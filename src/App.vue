@@ -1,28 +1,46 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+    <AppHeader></AppHeader>
+    <router-view />
   </div>
 </template>
+<script>
+import AppHeader from './components/AppHeader.vue';
 
+export default {
+  name: 'App',
+  data() {
+    return {};
+  },
+  components: {
+    AppHeader,
+  },
+};
+</script>
 <style lang="scss">
+$dark-font: #2c3e50;
+body {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
   text-align: center;
-  color: #2c3e50;
+  color: $dark-font;
 }
 
+//TODO: Esto debería moverse al componente AppHeader
 #nav {
   padding: 30px;
 
   a {
     font-weight: bold;
-    color: #2c3e50;
+    color: $dark-font;
 
     &.router-link-exact-active {
       color: #42b983;
