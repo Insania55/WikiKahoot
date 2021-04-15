@@ -23,6 +23,7 @@ body {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+  outline: none;
 }
 
 #app {
@@ -30,6 +31,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   box-sizing: border-box;
+  outline: none;
+  // Si quitas esto el layout se va a la verga
   text-align: center;
   color: $dark-font;
 }
