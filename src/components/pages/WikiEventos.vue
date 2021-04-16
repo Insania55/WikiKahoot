@@ -14,13 +14,14 @@
         />
         <div
           class="open-filters"
-          :class="{ 'filter-dropdown': desplegableFiltros }"
-          @click="abrirModalFiltros"
+          :class="{ 'filter-dropdown': filtersDropdown }"
+          @click="openFiltersDropdown"
         >
           <i class="fas fa-cogs"></i>
         </div>
       </div>
     </div>
+
     <!-- Tabla principal de eventos -->
     <h2>Lista de eventos</h2>
     <div class="table-container">
@@ -51,12 +52,12 @@
         <div class="flex-row">{{ evento.codigo }}</div>
       </div>
     </div>
-    <!-- <button class="datagrid-button" @click="descargarExcel">
+    <button class="datagrid-button" @click="descargarExcel">
       Descargar selección
-    </button> -->
+    </button>
 
     <transition name="fade">
-      <div class="modal" v-if="modalFiltros">
+      <div class="modal" v-if="filtersDropdown">
         <h1>Filtros</h1>
         <span>Contenido del modal</span>
       </div>
@@ -75,8 +76,32 @@ export default {
     return {
       camposHeader: ['Area', 'Etapa', 'Nivel', 'Tema', 'Codigo'],
       eventos: [],
-      desplegableFiltros: false,
-      modalFiltros: false,
+      filtersDropdown: false,
+      //TODO: Esto habrá que obtenerlo dependiendo de los datos que se seleccionen en la tabla
+      dataToDownload: [
+        {
+          numero: 1,
+          algo: 'Traducciones',
+          mas: 'De',
+          cosa: 'History',
+          numerico: 2,
+        },
+        {
+          numero: 1,
+          algo: 'Traducciones',
+          mas: 'De',
+          cosa: 'History',
+          numerico: 2,
+        },
+        {
+          numero: 1,
+          algo: 'Traducciones',
+          mas: 'De',
+          cosa: 'History',
+          numerico: 2,
+        },
+      ],
+
       bddEventos: [
         {
           codigo: 0,
@@ -106,7 +131,7 @@ export default {
   methods: {
     crearEvento() {},
     descargarExcel() {
-      downloadAsExcel();
+      downloadAsExcel(this.dataToDownload);
     },
 
     seleccionarTodos() {
@@ -126,12 +151,8 @@ export default {
     capitalize(string) {
       return string.charAt(0).toUpperCase() + string.slice(1);
     },
-    abrirModalFiltros() {
-      if (this.desplegableFiltros === false) {
-        this.desplegableFiltros = true;
-      } else {
-        this.desplegableFiltros = false;
-      }
+    openFiltersDropdown() {
+      !this.filtersDropdown;
     },
   },
 };
@@ -183,7 +204,8 @@ export default {
       background: $table-header;
       color: white;
       border-color: $table-header-border;
-      // ? Para centrar el checkbox
+
+      // * Para centrar el checkbox
       display: flex;
       justify-content: center;
     }
@@ -204,31 +226,31 @@ export default {
     border-bottom: solid 1px $table-border;
   }
 
-  .rowspan {
-    display: flex;
-    flex-flow: row wrap;
-    align-items: flex-start;
-    justify-content: center;
-  }
-
-  .column {
-    display: flex;
-    flex-flow: column wrap;
-    width: 75%;
-    padding: 0;
-    .flex-row {
-      display: flex;
-      flex-flow: row wrap;
-      width: 100%;
-      padding: 0;
-      border: 0;
-      border-bottom: solid 1px $table-border;
-      &:hover {
-        background: #f5f5f5;
-        transition: 500ms;
-      }
-    }
-  }
+  // ? Para rows anidados. No se utiliza, pero puede ser útil
+  // .rowspan {
+  //   display: flex;
+  //   flex-flow: row wrap;
+  //   align-items: flex-start;
+  //   justify-content: center;
+  // }
+  // .column {
+  //   display: flex;
+  //   flex-flow: column wrap;
+  //   width: 75%;
+  //   padding: 0;
+  //   .flex-row {
+  //     display: flex;
+  //     flex-flow: row wrap;
+  //     width: 100%;
+  //     padding: 0;
+  //     border: 0;
+  //     border-bottom: solid 1px $table-border;
+  //     &:hover {
+  //       background: #f5f5f5;
+  //       transition: 500ms;
+  //     }
+  //   }
+  // }
 
   @media all and (max-width: 430px) {
     .flex-table {
