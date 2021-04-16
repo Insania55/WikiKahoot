@@ -2,28 +2,73 @@
   <div class="wiki-eventos">
     <!-- //TODO: Trasladar filtros y datagrid a componente -->
     <div class="filter-search-container">
-      <div class="filter-search-form">
-        <button class="filter-search-button">
-          <i class="fas fa-search"></i>
-        </button>
-        <!-- //TODO: Necesita un mejor placeholder. Quizá un subtítulo? -->
-        <input
-          class="filter-searching"
-          type="search"
-          placeholder="Escribe para buscar"
-        />
-        <div
-          class="open-filters"
-          :class="{ 'filter-dropdown': filtersDropdown }"
-          @click="openFiltersDropdown"
-        >
-          <i class="fas fa-cogs"></i>
+      <div
+        class="filter-search-form"
+        :class="{ 'filter-dropdown': filtersDropdown }"
+      >
+        <div>
+          <button class="filter-search-button">
+            <i class="fas fa-search"></i>
+          </button>
+          <!-- //TODO: Necesita un mejor placeholder. Quizá un subtítulo? -->
+          <input
+            class="filter-search-input"
+            type="search"
+            placeholder="Escribe para buscar"
+          />
+          <div
+            class="filter-search-options"
+            :class="{ 'filter-dropdown': filtersDropdown }"
+            @click="openFiltersDropdown"
+          >
+            <div>
+              <i class="fas fa-cogs"></i>
+            </div>
+          </div>
+
+          <!-- // * Desplegable de filtros -->
+          <div class="filter-options-container" v-if="filtersDropdown">
+            <!-- //TODO: Eso se podría cambiar a un v-for -->
+            <div class="filter-option">
+              <label for="area">Área:</label>
+              <input
+                type="text"
+                name="area"
+                placeholder="Área temática general"
+              />
+            </div>
+            <div class="filter-option">
+              <label for="etapa">Etapa:</label>
+              <input
+                type="text"
+                name="etapa"
+                placeholder="Etapa educativa, si procede"
+              />
+            </div>
+            <div class="filter-option">
+              <label for="nivel">Nivel:</label>
+              <input
+                type="text"
+                name="nivel"
+                placeholder="Nivel de complejidad"
+              />
+            </div>
+            <div class="filter-option">
+              <label for="tema">Tema:</label>
+              <input
+                type="text"
+                name="tema"
+                placeholder="Tema concreto de la pregunta"
+              />
+            </div>
+            <button class="filter-option-button">Buscar</button>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Tabla principal de eventos -->
-    <h2>Lista de eventos</h2>
+    <h2>Resultados de la búsqueda</h2>
     <div class="table-container">
       <div class="flex-table header">
         <div class="flex-row">
@@ -55,13 +100,6 @@
     <button class="datagrid-button" @click="descargarExcel">
       Descargar selección
     </button>
-
-    <transition name="fade">
-      <div class="modal" v-if="filtersDropdown">
-        <h1>Filtros</h1>
-        <span>Contenido del modal</span>
-      </div>
-    </transition>
   </div>
 </template>
 
@@ -152,7 +190,7 @@ export default {
       return string.charAt(0).toUpperCase() + string.slice(1);
     },
     openFiltersDropdown() {
-      !this.filtersDropdown;
+      this.filtersDropdown = !this.filtersDropdown;
     },
   },
 };
@@ -160,20 +198,82 @@ export default {
 
 <style lang="scss">
 .wiki-eventos {
-  .filter-search-container {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: center;
-
-    .filter-dropdown {
-      background: salmon;
-    }
-  }
-
   $table-header: #1976d2;
   $table-header-border: #1565c0;
   $table-border: #d9d9d9;
   $row-bg: #f4f2f1;
+
+  margin: 0 1.5rem;
+
+  .filter-search-container {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 1.2rem;
+
+    .filter-search-form {
+      position: relative;
+      width: 350px;
+      min-height: 32px;
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+      background: lightsteelblue;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+
+      .filter-search-button {
+        position: absolute;
+        top: 5px;
+        left: 9px;
+        height: 18px;
+        width: 20px;
+        padding: 0;
+        margin: 0;
+        border: none;
+        background: none;
+        outline: none !important;
+        cursor: pointer;
+      }
+
+      .filter-search-input {
+        position: absolute;
+        top: 5px;
+        left: 31px;
+        font-size: 15px;
+        background: none;
+        color: black;
+        width: 92%;
+        height: 20px;
+        border: none;
+        appearance: none;
+        font-weight: 700;
+      }
+
+      .filter-search-options {
+        position: absolute;
+        text-align: right;
+        top: 5px;
+        right: 9px;
+      }
+    }
+
+    .filter-dropdown {
+      width: 100%;
+    }
+
+    .filter-options-container {
+      flex-direction: row;
+      flex-wrap: wrap;
+      margin: 37px 9px 9px;
+      justify-content: flex-start;
+      width: 98%;
+
+      .filter-option {
+        padding: 1rem;
+      }
+    }
+  }
 
   .table-container {
     display: block;
