@@ -86,18 +86,19 @@
       <div
         class="flex-table row"
         v-for="(evento, index) in bddEventos"
-        :id="'row' + index"
         :key="index"
       >
         <div class="flex-row first"><input type="checkbox" /></div>
-        <div class="flex-row">{{ capitalize(evento.area) }}</div>
-        <div class="flex-row">{{ capitalize(evento.etapa) }}</div>
-        <div class="flex-row">{{ capitalize(evento.nivel) }}</div>
-        <div class="flex-row">{{ capitalize(evento.tema) }}</div>
-        <div class="flex-row">{{ evento.codigo }}</div>
+        <div class="flex-row">{{ evento.pregunta }}</div>
+        <div class="flex-row">{{ evento.respuesta1 }}</div>
+        <div class="flex-row">{{ evento.respuesta2 }}</div>
+        <div class="flex-row">{{ evento.respuesta3 }}</div>
+        <div class="flex-row">{{ evento.respuesta4 }}</div>
+        <div class="flex-row">{{ evento.respuestaCorrecta }}</div>
+        <div class="flex-row">{{ evento.imgLink }}</div>
       </div>
     </div>
-    <button class="datagrid-button" @click="descargarExcel">
+    <button class="datagrid-button" @click="holi">
       Descargar selección
     </button>
   </div>
@@ -112,52 +113,59 @@ export default {
   name: 'WikiEventos',
   data() {
     return {
-      camposHeader: ['Area', 'Etapa', 'Nivel', 'Tema', 'Codigo'],
-      eventos: [],
+      camposHeader: [
+        'Pregunta',
+        'Respuesta 1',
+        'Respuesta 2',
+        'Respuesta 3',
+        'Respuesta 4',
+        'Respuesta correcta',
+        'Enlace a imagen',
+      ],
       filtersDropdown: false,
+      spreadsheetColumns: [
+        { label: 'Question', value: 'pregunta' },
+        { label: 'Answer 1', value: 'respuesta1' },
+        { label: 'Answer 2', value: 'respuesta2' },
+        { label: 'Answer 3', value: 'respuesta3' },
+        { label: 'Answer 4', value: 'respuesta4' },
+        { label: 'Time limit', value: 'timeLimit' },
+        { label: 'Correct answer(s)', value: 'respuestaCorrecta' },
+      ],
       //TODO: Esto habrá que obtenerlo dependiendo de los datos que se seleccionen en la tabla
       dataToDownload: [
+        // * Objeto de testeo
         {
-          numero: 1,
-          algo: 'Traducciones',
-          mas: 'De',
-          cosa: 'History',
-          numerico: 2,
-        },
-        {
-          numero: 1,
-          algo: 'Traducciones',
-          mas: 'De',
-          cosa: 'History',
-          numerico: 2,
-        },
-        {
-          numero: 1,
-          algo: 'Traducciones',
-          mas: 'De',
-          cosa: 'History',
-          numerico: 2,
+          pregunta: 'Esta sería la pregunta',
+          respuesta1: 'Respuesta 1',
+          respuesta2: 'Respuesta 2',
+          respuesta3: 'Respuesta 3',
+          respuesta4: 'Respuesta 4',
+          timeLimit: 60,
+          respuestaCorrecta: '2',
         },
       ],
-
+      // TODO: Habría que añadir el campo 'timeLimit' y hacer que 'imgLink' no se descargue
       bddEventos: [
         {
-          codigo: 0,
-          area: 'anime',
-          etapa: 'none',
-          nivel: 'begginer',
-          tema: 'shonen',
-          fecha: new Date().toLocaleString,
-          revisado: false,
+          pregunta: '¿Kapasao?',
+          respuesta1: 'Idk',
+          respuesta2: 'No lo sé',
+          respuesta3: 'Who knows',
+          respuesta4: ':D',
+          respuestaCorrecta: 4,
+          imgLink: 'https://unsplash.com/photos/fHXP17AxOEk',
+          // revisado: false,
+          // fecha: new Date().toLocaleString()
         },
         {
-          codigo: 1,
-          area: 'anime',
-          etapa: 'none',
-          nivel: 'advanced',
-          tema: 'misterio',
-          fecha: new Date().toLocaleString,
-          revisado: false,
+          pregunta: '¿What happened?',
+          respuesta1: 'Idk',
+          respuesta2: 'No lo sé',
+          respuesta3: 'Who knows',
+          respuesta4: ':D',
+          respuestaCorrecta: 3,
+          imgLink: 'https://unsplash.com/photos/fHXP17AxOEk',
         },
       ],
     };
@@ -167,9 +175,49 @@ export default {
     Preguntas,
   },
   methods: {
-    crearEvento() {},
+    anyadirEvento(
+      pregunta,
+      respuesta1,
+      respuesta2,
+      respuesta3,
+      respuesta4,
+      respuestaCorrecta,
+      timeLimit
+    ) {
+      this.dataToDownload.push({
+        pregunta,
+        respuesta1,
+        respuesta2,
+        respuesta3,
+        respuesta4,
+        respuestaCorrecta,
+        timeLimit,
+      });
+    },
+
+    holi() {
+      const row = document.querySelectorAll('.flex-table.row');
+
+      row.forEach((fila) => {
+        // * Comprueba si el checkbox de dicha fila está en estado 'checked' para descargar su info
+        if (fila.firstChild.firstChild.checked === true) {
+          this.anyadirEvento(
+            fila.children[1].textContent,
+            fila.children[2].textContent,
+            fila.children[3].textContent,
+            fila.children[4].textContent,
+            fila.children[5].textContent,
+            fila.children[6].textContent,
+            fila.children[7].textContent
+          );
+        }
+      });
+      //TODO: Comprobar que dataToDownload no esté vacío antes de descargar
+      this.descargarExcel();
+      this.dataToDownload = [];
+    },
     descargarExcel() {
-      downloadAsExcel(this.dataToDownload);
+      downloadAsExcel(this.spreadsheetColumns, this.dataToDownload);
     },
 
     seleccionarTodos() {
@@ -185,9 +233,6 @@ export default {
           checkbox.checked = false;
         });
       }
-    },
-    capitalize(string) {
-      return string.charAt(0).toUpperCase() + string.slice(1);
     },
     openFiltersDropdown() {
       this.filtersDropdown = !this.filtersDropdown;
@@ -319,7 +364,7 @@ export default {
   }
 
   .flex-row {
-    width: calc(100% / 6);
+    width: calc(100% / 8);
     text-align: center;
     padding: 0.5em 0.5em;
     border-right: solid 1px $table-border;
