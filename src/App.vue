@@ -19,6 +19,12 @@ export default {
 </script>
 <style lang="scss">
 $dark-font: #2c3e50;
+
+* {
+  box-sizing: border-box;
+  outline: none;
+}
+
 body {
   box-sizing: border-box;
   padding: 0;

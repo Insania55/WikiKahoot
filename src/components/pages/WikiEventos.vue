@@ -19,10 +19,9 @@
           <div
             class="filter-search-options"
             :class="{ 'filter-dropdown': filtersDropdown }"
-            @click="openFiltersDropdown"
           >
             <div>
-              <i class="fas fa-cogs"></i>
+              <i @click="openFiltersDropdown" class="fas fa-cogs"></i>
             </div>
           </div>
 
@@ -32,6 +31,7 @@
             <div class="filter-option">
               <label for="area">Área:</label>
               <input
+                class="w-100"
                 type="text"
                 name="area"
                 placeholder="Área temática general"
@@ -95,10 +95,11 @@
         <div class="flex-row">{{ evento.respuesta3 }}</div>
         <div class="flex-row">{{ evento.respuesta4 }}</div>
         <div class="flex-row">{{ evento.respuestaCorrecta }}</div>
+        <div class="flex-row">{{ evento.timeLimit }}</div>
         <div class="flex-row">{{ evento.imgLink }}</div>
       </div>
     </div>
-    <button class="datagrid-button" @click="holi">
+    <button @click="descargarExcel" class="download-button">
       Descargar selección
     </button>
   </div>
@@ -120,17 +121,24 @@ export default {
         'Respuesta 3',
         'Respuesta 4',
         'Respuesta correcta',
+        'Tiempo límite',
         'Enlace a imagen',
       ],
       filtersDropdown: false,
       spreadsheetColumns: [
         { label: 'Question', value: 'pregunta' },
-        { label: 'Answer 1', value: 'respuesta1' },
-        { label: 'Answer 2', value: 'respuesta2' },
-        { label: 'Answer 3', value: 'respuesta3' },
-        { label: 'Answer 4', value: 'respuesta4' },
-        { label: 'Time limit', value: 'timeLimit' },
-        { label: 'Correct answer(s)', value: 'respuestaCorrecta' },
+        { label: 'Answer 1 - max 75 characters', value: 'respuesta1' },
+        { label: 'Answer 2 - max 75 characters', value: 'respuesta2' },
+        { label: 'Answer 3 - max 75 characters', value: 'respuesta3' },
+        { label: 'Answer 4 - max 75 characters', value: 'respuesta4' },
+        {
+          label: 'Time limit (sec) – 5, 10, 20, 30, 60, 90, 120, or 240 secs',
+          value: 'timeLimit',
+        },
+        {
+          label: 'Correct answer(s) - choose at least one',
+          value: 'respuestaCorrecta',
+        },
       ],
       //TODO: Esto habrá que obtenerlo dependiendo de los datos que se seleccionen en la tabla
       dataToDownload: [
@@ -145,26 +153,37 @@ export default {
           respuestaCorrecta: '2',
         },
       ],
-      // TODO: Habría que añadir el campo 'timeLimit' y hacer que 'imgLink' no se descargue
       bddEventos: [
         {
-          pregunta: '¿Kapasao?',
-          respuesta1: 'Idk',
+          pregunta:
+            '¿Qué propiedad de CSS es la más apropiada para poner en negrita la letra?',
+          respuesta1: 'font-weight',
           respuesta2: 'No lo sé',
           respuesta3: 'Who knows',
           respuesta4: ':D',
-          respuestaCorrecta: 4,
+          timeLimit: 60,
+          respuestaCorrecta: 1,
           imgLink: 'https://unsplash.com/photos/fHXP17AxOEk',
           // revisado: false,
           // fecha: new Date().toLocaleString()
         },
         {
-          pregunta: '¿What happened?',
+          pregunta: '¿Quién creó Mortadelo y Filemón?',
+          respuesta1: 'Idk',
+          respuesta2: 'No lo sé',
+          respuesta3: 'Francisco Ibáñez',
+          respuesta4: ':D',
+          timeLimit: 120,
+          respuestaCorrecta: 2,
+        },
+        {
+          pregunta: '¿En qué año se descubrió América?',
           respuesta1: 'Idk',
           respuesta2: 'No lo sé',
           respuesta3: 'Who knows',
-          respuesta4: ':D',
-          respuestaCorrecta: 3,
+          respuesta4: '1492',
+          timeLimit: 90,
+          respuestaCorrecta: 4,
           imgLink: 'https://unsplash.com/photos/fHXP17AxOEk',
         },
       ],
@@ -195,11 +214,9 @@ export default {
       });
     },
 
-    holi() {
-      const row = document.querySelectorAll('.flex-table.row');
-
-      row.forEach((fila) => {
-        // * Comprueba si el checkbox de dicha fila está en estado 'checked' para descargar su info
+    descargarExcel() {
+      document.querySelectorAll('.flex-table.row').forEach((fila) => {
+        // * Si el checkbox de dicha fila está en estado 'checked' significa que lo han seleccionado para descargar
         if (fila.firstChild.firstChild.checked === true) {
           this.anyadirEvento(
             fila.children[1].textContent,
@@ -212,18 +229,22 @@ export default {
           );
         }
       });
+
+      let anyChecked = false;
+      document.querySelectorAll('input[type=checkbox]').forEach((checkbox) => {
+        if (checkbox.checked === true) anyChecked = true;
+      });
+
+      // TODO: Si no hay ninguno seleccionado y se intenta descargar, en vez de no hacer nada, mostrar un mensaje de error
+      if (anyChecked === false) return;
+
+      downloadAsExcel(this.spreadsheetColumns, this.dataToDownload);
       //TODO: Comprobar que dataToDownload no esté vacío antes de descargar
-      this.descargarExcel();
       this.dataToDownload = [];
     },
-    descargarExcel() {
-      downloadAsExcel(this.spreadsheetColumns, this.dataToDownload);
-    },
-
     seleccionarTodos() {
-      let checkboxes = document.querySelectorAll('input[type=checkbox');
+      let checkboxes = document.querySelectorAll('input[type=checkbox]');
       let allSelected = checkboxes[0].checked === true;
-
       if (allSelected) {
         checkboxes.forEach((checkbox) => {
           checkbox.checked = true;
@@ -247,6 +268,7 @@ export default {
   $table-header-border: #1565c0;
   $table-border: #d9d9d9;
   $row-bg: #f4f2f1;
+  $filter-container-bg: mediumseagreen;
 
   margin: 0 1.5rem;
 
@@ -263,7 +285,7 @@ export default {
       width: 350px;
       min-height: 32px;
       box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-      background: lightsteelblue;
+      background: $filter-container-bg;
       border-radius: 8px;
       transition: all 0.3s ease;
 
@@ -274,11 +296,10 @@ export default {
         height: 18px;
         width: 20px;
         padding: 0;
-        margin: 0;
         border: none;
         background: none;
-        outline: none !important;
         cursor: pointer;
+        color: inherit;
       }
 
       .filter-search-input {
@@ -300,9 +321,11 @@ export default {
         text-align: right;
         top: 5px;
         right: 9px;
+        > div i {
+          cursor: pointer;
+        }
       }
     }
-
     .filter-dropdown {
       width: 100%;
     }
@@ -316,15 +339,26 @@ export default {
 
       .filter-option {
         padding: 1rem;
+
+        > input {
+          border-radius: 8px;
+          border: none;
+          padding: 0.4rem;
+          width: 70%;
+        }
       }
     }
+  }
+
+  .hidden {
+    visibility: hidden;
   }
 
   .table-container {
     display: block;
     margin: 2em auto;
     width: 90%;
-    max-width: 600px;
+    max-width: 825px;
   }
 
   .flex-table {
@@ -362,16 +396,34 @@ export default {
       transition: 500ms;
     }
   }
+  .download-button {
+    font-family: 'Fredoka One', cursive;
+    display: inline-block;
+    border: none;
+    padding: 0.5rem;
+    background-color: transparent;
+    cursor: pointer;
+    border-radius: 2px;
+    background: dodgerblue;
+    margin-bottom: 2em;
+
+    &:active {
+      transform: translateY(2px);
+      background: rgba(30, 143, 255, 0.9);
+    }
+  }
 
   .flex-row {
-    width: calc(100% / 8);
+    width: calc(100% / 9);
     text-align: center;
     padding: 0.5em 0.5em;
     border-right: solid 1px $table-border;
     border-bottom: solid 1px $table-border;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
-  // ? Para rows anidados. No se utiliza, pero puede ser útil
+  // ? Para rows anidados. No se utiliza, pero puede sernos útil
   // .rowspan {
   //   display: flex;
   //   flex-flow: row wrap;

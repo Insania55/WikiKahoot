@@ -1,8 +1,8 @@
 import xlsx from 'json-as-xlsx';
 
 const settings = {
-  sheetName: 'FirstSheet',
-  fileName: 'MySpreadsheet',
+  sheetName: 'wiki-kahoot',
+  fileName: 'hojaCalculoKahoot',
   extraLength: 3,
   writeOptions: {},
 };
