@@ -1,7 +1,7 @@
 <template> </template>
 
 <script>
-import Pregunta from './Pregunta.vue';
+// import Pregunta from './Pregunta.vue';
 export default {
   name: 'Evento',
   data() {
@@ -37,7 +37,7 @@ export default {
     },
   },
   components: {
-    Pregunta,
+    // Pregunta,
   },
 };
 </script>

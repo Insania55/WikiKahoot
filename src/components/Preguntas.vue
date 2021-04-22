@@ -1,16 +1,16 @@
 <template>
   <div class="wiki-preguntas">
-    <Pregunta
+    <!-- <Pregunta
       v-for="(pregunta, index) in preguntas"
       :key="index"
       :enunciado="pregunta.enunciado"
       :class="pregunta.correcta ? 'respuesta-correcta' : ''"
-    ></Pregunta>
+    ></Pregunta> -->
   </div>
 </template>
 
 <script>
-import Pregunta from './Pregunta.vue';
+// import Pregunta from './Pregunta.vue';
 export default {
   name: 'Preguntas',
   data() {
@@ -23,7 +23,7 @@ export default {
     },
   },
   components: {
-    Pregunta,
+    // Pregunta,
   },
 };
 </script>

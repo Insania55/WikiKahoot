@@ -1,74 +1,9 @@
 <template>
   <div class="wiki-eventos">
-    <!-- //TODO: Trasladar filtros y datagrid a componente -->
-    <div class="filter-search-container">
-      <div
-        class="filter-search-form"
-        :class="{ 'filter-dropdown': filtersDropdown }"
-      >
-        <div>
-          <button class="filter-search-button">
-            <i class="fas fa-search"></i>
-          </button>
-          <!-- //TODO: Necesita un mejor placeholder. Quizá un subtítulo? -->
-          <input
-            class="filter-search-input"
-            type="search"
-            placeholder="Escribe para buscar"
-          />
-          <div
-            class="filter-search-options"
-            :class="{ 'filter-dropdown': filtersDropdown }"
-          >
-            <div>
-              <i @click="openFiltersDropdown" class="fas fa-cogs"></i>
-            </div>
-          </div>
-
-          <!-- // * Desplegable de filtros -->
-          <div class="filter-options-container" v-if="filtersDropdown">
-            <!-- //TODO: Eso se podría cambiar a un v-for -->
-            <div class="filter-option">
-              <label for="area">Área:</label>
-              <input
-                class="w-100"
-                type="text"
-                name="area"
-                placeholder="Área temática general"
-              />
-            </div>
-            <div class="filter-option">
-              <label for="etapa">Etapa:</label>
-              <input
-                type="text"
-                name="etapa"
-                placeholder="Etapa educativa, si procede"
-              />
-            </div>
-            <div class="filter-option">
-              <label for="nivel">Nivel:</label>
-              <input
-                type="text"
-                name="nivel"
-                placeholder="Nivel de complejidad"
-              />
-            </div>
-            <div class="filter-option">
-              <label for="tema">Tema:</label>
-              <input
-                type="text"
-                name="tema"
-                placeholder="Tema concreto de la pregunta"
-              />
-            </div>
-            <button class="filter-option-button">Buscar</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
+    <EventFilters @cerrarFiltros="filtersDropdown = !filtersDropdown">
+    </EventFilters>
     <!-- Tabla principal de eventos -->
-    <h2>Resultados de la búsqueda</h2>
+    <h2 class="table-title">Resultados de la búsqueda</h2>
     <div class="table-container">
       <div class="flex-table header">
         <div class="flex-row">
@@ -96,18 +31,24 @@
         <div class="flex-row">{{ evento.respuesta4 }}</div>
         <div class="flex-row">{{ evento.respuestaCorrecta }}</div>
         <div class="flex-row">{{ evento.timeLimit }}</div>
-        <div class="flex-row">{{ evento.imgLink }}</div>
+        <!-- //TODO: Para evitar el desbordamiento, añadir opción de "copiar link" al clickar en él-->
+        <div class="flex-row">
+          <a :href="evento.imgLink" target="_blank">{{ evento.imgLink }}</a>
+        </div>
       </div>
     </div>
-    <button @click="descargarExcel" class="download-button">
-      Descargar selección
-    </button>
+    <div class="button-container">
+      <button @click="descargarExcel" class="download-button">
+        Descargar selección
+      </button>
+    </div>
   </div>
 </template>
 
 <script>
 import Evento from '../Evento.vue';
-import Preguntas from '../Preguntas.vue';
+// import Preguntas from '../Preguntas.vue';
+import EventFilters from '../EventFilters.vue';
 import { downloadAsExcel } from './js/jsonToExcel.js';
 
 export default {
@@ -191,7 +132,8 @@ export default {
   },
   components: {
     Evento,
-    Preguntas,
+    // Preguntas,
+    EventFilters,
   },
   methods: {
     anyadirEvento(
@@ -264,107 +206,30 @@ export default {
 
 <style lang="scss">
 .wiki-eventos {
-  $table-header: #1976d2;
-  $table-header-border: #1565c0;
-  $table-border: #d9d9d9;
-  $row-bg: #f4f2f1;
-  $filter-container-bg: mediumseagreen;
-
-  margin: 0 1.5rem;
-
-  .filter-search-container {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    margin-bottom: 1.2rem;
-
-    .filter-search-form {
-      position: relative;
-      width: 350px;
-      min-height: 32px;
-      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-      background: $filter-container-bg;
-      border-radius: 8px;
-      transition: all 0.3s ease;
-
-      .filter-search-button {
-        position: absolute;
-        top: 5px;
-        left: 9px;
-        height: 18px;
-        width: 20px;
-        padding: 0;
-        border: none;
-        background: none;
-        cursor: pointer;
-        color: inherit;
-      }
-
-      .filter-search-input {
-        position: absolute;
-        top: 5px;
-        left: 31px;
-        font-size: 15px;
-        background: none;
-        color: black;
-        width: 92%;
-        height: 20px;
-        border: none;
-        appearance: none;
-        font-weight: 700;
-      }
-
-      .filter-search-options {
-        position: absolute;
-        text-align: right;
-        top: 5px;
-        right: 9px;
-        > div i {
-          cursor: pointer;
-        }
-      }
-    }
-    .filter-dropdown {
-      width: 100%;
-    }
-
-    .filter-options-container {
-      flex-direction: row;
-      flex-wrap: wrap;
-      margin: 37px 9px 9px;
-      justify-content: flex-start;
-      width: 98%;
-
-      .filter-option {
-        padding: 1rem;
-
-        > input {
-          border-radius: 8px;
-          border: none;
-          padding: 0.4rem;
-          width: 70%;
-        }
-      }
-    }
-  }
+  $--color-table-header: #1976d2;
+  $--color-table-header-border: #1565c0;
+  $--color-table-border: #d9d9d9;
+  $--color-row-bg: #f4f2f1;
 
   .hidden {
     visibility: hidden;
+  }
+
+  .table-title {
+    text-align: center;
   }
 
   .table-container {
     display: block;
     margin: 2em auto;
     width: 90%;
-    max-width: 825px;
+    max-width: 75vw;
   }
 
   .flex-table {
     display: flex;
     flex-flow: row nowrap;
-    border-left: solid 1px $table-border;
+    border-left: solid 1px $--color-table-border;
     transition: 0.5s;
 
     &.header {
@@ -376,26 +241,31 @@ export default {
     }
 
     &:first-of-type {
-      border-top: solid 1px $table-header-border;
-      border-left: solid 1px $table-header-border;
+      border-top: solid 1px $--color-table-header-border;
+      border-left: solid 1px $--color-table-header-border;
     }
     &:first-of-type .flex-row {
-      background: $table-header;
+      background: $--color-table-header;
       color: white;
-      border-color: $table-header-border;
+      border-color: $--color-table-header-border;
 
       // * Para centrar el checkbox
       display: flex;
       justify-content: center;
     }
     &.row:nth-child(odd) .flex-row {
-      background: $row-bg;
+      background: $--color-row-bg;
     }
     &:hover {
       background: #f5f5f5;
       transition: 500ms;
     }
   }
+
+  .button-container {
+    text-align: center;
+  }
+
   .download-button {
     font-family: 'Fredoka One', cursive;
     display: inline-block;
@@ -417,8 +287,8 @@ export default {
     width: calc(100% / 9);
     text-align: center;
     padding: 0.5em 0.5em;
-    border-right: solid 1px $table-border;
-    border-bottom: solid 1px $table-border;
+    border-right: solid 1px $--color-table-border;
+    border-bottom: solid 1px $--color-table-border;
     overflow: hidden;
     text-overflow: ellipsis;
   }
@@ -441,7 +311,7 @@ export default {
   //     width: 100%;
   //     padding: 0;
   //     border: 0;
-  //     border-bottom: solid 1px $table-border;
+  //     border-bottom: solid 1px $--color-table-border;
   //     &:hover {
   //       background: #f5f5f5;
   //       transition: 500ms;
@@ -455,7 +325,7 @@ export default {
         border-bottom: 0;
       }
       .flex-row:last-of-type {
-        border-bottom: solid 1px $table-border;
+        border-bottom: solid 1px $--color-table-border;
       }
     }
 
@@ -470,14 +340,14 @@ export default {
 
       &.first {
         width: 100%;
-        border-bottom: solid 1px $table-border;
+        border-bottom: solid 1px $--color-table-border;
       }
     }
 
     .column {
       width: 100%;
       .flex-row {
-        border-bottom: solid 1px $table-border;
+        border-bottom: solid 1px $--color-table-border;
       }
     }
 
@@ -485,15 +355,12 @@ export default {
       width: 100%; //1px = border right
     }
   }
-  .evento {
-    color: seagreen;
-  }
 
   // .flex-cell {
   //   width: calc(100% / 3); //1px = border right
   //   text-align: center;
   //   padding: 0.5em 0.5em;
-  //   border-right: solid 1px $table-border;
+  //   border-right: solid 1px $--color-table-border;
   //   //flex: 1 1 33.3%;
   //   &:last-child {
   //     // border-right: 0;

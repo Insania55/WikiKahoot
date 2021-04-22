@@ -38,22 +38,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
   box-sizing: border-box;
   outline: none;
-  // Si quitas esto el layout se va a la verga
-  text-align: center;
   color: $dark-font;
-}
-
-//TODO: Esto debería moverse al componente AppHeader
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: $dark-font;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
 }
 </style>
