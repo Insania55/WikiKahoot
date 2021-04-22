@@ -10,5 +10,6 @@ const settings = {
 const download = true;
 
 export function downloadAsExcel(columns, data) {
+  settings.fileName += `${+new Date()}`;
   xlsx(columns, data, settings, download);
 }

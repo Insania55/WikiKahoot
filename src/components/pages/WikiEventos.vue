@@ -1,6 +1,9 @@
 <template>
   <div class="wiki-eventos">
-    <EventFilters @cerrarFiltros="filtersDropdown = !filtersDropdown">
+    <EventFilters
+      :filters-dropdown="filtersDropdown"
+      @cerrar-filtros="filtersDropdown = !filtersDropdown"
+    >
     </EventFilters>
     <!-- Tabla principal de eventos -->
     <h2 class="table-title">Resultados de la búsqueda</h2>

@@ -18,7 +18,7 @@ export default {
 };
 </script>
 <style lang="scss">
-$dark-font: #2c3e50;
+$--color-light-bg: #ffe;
 
 * {
   box-sizing: border-box;
@@ -38,6 +38,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
   box-sizing: border-box;
   outline: none;
-  color: $dark-font;
+  background-color: --color-light-bg;
 }
 </style>

@@ -38,7 +38,9 @@
                 <span class="input-label">{{ option.label }}</span>
               </label>
             </div>
-            <button class="filter-option-button">Buscar</button>
+            <div class="button-containr">
+              <button class="filter-option-button">Buscar</button>
+            </div>
           </div>
         </div>
       </div>
@@ -77,7 +79,10 @@ export default {
     };
   },
   props: {
-    filtersDropdown: false,
+    filtersDropdown: {
+      type: Boolean,
+      default: true,
+    },
   },
   methods: {
     cerrarFiltros() {
@@ -91,6 +96,7 @@ export default {
 .event-filters {
   $--color-filter-container: slategrey;
   $--color-accent: goldenrod;
+  $--color-dark-font: #2c3e50;
 
   .filter-search-container {
     display: flex;
@@ -106,6 +112,7 @@ export default {
       min-height: 32px;
       box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
       background: $--color-filter-container;
+      color: $--color-dark-font;
       border-radius: 8px;
       transition: all 0.3s ease;
 
@@ -128,9 +135,10 @@ export default {
         left: 31px;
         font-size: 15px;
         background: none;
-        color: black;
+        color: rgb(15, 34, 34);
         width: 92%;
         height: 20px;
+        color: #001;
         border: none;
         appearance: none;
         font-weight: 700;
@@ -153,7 +161,7 @@ export default {
   }
 
   .filter-dropdown {
-    width: 85%;
+    width: 85% !important;
   }
 
   .filter-options-container {
@@ -169,6 +177,24 @@ export default {
       flex-flow: column nowrap;
       justify-content: flex-start;
 
+      &-button {
+        font-family: 'Fredoka One', cursive;
+        display: inline-block;
+        border: none;
+        padding: 0.8rem;
+        background-color: transparent;
+        cursor: pointer;
+        border-radius: 4px;
+        background: $--color-dark-font;
+        margin-bottom: 2em;
+        margin-left: 1.2em;
+
+        &:active {
+          transform: translateY(2px);
+          background: rgba(30, 143, 255, 0.9);
+        }
+      }
+
       .input {
         position: relative;
 
@@ -178,7 +204,6 @@ export default {
           top: 0;
           padding: 6px 4px;
           margin: 9px 4px;
-
           background: $--color-filter-container;
           white-space: nowrap;
           transform: translate(0, 0);
@@ -186,21 +211,22 @@ export default {
           transition: transform 120ms ease-in;
           font-weight: bold;
           line-height: 1.2;
+          color: #133;
         }
 
         > input {
           display: block;
           width: 80%;
-          border: 3px solid currentColor;
+          border: 3px solid $--color-dark-font;
           padding: 1rem 0.5rem;
           color: currentColor;
-          background: transparent;
+          background: $--color-filter-container;
           border-radius: 4px;
 
           &:focus,
           &:not(:placeholder-shown) {
             & + .input-label {
-              transform: translate(0.3rem, -65%) scale(1);
+              transform: translate(0.4rem, -76%) scale(1);
               color: $--color-accent;
             }
           }
