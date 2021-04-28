@@ -34,7 +34,6 @@
         <div class="flex-row">{{ evento.respuesta4 }}</div>
         <div class="flex-row">{{ evento.respuestaCorrecta }}</div>
         <div class="flex-row">{{ evento.timeLimit }}</div>
-        <!-- //TODO: Para evitar el desbordamiento, añadir opción de "copiar link" al clickar en él-->
         <div class="flex-row">
           <a :href="evento.imgLink" target="_blank">{{ evento.imgLink }}</a>
         </div>
@@ -184,7 +183,6 @@ export default {
       if (anyChecked === false) return;
 
       downloadAsExcel(this.spreadsheetColumns, this.dataToDownload);
-      //TODO: Comprobar que dataToDownload no esté vacío antes de descargar
       this.dataToDownload = [];
     },
     seleccionarTodos() {

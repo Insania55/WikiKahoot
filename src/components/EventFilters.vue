@@ -9,38 +9,128 @@
           <button class="filter-search-button">
             <i class="fas fa-search"></i>
           </button>
-          <!-- //TODO: Necesita un mejor placeholder. Quizá un subtítulo? -->
+
           <input
             class="filter-search-input"
             type="search"
             placeholder="Escribe para buscar"
           />
           <div class="filter-search-options">
-            <div>
-              <i @click="cerrarFiltros" class="fas fa-cogs"></i>
-            </div>
+            <button @click="cerrarFiltros">Abrir filtros</button>
+            <!-- <i @click="cerrarFiltros" class="fas fa-cogs"></i> -->
           </div>
 
           <!-- // * Desplegable de filtros -->
           <div class="filter-options-container" v-if="filtersDropdown">
-            <div
-              v-for="(option, index) in filterOptions"
-              :key="index"
-              class="filter-option"
-            >
-              <label class="input" :for="option.name">
+            <form>
+              <div class="option-container">
+                <label>Etapa</label>
                 <input
-                  class="w-100"
+                  v-model="staticData.etapa"
+                  class="chosen-value"
+                  @click="desplegableEtapa = !desplegableEtapa"
+                  @focus="cambiarFocus"
+                  @focusout="desplegableEtapa = false"
                   type="text"
-                  :name="option.name"
-                  :placeholder="option.placeholder"
+                  placeholder="Escribe y filtra"
                 />
-                <span class="input-label">{{ option.label }}</span>
-              </label>
-            </div>
-            <div class="button-containr">
-              <button class="filter-option-button">Buscar</button>
-            </div>
+                <ul class="value-list" :class="{ open: desplegableEtapa }">
+                  <li
+                    v-for="(option, index) in optionsEtapa"
+                    :key="index"
+                    @click="
+                      seleccionarDato('etapa', option.name),
+                        (desplegableEtapa = false)
+                    "
+                  >
+                    {{ option.name }}
+                  </li>
+                </ul>
+              </div>
+
+              <div class="option-container">
+                <label>Nivel</label>
+                <input
+                  @click="desplegableNivel = !desplegableNivel"
+                  class="chosen-value"
+                  type="text"
+                  v-model="staticData.nivel"
+                  @focus="cambiarFocus"
+                  @focusout="desplegableNivel = false"
+                  placeholder="Escribe y filtra"
+                />
+                <ul class="value-list" :class="{ open: desplegableNivel }">
+                  <li
+                    v-for="(option, index) in optionsNivel"
+                    :key="index"
+                    @click="
+                      seleccionarDato('nivel', option.name),
+                        (desplegableNivel = false)
+                    "
+                  >
+                    {{ option.name }}
+                  </li>
+                </ul>
+              </div>
+
+              <div class="option-container">
+                <label>Área</label>
+                <input
+                  v-model="staticData.area"
+                  class="chosen-value"
+                  @click="desplegableArea = !desplegableArea"
+                  @focus="cambiarFocus"
+                  @focusout="desplegableArea = false"
+                  type="text"
+                  placeholder="Escribe y filtra"
+                />
+                <ul class="value-list" :class="{ open: desplegableArea }">
+                  <li
+                    v-for="(option, index) in filteredOptions(
+                      optionsArea,
+                      currentInput
+                    )"
+                    :key="index"
+                    @click="
+                      seleccionarDato('area', option.name),
+                        (desplegableArea = false)
+                    "
+                  >
+                    {{ option.name }}
+                  </li>
+                </ul>
+              </div>
+
+              <!-- //TODO: Estilarlo para posicionarlo mejor en el contenedor  -->
+              <div class="option-container">
+                <label>Tema</label>
+                <input
+                  v-model="staticData.tema"
+                  class="chosen-value"
+                  :disabled="!isTemaCargado"
+                  @click="desplegableTema = !desplegableTema"
+                  @focus="cambiarFocus"
+                  @focusout="desplegableTema = false"
+                  type="text"
+                  placeholder="Escribe y filtra"
+                />
+                <ul class="value-list" :class="{ open: desplegableTema }">
+                  <li
+                    v-for="(option, index) in optionsTema"
+                    :key="index"
+                    @click="
+                      seleccionarDato('tema', option.name),
+                        (desplegableTema = false)
+                    "
+                  >
+                    {{ option.name }}
+                  </li>
+                </ul>
+              </div>
+              <div class="button-containr">
+                <button class="filter-option-button">Buscar</button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
@@ -53,7 +143,18 @@ export default {
   name: 'EventFilters',
   data() {
     return {
-      //TODO: Ponerle a los placeholder un margin con CSS y no esta guarrada
+      //TODO: staticData deberían ser las opciones y esto los searchTerm
+      staticData: {
+        etapa: '',
+        area: '',
+        tema: '',
+        nivel: '',
+      },
+      desplegableEtapa: false,
+      desplegableNivel: false,
+      desplegableArea: false,
+      desplegableTema: false,
+      currentInput: null,
       filterOptions: [
         {
           label: 'Área',
@@ -76,6 +177,62 @@ export default {
           placeholder: '           Tema concreto de la pregunta',
         },
       ],
+      optionsEtapa: [
+        {
+          name: 'Primaria',
+          value: 'primaria',
+        },
+        {
+          name: 'Secundaria',
+          value: 'secundaria',
+        },
+        {
+          name: 'Bachiller',
+          value: 'bachiller',
+        },
+      ],
+      optionsNivel: [
+        {
+          name: 'Fácil',
+          value: 'facil',
+        },
+        {
+          name: 'Intermedio',
+          value: 'intermedio',
+        },
+        {
+          name: 'Difícil',
+          value: 'dificil',
+        },
+      ],
+      optionsArea: [
+        {
+          name: 'Anime',
+          value: 'anime',
+        },
+        {
+          name: 'Historia',
+          value: 'historia',
+        },
+        {
+          name: 'Furbo',
+          value: 'furbo',
+        },
+      ],
+      optionsTema: [
+        {
+          name: 'Gormiti',
+          value: 'gormiti',
+        },
+        {
+          name: '2ª Guerra Mundial',
+          value: 'segunda guerra mundial',
+        },
+        {
+          name: 'Barça',
+          value: 'barça',
+        },
+      ],
     };
   },
   props: {
@@ -84,7 +241,30 @@ export default {
       default: true,
     },
   },
+  computed: {
+    isTemaCargado: function() {
+      return (
+        this.staticData.etapa !== '' &&
+        this.staticData.nivel !== '' &&
+        this.staticData.area !== ''
+      );
+    },
+    //TODO: Conseguir filtrar los inputs... este método debe tener un array con opciones por defecto, hasta que se empiece a filtrar
+    filteredOptions: function(options, currentInput) {
+      // console.log(currentInput);
+      return options;
+      // return options.filter((element) => {
+      // return element.value.toLowerCase().match(searchTerm.toLowerCase());
+      // });
+    },
+  },
   methods: {
+    cambiarFocus(value) {
+      this.currentInput = value.target;
+    },
+    seleccionarDato(target, data) {
+      this.staticData[target] = data;
+    },
     cerrarFiltros() {
       this.$emit('cerrar-filtros');
     },
@@ -94,9 +274,10 @@ export default {
 
 <style lang="scss">
 .event-filters {
-  $--color-filter-container: slategrey;
-  $--color-accent: goldenrod;
+  $--color-filter-container: salmon;
   $--color-dark-font: #2c3e50;
+  $--select-border: #444;
+  $--select-arrow: $--select-border;
 
   .filter-search-container {
     display: flex;
@@ -149,12 +330,16 @@ export default {
         text-align: right;
         top: 5px;
         right: 9px;
-
-        > div {
+        // TODO: Estilar mejor este botón
+        > button {
           position: relative;
           display: inline-block;
-          margin: 0 1px;
           cursor: pointer;
+          padding: 3px 5px;
+          background: transparent;
+          border: unset;
+          border-radius: 5px;
+          box-shadow: 1px 1px 2px;
         }
       }
     }
@@ -165,73 +350,123 @@ export default {
   }
 
   .filter-options-container {
-    flex-direction: row;
-    flex-wrap: wrap;
     margin: 37px 14px 1rem;
     justify-content: flex-start;
     width: 98%;
 
-    .filter-option {
-      padding: 1rem;
+    .button-containr {
+      margin-top: 1em;
+    }
+
+    button {
+      font-family: 'Fredoka One', cursive;
+      display: inline-block;
+      border: none;
+      padding: 0.8rem;
+      background-color: transparent;
+      cursor: pointer;
+      border-radius: 4px;
+      background: $--color-dark-font;
+      margin-bottom: 2em;
+      margin-left: 1.2em;
+
+      &:active {
+        transform: translateY(2px);
+        background: rgba(30, 143, 255, 0.9);
+      }
+    }
+    .option-container {
+      position: relative;
+      width: 40%;
+      margin-top: 8vh;
       display: flex;
-      flex-flow: column nowrap;
-      justify-content: flex-start;
+      align-items: center;
 
-      &-button {
-        font-family: 'Fredoka One', cursive;
-        display: inline-block;
-        border: none;
-        padding: 0.8rem;
-        background-color: transparent;
-        cursor: pointer;
-        border-radius: 4px;
-        background: $--color-dark-font;
-        margin-bottom: 2em;
-        margin-left: 1.2em;
-
-        &:active {
-          transform: translateY(2px);
-          background: rgba(30, 143, 255, 0.9);
-        }
+      label {
+        margin-right: 0.5rem;
       }
+    }
 
-      .input {
-        position: relative;
+    .value-list {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 999;
+      width: 100%;
+      margin-left: 4rem;
+    }
+    //TODO: Refactorizar a código SCSS
+    .chosen-value {
+      font-family: 'Ek Mukta';
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 4px;
+      font-size: 1.1rem;
+      background-color: #fafcfd;
+      border: 3px solid transparent;
+      -webkit-transition: 0.3s ease-in-out;
+      transition: 0.3s ease-in-out;
+    }
+    .chosen-value::-webkit-input-placeholder {
+      color: #333;
+    }
+    .chosen-value:hover {
+      background-color: #ff908b;
+      cursor: pointer;
+    }
+    .chosen-value:hover::-webkit-input-placeholder {
+      color: #333;
+    }
+    .chosen-value:focus,
+    .chosen-value.open {
+      box-shadow: 0px 5px 8px 0px rgba(0, 0, 0, 0.2);
+      outline: 0;
+      background-color: #ff908b;
+      color: #000;
+    }
+    .chosen-value:focus::-webkit-input-placeholder,
+    .chosen-value.open::-webkit-input-placeholder {
+      color: #000;
+    }
 
-        .input-label {
-          position: absolute;
-          left: 0;
-          top: 0;
-          padding: 6px 4px;
-          margin: 9px 4px;
-          background: $--color-filter-container;
-          white-space: nowrap;
-          transform: translate(0, 0);
-          transform-origin: 0, 0;
-          transition: transform 120ms ease-in;
-          font-weight: bold;
-          line-height: 1.2;
-          color: #133;
-        }
-
-        > input {
-          display: block;
-          width: 80%;
-          border: 3px solid $--color-dark-font;
-          padding: 1rem 0.5rem;
-          color: currentColor;
-          background: $--color-filter-container;
-          border-radius: 4px;
-
-          &:focus,
-          &:not(:placeholder-shown) {
-            & + .input-label {
-              transform: translate(0.4rem, -76%) scale(1);
-              color: $--color-accent;
-            }
-          }
-        }
-      }
+    .value-list {
+      list-style: none;
+      margin-top: 2rem;
+      box-shadow: 0px 5px 8px 0px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      max-height: 0;
+      -webkit-transition: 0.3s ease-in-out;
+      transition: 0.3s ease-in-out;
+    }
+    .value-list.open {
+      max-height: 320px;
+      overflow: auto;
+    }
+    .value-list li {
+      position: relative;
+      height: 4rem;
+      background-color: #fafcfd;
+      padding: 1rem;
+      font-size: 1.1rem;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      align-items: center;
+      cursor: pointer;
+      -webkit-transition: background-color 0.3s;
+      transition: background-color 0.3s;
+      opacity: 1;
+    }
+    .value-list li:hover {
+      background-color: #ff908b;
+    }
+    .value-list li.closed {
+      max-height: 0;
+      overflow: hidden;
+      padding: 0;
+      opacity: 0;
     }
   }
 }

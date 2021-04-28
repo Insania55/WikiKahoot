@@ -22,6 +22,11 @@ const routes = [
       ),
   },
   {
+    path: '/creacionEventos',
+    name: 'Creación de eventos',
+    component: () => import('../components/pages/WikiCreacion.vue'),
+  },
+  {
     path: '/ayuda',
     name: 'Ayuda',
     component: () => import('../components/pages/WikiHelp.vue'),

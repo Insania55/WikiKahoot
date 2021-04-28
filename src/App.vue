@@ -23,6 +23,8 @@ $--color-light-bg: #ffe;
 * {
   box-sizing: border-box;
   outline: none;
+  margin: 0;
+  padding: 0;
 }
 
 body {
