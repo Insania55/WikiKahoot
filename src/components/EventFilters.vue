@@ -22,113 +22,51 @@
 
           <!-- // * Desplegable de filtros -->
           <div class="filter-options-container" v-if="filtersDropdown">
-            <form>
+            <form @submit.prevent="cerrarFiltros">
               <div class="option-container">
-                <label>Etapa</label>
-                <input
-                  v-model="staticData.etapa"
-                  class="chosen-value"
-                  @click="desplegableEtapa = !desplegableEtapa"
-                  @focus="cambiarFocus"
-                  @focusout="desplegableEtapa = false"
-                  type="text"
-                  placeholder="Escribe y filtra"
-                />
-                <ul class="value-list" :class="{ open: desplegableEtapa }">
-                  <li
-                    v-for="(option, index) in optionsEtapa"
-                    :key="index"
-                    @click="
-                      seleccionarDato('etapa', option.name),
-                        (desplegableEtapa = false)
-                    "
-                  >
-                    {{ option.name }}
-                  </li>
-                </ul>
+                <AppSelect
+                  :options="optionsEtapa"
+                  label="Etapa"
+                  placeholder="Busca una etapa.."
+                  @input="setData($event, 'etapa')"
+                ></AppSelect>
               </div>
 
               <div class="option-container">
-                <label>Nivel</label>
-                <input
-                  @click="desplegableNivel = !desplegableNivel"
-                  class="chosen-value"
-                  type="text"
-                  v-model="staticData.nivel"
-                  @focus="cambiarFocus"
-                  @focusout="desplegableNivel = false"
-                  placeholder="Escribe y filtra"
-                />
-                <ul class="value-list" :class="{ open: desplegableNivel }">
-                  <li
-                    v-for="(option, index) in optionsNivel"
-                    :key="index"
-                    @click="
-                      seleccionarDato('nivel', option.name),
-                        (desplegableNivel = false)
-                    "
-                  >
-                    {{ option.name }}
-                  </li>
-                </ul>
+                <AppSelect
+                  :options="optionsNivel"
+                  label="Nivel"
+                  placeholder="Busca un nivel.."
+                  @input="setData($event, 'nivel')"
+                ></AppSelect>
               </div>
 
               <div class="option-container">
-                <label>Área</label>
-                <input
-                  v-model="staticData.area"
-                  class="chosen-value"
-                  @click="desplegableArea = !desplegableArea"
-                  @focus="cambiarFocus"
-                  @focusout="desplegableArea = false"
-                  type="text"
-                  placeholder="Escribe y filtra"
-                />
-                <ul class="value-list" :class="{ open: desplegableArea }">
-                  <li
-                    v-for="(option, index) in filteredOptions(
-                      optionsArea,
-                      currentInput
-                    )"
-                    :key="index"
-                    @click="
-                      seleccionarDato('area', option.name),
-                        (desplegableArea = false)
-                    "
-                  >
-                    {{ option.name }}
-                  </li>
-                </ul>
+                <AppSelect
+                  :options="optionsArea"
+                  label="Área"
+                  placeholder="Busca un área.."
+                  @input="setData($event, 'area')"
+                ></AppSelect>
               </div>
 
-              <!-- //TODO: Estilarlo para posicionarlo mejor en el contenedor  -->
               <div class="option-container">
-                <label>Tema</label>
-                <input
-                  v-model="staticData.tema"
-                  class="chosen-value"
-                  :disabled="!isTemaCargado"
-                  @click="desplegableTema = !desplegableTema"
-                  @focus="cambiarFocus"
-                  @focusout="desplegableTema = false"
-                  type="text"
-                  placeholder="Escribe y filtra"
-                />
-                <ul class="value-list" :class="{ open: desplegableTema }">
-                  <li
-                    v-for="(option, index) in optionsTema"
-                    :key="index"
-                    @click="
-                      seleccionarDato('tema', option.name),
-                        (desplegableTema = false)
-                    "
-                  >
-                    {{ option.name }}
-                  </li>
-                </ul>
+                <AppSelect
+                  :options="optionsTema"
+                  label="Tema"
+                  :placeholder="
+                    isDisabled ? 'Rellena los otros datos' : 'Busca un tema..'
+                  "
+                  :disabled="isDisabled"
+                  @input="setData($event, 'tema')"
+                ></AppSelect>
               </div>
               <div class="button-containr">
                 <button class="filter-option-button">Buscar</button>
+              </div>
+              <!-- //TODO: Funcionalidad para resetear los inputs -->
+              <div class="button-containr">
+                <button class="filter-option-button">Borrar</button>
               </div>
             </form>
           </div>
@@ -139,98 +77,94 @@
 </template>
 
 <script>
+import AppSelect from "./AppSelect.vue";
 export default {
-  name: 'EventFilters',
+  name: "EventFilters",
+  components: { AppSelect },
   data() {
     return {
-      //TODO: staticData deberían ser las opciones y esto los searchTerm
-      staticData: {
-        etapa: '',
-        area: '',
-        tema: '',
-        nivel: '',
+      searchData: {
+        etapa: "",
+        area: "",
+        tema: "",
+        nivel: "",
       },
-      desplegableEtapa: false,
-      desplegableNivel: false,
-      desplegableArea: false,
-      desplegableTema: false,
-      currentInput: null,
       filterOptions: [
         {
-          label: 'Área',
-          name: 'area',
-          placeholder: '           Área temática general',
+          label: "Área",
+          name: "area",
+          placeholder: "           Área temática general",
         },
         {
-          label: 'Etapa',
-          name: 'etapa',
-          placeholder: '             Etapa educativa. si procede',
+          label: "Etapa",
+          name: "etapa",
+          placeholder: "             Etapa educativa. si procede",
         },
         {
-          label: 'Nivel',
-          name: 'nivel',
-          placeholder: '           Nivel de complejidad',
+          label: "Nivel",
+          name: "nivel",
+          placeholder: "           Nivel de complejidad",
         },
         {
-          label: 'Tema',
-          name: 'tema',
-          placeholder: '           Tema concreto de la pregunta',
+          label: "Tema",
+          name: "tema",
+          placeholder: "           Tema concreto de la pregunta",
         },
       ],
       optionsEtapa: [
         {
-          name: 'Primaria',
-          value: 'primaria',
+          name: "Primaria",
+          value: "primaria",
         },
         {
-          name: 'Secundaria',
-          value: 'secundaria',
+          name: "Secundaria",
+          value: "secundaria",
         },
         {
-          name: 'Bachiller',
-          value: 'bachiller',
+          name: "Bachiller",
+          value: "bachiller",
         },
       ],
       optionsNivel: [
         {
-          name: 'Fácil',
-          value: 'facil',
+          name: "Fácil",
+          value: "facil",
         },
         {
-          name: 'Intermedio',
-          value: 'intermedio',
+          name: "Intermedio",
+          value: "intermedio",
         },
         {
-          name: 'Difícil',
-          value: 'dificil',
+          name: "Difícil",
+          value: "dificil",
         },
       ],
       optionsArea: [
         {
-          name: 'Anime',
-          value: 'anime',
+          name: "Anime",
+          value: "anime",
         },
         {
-          name: 'Historia',
-          value: 'historia',
+          name: "Historia",
+          value: "historia",
         },
         {
-          name: 'Furbo',
-          value: 'furbo',
+          name: "Furbo",
+          value: "furbo",
         },
       ],
       optionsTema: [
         {
-          name: 'Gormiti',
-          value: 'gormiti',
+          name: "Gormiti",
+          value: "gormiti",
         },
         {
-          name: '2ª Guerra Mundial',
-          value: 'segunda guerra mundial',
+          name: "2ª Guerra Mundial",
+          value: "segunda guerra mundial",
         },
         {
-          name: 'Barça',
-          value: 'barça',
+          name: "Barça",
+          value: "barça",
         },
       ],
     };
@@ -242,31 +176,23 @@ export default {
     },
   },
   computed: {
-    isTemaCargado: function() {
+    isTemaCargado: function () {
       return (
-        this.staticData.etapa !== '' &&
-        this.staticData.nivel !== '' &&
-        this.staticData.area !== ''
+        this.searchData.etapa !== "" &&
+        this.searchData.nivel !== "" &&
+        this.searchData.area !== ""
       );
     },
-    //TODO: Conseguir filtrar los inputs... este método debe tener un array con opciones por defecto, hasta que se empiece a filtrar
-    filteredOptions: function(options, currentInput) {
-      // console.log(currentInput);
-      return options;
-      // return options.filter((element) => {
-      // return element.value.toLowerCase().match(searchTerm.toLowerCase());
-      // });
+    isDisabled() {
+      return this.isTemaCargado ? false : true;
     },
   },
   methods: {
-    cambiarFocus(value) {
-      this.currentInput = value.target;
-    },
-    seleccionarDato(target, data) {
-      this.staticData[target] = data;
+    setData(value, target) {
+      this.searchData[target] = value;
     },
     cerrarFiltros() {
-      this.$emit('cerrar-filtros');
+      this.$emit("cerrar-filtros");
     },
   },
 };
@@ -287,6 +213,7 @@ export default {
     width: 100%;
     margin: 1rem;
 
+    // * Barra de filtros sin desplegar
     .filter-search-form {
       position: relative;
       width: 350px;
@@ -345,21 +272,22 @@ export default {
     }
   }
 
+  //* Filtros desplegados
   .filter-dropdown {
-    width: 85% !important;
+    width: 40% !important;
   }
 
   .filter-options-container {
-    margin: 37px 14px 1rem;
+    margin: 37px 20px 1rem;
     justify-content: flex-start;
-    width: 98%;
+    // width: 100%;
 
     .button-containr {
       margin-top: 1em;
     }
 
     button {
-      font-family: 'Fredoka One', cursive;
+      font-family: "Fredoka One", cursive;
       display: inline-block;
       border: none;
       padding: 0.8rem;
@@ -385,88 +313,6 @@ export default {
       label {
         margin-right: 0.5rem;
       }
-    }
-
-    .value-list {
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 999;
-      width: 100%;
-      margin-left: 4rem;
-    }
-    //TODO: Refactorizar a código SCSS
-    .chosen-value {
-      font-family: 'Ek Mukta';
-      text-transform: uppercase;
-      font-weight: 600;
-      letter-spacing: 4px;
-      font-size: 1.1rem;
-      background-color: #fafcfd;
-      border: 3px solid transparent;
-      -webkit-transition: 0.3s ease-in-out;
-      transition: 0.3s ease-in-out;
-    }
-    .chosen-value::-webkit-input-placeholder {
-      color: #333;
-    }
-    .chosen-value:hover {
-      background-color: #ff908b;
-      cursor: pointer;
-    }
-    .chosen-value:hover::-webkit-input-placeholder {
-      color: #333;
-    }
-    .chosen-value:focus,
-    .chosen-value.open {
-      box-shadow: 0px 5px 8px 0px rgba(0, 0, 0, 0.2);
-      outline: 0;
-      background-color: #ff908b;
-      color: #000;
-    }
-    .chosen-value:focus::-webkit-input-placeholder,
-    .chosen-value.open::-webkit-input-placeholder {
-      color: #000;
-    }
-
-    .value-list {
-      list-style: none;
-      margin-top: 2rem;
-      box-shadow: 0px 5px 8px 0px rgba(0, 0, 0, 0.2);
-      overflow: hidden;
-      max-height: 0;
-      -webkit-transition: 0.3s ease-in-out;
-      transition: 0.3s ease-in-out;
-    }
-    .value-list.open {
-      max-height: 320px;
-      overflow: auto;
-    }
-    .value-list li {
-      position: relative;
-      height: 4rem;
-      background-color: #fafcfd;
-      padding: 1rem;
-      font-size: 1.1rem;
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex;
-      -webkit-box-align: center;
-      -ms-flex-align: center;
-      align-items: center;
-      cursor: pointer;
-      -webkit-transition: background-color 0.3s;
-      transition: background-color 0.3s;
-      opacity: 1;
-    }
-    .value-list li:hover {
-      background-color: #ff908b;
-    }
-    .value-list li.closed {
-      max-height: 0;
-      overflow: hidden;
-      padding: 0;
-      opacity: 0;
     }
   }
 }
