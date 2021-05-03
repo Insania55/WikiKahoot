@@ -5,11 +5,22 @@
       @cerrar-filtros="filtersDropdown = !filtersDropdown"
     >
     </EventFilters>
+    <AppPaginatedTable
+      :data="bddEventos"
+      :headerFields="camposHeader"
+      :totalPages="3"
+      :total="5"
+      :perPage="5"
+      :currentPage="1"
+    >
+    </AppPaginatedTable>
     <!-- Tabla principal de eventos -->
-    <h2 class="table-title">Resultados de la búsqueda</h2>
+    <!-- <h2 class="table-title">Resultados de la búsqueda</h2>
     <div class="table-container">
       <div class="flex-table header">
         <div class="flex-row">
+          <span>Seleccionar todos</span>
+
           <input type="checkbox" @click="seleccionarTodos" />
         </div>
         <div
@@ -20,7 +31,6 @@
           <h3>{{ header }}</h3>
         </div>
       </div>
-
       <div
         class="flex-table row"
         v-for="(evento, index) in bddEventos"
@@ -39,11 +49,12 @@
         </div>
       </div>
     </div>
+
     <div class="button-container">
       <button @click="descargarExcel" class="download-button">
         Descargar selección
       </button>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -51,7 +62,8 @@
 import Evento from '../Evento.vue';
 // import Preguntas from '../Preguntas.vue';
 import EventFilters from '../EventFilters.vue';
-import { downloadAsExcel } from './js/jsonToExcel.js';
+import AppPaginatedTable from '../AppPaginatedTable.vue';
+import { downloadAsExcel } from '../js/jsonToExcel.js';
 
 export default {
   name: 'WikiEventos',
@@ -129,6 +141,36 @@ export default {
           respuestaCorrecta: 4,
           imgLink: 'https://unsplash.com/photos/fHXP17AxOEk',
         },
+        {
+          pregunta: '¿En qué año se descubrió América?',
+          respuesta1: 'Idk',
+          respuesta2: 'No lo sé',
+          respuesta3: 'Who knows',
+          respuesta4: '1492',
+          timeLimit: 90,
+          respuestaCorrecta: 4,
+          imgLink: 'https://unsplash.com/photos/fHXP17AxOEk',
+        },
+        {
+          pregunta: '¿En qué año se descubrió América?',
+          respuesta1: 'Idk',
+          respuesta2: 'No lo sé',
+          respuesta3: 'Who knows',
+          respuesta4: '1492',
+          timeLimit: 90,
+          respuestaCorrecta: 4,
+          imgLink: 'https://unsplash.com/photos/fHXP17AxOEk',
+        },
+        {
+          pregunta: '¿En qué año se descubrió América?',
+          respuesta1: 'Idk',
+          respuesta2: 'No lo sé',
+          respuesta3: 'Who knows',
+          respuesta4: '1492',
+          timeLimit: 90,
+          respuestaCorrecta: 4,
+          imgLink: 'https://unsplash.com/photos/fHXP17AxOEk',
+        },
       ],
     };
   },
@@ -136,8 +178,10 @@ export default {
     Evento,
     // Preguntas,
     EventFilters,
+    AppPaginatedTable,
   },
   methods: {
+    // TODO: Crear botón para añadir a la lista de descarga, aparte del botón de descargar
     anyadirEvento(
       pregunta,
       respuesta1,
@@ -157,10 +201,13 @@ export default {
         timeLimit,
       });
     },
-
+    paginatedData() {
+      let start = this.currentPage;
+      return this.bddEventos.slice();
+    },
     descargarExcel() {
       document.querySelectorAll('.flex-table.row').forEach((fila) => {
-        // * Si el checkbox de dicha fila está en estado 'checked' significa que lo han seleccionado para descargar
+        // ? Si el checkbox de dicha fila está en estado 'checked' significa que lo han seleccionado para descargar
         if (fila.firstChild.firstChild.checked === true) {
           this.anyadirEvento(
             fila.children[1].textContent,
@@ -173,7 +220,6 @@ export default {
           );
         }
       });
-
       let anyChecked = false;
       document.querySelectorAll('input[type=checkbox]').forEach((checkbox) => {
         if (checkbox.checked === true) anyChecked = true;
@@ -220,11 +266,35 @@ export default {
     text-align: center;
   }
 
+  .paginate-links {
+    width: 100%;
+    list-style: none;
+    text-align: center;
+    margin-bottom: 2em;
+  }
+
+  .paginate-links li {
+    display: inline;
+    background-color: #e43a48;
+    color: white;
+    padding: 0.5rem;
+    margin-left: 0.3rem;
+    margin-right: 0.3rem;
+    cursor: pointer;
+    border-radius: 3px;
+  }
+
+  .paginate-result {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
   .table-container {
     display: block;
     margin: 2em auto;
-    width: 90%;
-    max-width: 75vw;
+    width: 100%;
+    max-width: 90vw;
   }
 
   .flex-table {
@@ -247,12 +317,13 @@ export default {
     }
     &:first-of-type .flex-row {
       background: $--color-table-header;
-      color: white;
       border-color: $--color-table-header-border;
+      color: white;
 
       // * Para centrar el checkbox
       display: flex;
       justify-content: center;
+      flex-flow: column;
     }
     &.row:nth-child(odd) .flex-row {
       background: $--color-row-bg;
@@ -260,6 +331,54 @@ export default {
     &:hover {
       background: #f5f5f5;
       transition: 500ms;
+    }
+
+    &.row {
+      .flex-row {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow-x: auto;
+        display: grid;
+        place-items: center;
+
+        // ? Para el tooltip, de momento no se puede implementar pero puede ser útil
+        // position: relative;
+        // display: inline-block;
+        // border-bottom: 1px dotted black;
+
+        // &:hover > #text {
+        //   visibility: visible;
+        //   opacity: 1;
+        // }
+
+        // &:not(.first) > * {
+        //   visibility: hidden;
+        //   width: 120px;
+        //   background-color: #555;
+        //   color: #fff;
+        //   text-align: center;
+        //   border-radius: 6px;
+        //   padding: 5px 0;
+        //   position: absolute;
+        //   z-index: 1;
+        //   bottom: 125%;
+        //   left: 50%;
+        //   margin-left: -60px;
+        //   opacity: 0;
+        //   transition: opacity 0.3s;
+
+        //   &::after {
+        //     content: '';
+        //     position: absolute;
+        //     top: 100%;
+        //     left: 50%;
+        //     margin-left: -5px;
+        //     border-width: 5px;
+        //     border-style: solid;
+        //     border-color: #555 transparent transparent transparent;
+        //   }
+        // }
+      }
     }
   }
 
@@ -285,13 +404,28 @@ export default {
   }
 
   .flex-row {
-    width: calc(100% / 9);
     text-align: center;
-    padding: 0.5em 0.5em;
+
+    // ? Esto está sucio pero es lo que hay
+    &:first-child,
+    &:nth-child(7),
+    &:nth-child(8),
+    &:nth-child(9) {
+      width: 10%;
+    }
+
+    &:nth-child(3),
+    &:nth-child(4),
+    &:nth-child(5),
+    &:nth-child(6) {
+      width: 15%;
+    }
+    &:nth-child(2) {
+      width: 25%;
+    }
+    padding: 0.5em;
     border-right: solid 1px $--color-table-border;
     border-bottom: solid 1px $--color-table-border;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 
   // ? Para rows anidados. No se utiliza, pero puede sernos útil
@@ -369,15 +503,6 @@ export default {
 }
 
 @media all and (max-width: 767px) {
-  // ? Esto no sirve pero queda guay, se podría usar?
-  // .flex-row {
-  //   width: auto; //1px = border right
-
-  //   &.first {
-  //     width: 100%;
-  //   }
-  // }
-
   .column {
     width: 100%;
   }

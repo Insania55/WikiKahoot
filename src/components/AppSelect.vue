@@ -1,20 +1,31 @@
 <template>
   <div class="app-select">
-    <label>{{ label }}</label>
-    <!-- //TODO: Efecto de hover al cambiar con las flechas -->
-    <input
-      v-model="searchTerm"
-      @input="onChange"
-      @keydown.up="onArrowUp"
-      @keydown.down="onArrowDown"
-      @keydown.enter="onEnter"
-      class="chosen-value"
-      type="text"
-      :placeholder="placeholder"
-      :disabled="disabled"
-    />
-    <ul class="value-list open" v-show="optionsDropdown">
+    <label class="label"
+      >{{ label }}
+      <input
+        @input="onChange"
+        @keydown.up="onArrowUp"
+        @keydown.down="onArrowDown(results)"
+        @keydown.enter.prevent="onEnter(results)"
+        v-model="searchTerm"
+        @click="(optionsDropdown = !optionsDropdown), (isInputClicked = true)"
+        class="chosen-value"
+        type="text"
+        :placeholder="placeholder"
+        :disabled="disabled"
+      />
+    </label>
+    <ul class="value-list open" v-if="optionsDropdown">
       <li v-if="isLoading" class="loading">Cargando resultados..</li>
+      <li
+        v-else-if="isInputClicked"
+        v-for="(option, index) in options"
+        :key="index"
+        @click="setResult(option)"
+        :class="{ 'is-active': index === currentPointer }"
+      >
+        {{ option.name }}
+      </li>
       <li
         v-else
         v-for="(result, index) in results"
@@ -30,7 +41,7 @@
 
 <script>
 export default {
-  name: "AppSelect",
+  name: 'AppSelect',
   props: {
     options: {
       type: Array,
@@ -44,21 +55,22 @@ export default {
   },
   data() {
     return {
-      searchTerm: "",
+      searchTerm: '',
       results: [],
       optionsDropdown: false,
       currentPointer: -1,
       isLoading: false,
+      isInputClicked: false,
     };
   },
   mounted() {
-    document.addEventListener("click", this.handleClickOutside);
+    document.addEventListener('click', this.handleClickOutside);
   },
   destroyed() {
-    document.removeEventListener("click", this.handleClickOutside);
+    document.removeEventListener('click', this.handleClickOutside);
   },
   watch: {
-    options: function (val, oldVal) {
+    options: function(val, oldVal) {
       if (this.isAsync) {
         this.results = val;
         this.optionsDropdown = true;
@@ -76,20 +88,23 @@ export default {
     setResult(result) {
       this.searchTerm = result.name;
       this.optionsDropdown = false;
+      this.$emit('selected-value', result.value);
     },
     onChange() {
-      //TODO: Esto no debería ser así, emite demasiado
-      this.$emit("input", this.searchTerm);
+      //TODO: Esto no debería ser así, emite demasiado. Quizá un debounce?
+      this.$emit('input', this.searchTerm);
       if (this.isAsync) {
         this.isLoading = true;
       } else {
+        // ? Si el input ha sido clickado y no hay resultados, esto hará que no se muestre ningún desplegable
+        this.isInputClicked = false;
         this.filterResults();
         this.optionsDropdown = true;
       }
     },
     handleClickOutside(event) {
       if (!this.$el.contains(event.target)) {
-        this.arrowCounter = -1;
+        this.currentPointer = -1;
         this.optionsDropdown = false;
       }
     },
@@ -98,15 +113,22 @@ export default {
         this.currentPointer = this.currentPointer - 1;
       }
     },
-    onArrowDown() {
-      if (this.currentPointer < this.results.length) {
+    onArrowDown(array) {
+      if (array.length === 0) array = this.options;
+      if (this.currentPointer < array.length - 1) {
         this.currentPointer = this.currentPointer + 1;
       }
     },
-    onEnter() {
-      this.searchTerm = this.results[this.currentPointer].name;
+    onEnter(array) {
+      // ? Si han hecho enter pero no han seleccionado ningún valor, se devuelve
+      if (this.currentPointer === -1) return;
+
+      // ? Si no han pasado un array por parámetro, es porque se ha abierto el desplegable mediante click y utilizamos las options por defecto
+      if (array.length === 0) array = this.options;
+      this.searchTerm = array[this.currentPointer].name;
       this.currentPointer = -1;
       this.optionsDropdown = false;
+      this.$emit('selected-value', this.searchTerm);
     },
   },
 };
@@ -120,15 +142,29 @@ export default {
   left: 0;
   z-index: 999;
   width: 100%;
-  margin-left: 4rem;
 }
-.chosen-value {
-  font-family: "Ek Mukta";
-  text-transform: uppercase;
+
+.label {
   font-weight: 600;
-  letter-spacing: 4px;
-  font-size: 1.1rem;
-  background-color: #fafcfd;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  width: 400px;
+  line-height: 28px;
+  margin-left: 3rem;
+
+  input {
+    height: 30px;
+    flex: 0 0 400px;
+    margin-left: 10px;
+  }
+}
+
+.chosen-value {
+  font-family: 'Ek Mukta';
+  font-weight: 600;
+  font-size: 1rem;
+  // background-color: #fafcfd;
   border: 3px solid transparent;
   -webkit-transition: 0.3s ease-in-out;
   transition: 0.3s ease-in-out;
@@ -187,7 +223,7 @@ export default {
 }
 .value-list li:hover,
 .is-active {
-  background-color: #ff908b;
+  background-color: #ff908b !important;
 }
 .value-list li.closed {
   max-height: 0;
