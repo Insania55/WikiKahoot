@@ -241,7 +241,7 @@ export default {
     justify-content: center;
     align-items: center;
     width: 100%;
-    margin: 1rem;
+    margin: 0.5rem 0;
 
     // * Barra de filtros sin desplegar
     .filter-search-form {
