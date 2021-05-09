@@ -2,7 +2,7 @@
   <div id="app-nav">
     <router-link to="/">Home</router-link> |
     <router-link to="/creacionEventos">Crear eventos</router-link> |
-    <router-link to="/preguntas">Buscar eventos</router-link> |
+    <router-link to="/preguntas">Consultar eventos</router-link> |
     <router-link to="/ayuda">Ayuda</router-link>
   </div>
 </template>
