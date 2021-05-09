@@ -6,9 +6,6 @@
 </template>
 <script>
 import AppHeader from "./components/AppHeader.vue";
-import VuePaginate from "vue-paginate";
-
-Vue.use(VuePaginate);
 
 export default {
   name: "App",
