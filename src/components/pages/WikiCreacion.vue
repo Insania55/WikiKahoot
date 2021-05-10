@@ -35,28 +35,135 @@
           <button @click="crearEvento">Crear evento</button>
         </form>
       </div>
-      <span class="container-divider">O</span>
+      <span class="separator">O</span>
       <div class="add-event-container">
         <h2>Añade preguntas a un evento existente</h2>
-
-        <label class="input" for="codigo">
-          <input
-            v-model="codigoEvento"
-            name="codigo"
-            type="text"
-            placeholder=" "
-          />
-          <span class="input-label">Código de evento</span>
-        </label>
+        <div class="input-container">
+          <label class="input" for="codigo">
+            <input
+              v-model="codigoEvento"
+              name="codigo"
+              type="text"
+              placeholder="12345..."
+            />
+            <span class="input-label">Código de evento</span>
+          </label>
+        </div>
         <button @click="buscarEvento">Buscar evento</button>
       </div>
     </main>
+
+    <div class="form-container">
+      <form @submit.prevent="anyadirPregunta">
+        <div class="input-container">
+          <label class="input" for="enunciado">
+            <input
+              v-model="nuevaPregunta.enunciado"
+              required
+              name="enunciado"
+              type="text"
+              placeholder=""
+            />
+            <span class="input-label">Enunciado*</span>
+          </label>
+        </div>
+        <div class="input-container">
+          <label class="input" for="r1">
+            <input
+              v-model="nuevaPregunta.r1"
+              required
+              name="r1"
+              type="text"
+              placeholder=""
+            />
+            <span class="input-label">Respuesta 1*</span>
+          </label>
+        </div>
+        <div class="input-container">
+          <label class="input" for="r2">
+            <input
+              v-model="nuevaPregunta.r2"
+              required
+              name="r2"
+              type="text"
+              placeholder=""
+            />
+            <span class="input-label">Respuesta 2*</span>
+          </label>
+        </div>
+        <div class="input-container">
+          <label class="input" for="r3">
+            <input
+              v-model="nuevaPregunta.r3"
+              required
+              name="r3"
+              type="text"
+              placeholder=""
+            />
+            <span class="input-label">Respuesta 3*</span>
+          </label>
+        </div>
+        <div class="input-container">
+          <label class="input" for="r4">
+            <input
+              v-model="nuevaPregunta.r4"
+              required
+              name="r4"
+              type="text"
+              placeholder=""
+            />
+            <span class="input-label">Respuesta 4*</span>
+          </label>
+        </div>
+        <div class="input-container">
+          <!-- //TODO: Troquelar espacios antes de enviar-->
+          <label class="input" for="respuestaCorrecta">
+            <input
+              v-model="nuevaPregunta.respuestaCorrecta"
+              required
+              name="respuestaCorrecta"
+              type="text"
+              placeholder=""
+            />
+            <span class="input-label">Respuesta(s) correcta(s)*</span>
+          </label>
+        </div>
+        <div class="input-container">
+          <!-- //TODO: Que solo se permita introducir valores dentro de array de posibilidades-->
+          <!-- //TODO: Parsear a número antes de enviar -->
+          <label class="input" for="tiempoLimite">
+            <input
+              v-model="nuevaPregunta.tiempoLimite"
+              required
+              name="tiempoLimite"
+              type="number"
+              placeholder=""
+            />
+            <span class="input-label">Tiempo límite*</span>
+          </label>
+        </div>
+
+        <div class="input-container">
+          <label class="input" for="imgLink">
+            <input
+              v-model="nuevaPregunta.imgLink"
+              required
+              name="imgLink"
+              type="text"
+              placeholder=""
+            />
+            <span class="input-label">Link hacia la imagen (Opcional)</span>
+          </label>
+        </div>
+      </form>
+      <span><small>Los campos con (*) son obligatorios</small> </span>
+    </div>
     <AppPaginatedTable
       v-if="eventoCargado"
-      :data="eventosAnyadidos"
+      :data="preguntasAnyadidas"
       :headerFields="camposHeader"
-      :total-pages="Math.ceil(eventosAnyadidos.length / itemsPerPage)"
-      :total="eventosAnyadidos.length"
+      :total-pages="Math.ceil(preguntasAnyadidas.length / itemsPerPage)"
+      :total="preguntasAnyadidas.length"
       :perPage="itemsPerPage"
       :currentPage="currentPage"
       @page-changed="onPageChange"
@@ -66,106 +173,110 @@
 </template>
 
 <script>
-import AppSelect from '../AppSelect.vue';
-import AppPaginatedTable from '../AppPaginatedTable.vue';
+import AppSelect from "../AppSelect.vue";
+import AppPaginatedTable from "../AppPaginatedTable.vue";
 
 export default {
-  name: 'WikiCreacion',
+  name: "WikiCreacion",
   data() {
     return {
       dataToSend: {
-        etapa: '',
-        nivel: '',
-        area: '',
-        tema: '',
+        etapa: "",
+        nivel: "",
+        area: "",
+        tema: "",
       },
-      eventosAnyadidos: [],
+      preguntasAnyadidas: [],
       nuevaPregunta: {
-        enunciado: '',
-        r1: '',
-        r2: '',
-        r3: '',
-        r4: '',
-        respuestaCorrecta: '',
-        tiempoLimite: 0,
-        imgLink: '',
+        enunciado: "",
+        r1: "",
+        r2: "",
+        r3: "",
+        r4: "",
+        respuestaCorrecta: "",
+        tiempoLimite: "",
+        imgLink: "",
       },
-      codigoEvento: '',
+
       eventoCargado: true,
       currentPage: 1,
       itemsPerPage: 5,
       camposHeader: [
-        'Enunciado',
-        'Respuesta 1',
-        'Respuesta 2',
-        'Respuesta 3',
-        'Respuesta 4',
-        'Respuesta correcta',
-        'Tiempo límite',
-        'Enlace a imagen',
+        "Enunciado",
+        "Respuesta 1",
+        "Respuesta 2",
+        "Respuesta 3",
+        "Respuesta 4",
+        "Respuesta correcta",
+        "Tiempo límite",
+        "Enlace a imagen",
       ],
       optionsEtapa: [
         {
-          name: 'Primaria',
-          value: 'primaria',
+          name: "Primaria",
+          value: "primaria",
         },
         {
-          name: 'Secundaria',
-          value: 'secundaria',
+          name: "Secundaria",
+          value: "secundaria",
         },
         {
-          name: 'Bachiller',
-          value: 'bachiller',
+          name: "Bachiller",
+          value: "bachiller",
         },
       ],
       optionsNivel: [
         {
-          name: 'Fácil',
-          value: 'facil',
+          name: "Fácil",
+          value: "facil",
         },
         {
-          name: 'Intermedio',
-          value: 'intermedio',
+          name: "Intermedio",
+          value: "intermedio",
         },
         {
-          name: 'Difícil',
-          value: 'dificil',
+          name: "Difícil",
+          value: "dificil",
         },
       ],
       optionsArea: [
         {
-          name: 'Anime',
-          value: 'anime',
+          name: "Anime",
+          value: "anime",
         },
         {
-          name: 'Historia',
-          value: 'historia',
+          name: "Historia",
+          value: "historia",
         },
         {
-          name: 'Furbo',
-          value: 'furbo',
+          name: "Furbo",
+          value: "furbo",
         },
       ],
       optionsTema: [
         {
-          name: 'Gormiti',
-          value: 'gormiti',
+          name: "Gormiti",
+          value: "gormiti",
         },
         {
-          name: '2ª Guerra Mundial',
-          value: 'segunda guerra mundial',
+          name: "2ª Guerra Mundial",
+          value: "segunda guerra mundial",
         },
         {
-          name: 'Barça',
-          value: 'barça',
+          name: "Barça",
+          value: "barça",
         },
       ],
     };
   },
   components: { AppSelect, AppPaginatedTable },
   methods: {
+    setData(data, target) {
+      console.log("Seteando data: " + data);
+      this.dataToSend[target] = data;
+    },
     crearEvento() {
-      console.log('Se ha intentado crear el evento', this.dataToSend);
+      console.log("Se ha intentado crear el evento", this.dataToSend);
     },
     anyadirEvento(
       enunciado,
@@ -177,7 +288,7 @@ export default {
       timeLimit,
       imgLink
     ) {
-      this.eventosAnyadidos.push({
+      this.preguntasAnyadidas.push({
         enunciado,
         r1,
         r2,
@@ -188,19 +299,17 @@ export default {
         imgLink,
       });
     },
-    setData(data, target) {
-      console.log('Seteando data: ' + data);
-      this.dataToSend[target] = data;
-    },
+    anyadirPregunta() {},
+
     buscarEvento() {
       // TODO: Buscar evento en la base de datos cuando sea posible
-      console.log('Se ha intentado buscar un evento');
+      console.log("Se ha intentado buscar un evento");
     },
     consolear(ev) {
-      console.log('Consoleando', ev);
+      console.log("Consoleando", ev);
     },
     onPageChange() {
-      console.log('Respuesta del paginador');
+      console.log("Respuesta del paginador");
     },
   },
 };
@@ -225,46 +334,51 @@ $--color-accent: goldenrod;
   background: lightblue;
 }
 
-.container-divider {
+.separator {
   display: flex;
   align-items: center;
 }
 
-.input {
-  position: relative;
+.input-container {
+  padding: 2em;
+  background: whitesmoke;
 
-  > input {
-    display: block;
-    width: 80%;
-    border: 3px solid inherit;
-    padding: 1rem 0.5rem;
-    color: currentColor;
-    background: inherit;
-    border-radius: 4px;
+  .input {
+    position: relative;
 
-    &:focus,
-    &:not(:placeholder-shown) {
-      & + .input-label {
-        transform: translate(0.4rem, -76%) scale(1);
-        color: $--color-accent;
+    > input {
+      display: block;
+      width: 100%;
+      border: 3px solid currentColor;
+      padding: 1rem 0.5rem;
+      color: currentColor;
+      background: transparent;
+      border-radius: 4px;
+
+      &:focus,
+      &:not(:placeholder-shown) {
+        & + .input-label {
+          transform: translate(-0.5rem, -65%) scale(0.8);
+          color: $--color-accent;
+        }
       }
     }
   }
 
   .input-label {
+    color: #133;
     position: absolute;
     left: 0;
     top: 0;
     padding: 6px 4px;
-    margin: 9px 4px;
-    background: salmon;
+    margin: 6px 8px;
+    background: whitesmoke;
     white-space: nowrap;
     transform: translate(0, 0);
     transform-origin: 0, 0;
     transition: transform 120ms ease-in;
     font-weight: bold;
     line-height: 1.2;
-    color: #133;
   }
 }
 </style>

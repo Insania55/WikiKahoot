@@ -2,8 +2,10 @@ import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
 import VuePaginate from 'vue-paginate';
+import Vuelidate from 'vuelidate';
 
 Vue.use(VuePaginate);
+Vue.use(Vuelidate);
 Vue.config.productionTip = false;
 
 new Vue({
