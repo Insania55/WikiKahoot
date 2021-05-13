@@ -148,6 +148,7 @@ export default {
     EventFilters,
     AppPaginatedTable,
   },
+
   methods: {
     onPageChange(page) {
       this.currentPage = page;

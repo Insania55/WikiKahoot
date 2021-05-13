@@ -35,11 +35,12 @@ body {
 }
 
 #app {
-  font-family: "Montserrat", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  // font-family: "Montserrat", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   box-sizing: border-box;
   outline: none;
-  background-color: --color-light-bg;
+  background-color: $--color-light-bg;
 }
 </style>

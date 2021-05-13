@@ -96,6 +96,8 @@
 
 <script>
 import AppSelect from "./AppSelect.vue";
+import * as api from "./js/api.js";
+
 export default {
   name: "EventFilters",
   components: { AppSelect },
@@ -108,20 +110,7 @@ export default {
         area: "",
         tema: "",
       },
-      optionsEtapa: [
-        {
-          name: "Primaria",
-          value: "primaria",
-        },
-        {
-          name: "Secundaria",
-          value: "secundaria",
-        },
-        {
-          name: "Bachiller",
-          value: "bachiller",
-        },
-      ],
+      optionsEtapa: [],
       optionsNivel: [
         {
           name: "Fácil",
@@ -136,20 +125,7 @@ export default {
           value: "dificil",
         },
       ],
-      optionsArea: [
-        {
-          name: "Anime",
-          value: "anime",
-        },
-        {
-          name: "Historia",
-          value: "historia",
-        },
-        {
-          name: "Furbo",
-          value: "furbo",
-        },
-      ],
+      optionsArea: [],
       optionsTema: [
         {
           name: "Gormiti",
@@ -172,6 +148,10 @@ export default {
       default: true,
     },
   },
+  created() {
+    this.loadEtapas();
+    this.loadAreas();
+  },
   computed: {
     isTemaCargado: function () {
       return this.searchData.area !== "" && this.searchData.area !== undefined;
@@ -185,6 +165,38 @@ export default {
     saveData() {
       //let data = this.searchData;
       console.log("Se ha intentado enviar el formulario");
+    },
+    loadEtapas() {
+      api
+        .getEtapas()
+        .then((response) => {
+          if (response.status === 200 && response.data.length > 0) {
+            const selectEtapas = response.data.reduce((acc, value) => {
+              acc.push({ value: value.IdEtapa, text: value.Nombre });
+              return acc;
+            }, []);
+            this.optionsEtapa = selectEtapas;
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    loadAreas() {
+      api
+        .getAreas()
+        .then((response) => {
+          if (response.status === 200 && response.data.length > 0) {
+            const selectAreas = response.data.reduce((acc, value) => {
+              acc.push({ value: value.IdArea, text: value.Nombre });
+              return acc;
+            }, []);
+            this.optionsArea = selectAreas;
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
     cerrarFiltros() {
       this.$emit("cerrar-filtros");
@@ -305,7 +317,7 @@ export default {
       }
     }
   }
-
+  // TODO: Refactorizar estos botones y pasarlos a componente
   .button-container {
     display: flex;
     justify-content: center;
@@ -337,12 +349,24 @@ export default {
         padding-bottom: 2px;
       }
 
+      &:active:enabled {
+        min-height: 38px;
+        margin-top: 4px;
+        padding-bottom: 0px;
+        box-shadow: none;
+        background-color: rgb(202, 202, 202);
+      }
+
       &:last-child {
         background: rgb(38, 137, 12) none repeat scroll 0% 0%;
         color: white;
 
         &:hover:enabled {
           background-color: rgb(35, 126, 11);
+        }
+
+        &:active:enabled {
+          background-color: rgb(32, 115, 10);
         }
 
         &[disabled] {

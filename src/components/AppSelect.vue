@@ -24,7 +24,7 @@
         @click="setResult(option)"
         :class="{ 'is-active': index === currentPointer }"
       >
-        {{ option.name }}
+        {{ option.text }}
       </li>
       <li
         v-else
@@ -41,7 +41,7 @@
 
 <script>
 export default {
-  name: 'AppSelect',
+  name: "AppSelect",
   props: {
     options: {
       type: Array,
@@ -55,7 +55,7 @@ export default {
   },
   data() {
     return {
-      searchTerm: '',
+      searchTerm: "",
       results: [],
       optionsDropdown: false,
       totalWidth: 0,
@@ -65,13 +65,13 @@ export default {
     };
   },
   mounted() {
-    document.addEventListener('click', this.handleClickOutside);
+    document.addEventListener("click", this.handleClickOutside);
   },
   destroyed() {
-    document.removeEventListener('click', this.handleClickOutside);
+    document.removeEventListener("click", this.handleClickOutside);
   },
   watch: {
-    options: function(val, oldVal) {
+    options: function (val, oldVal) {
       if (this.isAsync) {
         this.results = val;
         this.optionsDropdown = true;
@@ -87,13 +87,13 @@ export default {
       );
     },
     setResult(result) {
-      this.searchTerm = result.name;
+      this.searchTerm = result.text;
       this.optionsDropdown = false;
-      this.$emit('selected-value', result.value);
+      this.$emit("selected-value", result.text);
     },
     onChange() {
       //TODO: Esto no debería ser así, emite demasiado. Quizá un debounce?
-      this.$emit('input', this.searchTerm);
+      this.$emit("input", this.searchTerm);
       if (this.isAsync) {
         this.isLoading = true;
       } else {
@@ -162,7 +162,7 @@ export default {
       this.searchTerm = array[this.currentPointer].name;
       this.currentPointer = -1;
       this.optionsDropdown = false;
-      this.$emit('selected-value', this.searchTerm);
+      this.$emit("selected-value", this.searchTerm);
     },
   },
 };
@@ -197,7 +197,7 @@ $select-width: 400px;
   }
 
   .chosen-value {
-    font-family: 'Ek Mukta';
+    font-family: "Ek Mukta";
     font-weight: 600;
     font-size: 1rem;
     // background-color: #fafcfd;

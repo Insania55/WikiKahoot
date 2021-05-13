@@ -54,20 +54,21 @@
     </main>
 
     <div class="form-container">
+      <h2>Añadir preguntas</h2>
       <form @submit.prevent="anyadirPregunta">
-        <div class="input-container">
+        <div class="input-container w-100">
           <label class="input" for="enunciado">
             <input
               v-model="nuevaPregunta.enunciado"
               required
               name="enunciado"
               type="text"
-              placeholder=""
+              placeholder="El enunciado de la pregunta"
             />
             <span class="input-label">Enunciado*</span>
           </label>
         </div>
-        <div class="input-container">
+        <div class="input-container w-50">
           <label class="input" for="r1">
             <input
               v-model="nuevaPregunta.r1"
@@ -79,7 +80,7 @@
             <span class="input-label">Respuesta 1*</span>
           </label>
         </div>
-        <div class="input-container">
+        <div class="input-container w-50">
           <label class="input" for="r2">
             <input
               v-model="nuevaPregunta.r2"
@@ -91,7 +92,7 @@
             <span class="input-label">Respuesta 2*</span>
           </label>
         </div>
-        <div class="input-container">
+        <div class="input-container w-50">
           <label class="input" for="r3">
             <input
               v-model="nuevaPregunta.r3"
@@ -100,50 +101,64 @@
               type="text"
               placeholder=""
             />
-            <span class="input-label">Respuesta 3*</span>
+            <span class="input-label">Respuesta 3</span>
           </label>
         </div>
-        <div class="input-container">
+        <div class="input-container w-50">
           <label class="input" for="r4">
             <input
               v-model="nuevaPregunta.r4"
-              required
               name="r4"
               type="text"
               placeholder=""
             />
-            <span class="input-label">Respuesta 4*</span>
+            <span class="input-label">Respuesta 4</span>
           </label>
         </div>
-        <div class="input-container">
+        <div class="input-container w-50">
           <!-- //TODO: Troquelar espacios antes de enviar-->
           <label class="input" for="respuestaCorrecta">
             <input
               v-model="nuevaPregunta.respuestaCorrecta"
-              required
               name="respuestaCorrecta"
               type="text"
-              placeholder=""
+              placeholder="1, 2.."
             />
             <span class="input-label">Respuesta(s) correcta(s)*</span>
           </label>
         </div>
-        <div class="input-container">
+        <div class="input-container w-50">
           <!-- //TODO: Que solo se permita introducir valores dentro de array de posibilidades-->
           <!-- //TODO: Parsear a número antes de enviar -->
+
           <label class="input" for="tiempoLimite">
             <input
+              list="browsers"
+              name="myBrowser"
+              placeholder="5, 10, 20, 30, 60, 90, 120"
+            />
+            <datalist id="browsers">
+              <option value="5"></option>
+              <option value="10"></option>
+              <option value="20"></option>
+              <option value="30"></option>
+              <option value="60"></option>
+              <option value="90"></option>
+              <option value="120"></option>
+            </datalist>
+
+            <!-- <input
               v-model="nuevaPregunta.tiempoLimite"
               required
               name="tiempoLimite"
-              type="number"
+              type="text"
               placeholder=""
-            />
+            /> -->
             <span class="input-label">Tiempo límite*</span>
           </label>
         </div>
 
-        <div class="input-container">
+        <div class="input-container w-100">
           <label class="input" for="imgLink">
             <input
               v-model="nuevaPregunta.imgLink"
@@ -152,12 +167,18 @@
               type="text"
               placeholder=""
             />
-            <span class="input-label">Link hacia la imagen (Opcional)</span>
+            <span class="input-label">Link hacia la imagen</span>
           </label>
         </div>
+        <div class="button-container">
+          <button @click.prevent="saveData" class="filter-option-button">
+            Buscar
+          </button>
+          <button type="reset" class="filter-option-button">Borrar</button>
+        </div>
       </form>
-      <span><small>Los campos con (*) son obligatorios</small> </span>
     </div>
+    <span><small>Los campos con (*) son obligatorios</small> </span>
     <AppPaginatedTable
       v-if="eventoCargado"
       :data="preguntasAnyadidas"
@@ -317,6 +338,8 @@ export default {
 
 <style lang="scss" scoped>
 $--color-accent: goldenrod;
+$--color-preguntas-container: #421b93;
+$--color-preguntas-text: #eee;
 
 .main-container {
   display: flex;
@@ -339,46 +362,84 @@ $--color-accent: goldenrod;
   align-items: center;
 }
 
-.input-container {
-  padding: 2em;
-  background: whitesmoke;
+.form-container {
+  max-width: 700px;
+  width: 100%;
+  padding: 1.8rem 2rem;
+  background: $--color-preguntas-container;
+  border-radius: 5px;
+  // margin: 0 auto;
 
-  .input {
+  h2 {
+    font-size: 25px;
     position: relative;
+    color: #eee;
 
-    > input {
-      display: block;
-      width: 100%;
-      border: 3px solid currentColor;
-      padding: 1rem 0.5rem;
-      color: currentColor;
-      background: transparent;
-      border-radius: 4px;
-
-      &:focus,
-      &:not(:placeholder-shown) {
-        & + .input-label {
-          transform: translate(-0.5rem, -65%) scale(0.8);
-          color: $--color-accent;
-        }
-      }
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 2px;
+      width: 30px;
+      // width: 230px;
+      background: linear-gradient(136deg, lightpink, violet);
     }
   }
 
-  .input-label {
-    color: #133;
-    position: absolute;
-    left: 0;
-    top: 0;
-    padding: 6px 4px;
-    margin: 6px 8px;
-    background: whitesmoke;
-    white-space: nowrap;
-    transform: translate(0, 0);
-    transform-origin: 0, 0;
-    transition: transform 120ms ease-in;
-    font-weight: bold;
-    line-height: 1.2;
+  form {
+    display: flex;
+    flex-flow: row wrap;
   }
+
+  .input-container {
+    padding: 2em;
+
+    .input {
+      position: relative;
+
+      > input {
+        display: block;
+        width: 100%;
+        border: 3px solid currentColor;
+        padding: 1rem 0.5rem;
+        color: $--color-preguntas-text;
+        background: transparent;
+        border-radius: 4px;
+
+        &:focus,
+        &:not(:placeholder-shown) {
+          & + .input-label {
+            transform: translate(-0.5rem, -65%) scale(0.8);
+            color: $--color-accent;
+          }
+        }
+      }
+    }
+
+    .input-label {
+      color: $--color-preguntas-text;
+      position: absolute;
+      left: 0;
+      top: 0;
+      padding: 6px 4px;
+      margin: 6px 8px;
+      background: $--color-preguntas-container;
+      white-space: nowrap;
+      transform: translate(0, 0);
+      transform-origin: 0, 0;
+      transition: transform 120ms ease-in;
+      font-weight: bold;
+      line-height: 1.2;
+    }
+  }
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.w-50 {
+  width: 50%;
 }
 </style>

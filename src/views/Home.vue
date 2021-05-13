@@ -5,12 +5,12 @@
         <img alt="logo" src="../assets/logo.png" />
       </div>
     </header>
-    <div class="card-container-crear">
-      <div class="card-crear">
-        <div class="titulo-crear">
+    <div class="card-container left">
+      <div class="card-content">
+        <div class="card-title">
           <h3>CREA EVENTOS</h3>
         </div>
-        <div class="parrafos-crear">
+        <div class="card-text">
           <p>
             WikiKahoot ofrece la opción de crear tus propios eventos con los que
             hacer crecer la web y crear contenido para otros usuarios.
@@ -20,7 +20,8 @@
             se recibe.
           </p>
         </div>
-        <div class="icono-crear">
+
+        <div class="card-icon">
           <img alt="logo1" src="../assets/card-image-2-kidd.png" />
         </div>
       </div>
@@ -94,6 +95,7 @@ export default {
     background-image: url("../assets/logoBackground.png");
     background-size: 100% 100%;
     margin-bottom: 4rem;
+
     .logo {
       display: flex;
       justify-content: center;
@@ -104,77 +106,78 @@ export default {
       -moz-backdrop-filter: blur(1.5rem);
     }
   }
-  .ir-arriba {
-    filter: drop-shadow(8px 8px 10px gray);
-    padding: 20px;
-    background-image: url("../assets/icono-subir.png");
-    background-size: 100% 100%;
-    cursor: pointer;
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    border-radius: 100%;
-  }
 
-  .card-container-crear {
+  // .ir-arriba {
+  //   filter: drop-shadow(8px 8px 10px gray);
+  //   padding: 20px;
+  //   background-image: url("../assets/icono-subir.png");
+  //   background-size: 100% 100%;
+  //   cursor: pointer;
+  //   position: fixed;
+  //   bottom: 30px;
+  //   right: 30px;
+  //   border-radius: 100%;
+  // }
+
+  .card-container {
     margin-bottom: 3rem;
-    display: flex;
     align-items: center;
-    justify-content: flex-start;
-    height: 20vh;
     color: #ffffff;
-    line-height: 1.4;
     border-radius: 5px;
+    line-height: 1.4;
+    max-width: 80vw;
 
-    .card-crear {
+    .card-content {
       display: flex;
       background: #0d2c40;
-      background-repeat: no-repeat;
       width: 65%;
       border-radius: 2px;
       box-shadow: 1px 1px 4px 2px rgba(0, 0, 0, 0.2);
     }
+
+    .card-text {
+      display: flex;
+      flex-flow: column nowrap;
+
+      p {
+        max-width: 60ch;
+        padding: 1rem 1.8rem;
+        line-height: 1.4rem;
+      }
+    }
+    .card-title {
+      background: seagreen;
+      display: flex;
+      align-items: center;
+      font-family: "open sans";
+
+      &:hover {
+        cursor: pointer;
+        animation: cambiar-color 2s;
+        animation-fill-mode: forwards;
+        h3 {
+          animation: rotacion 3s;
+        }
+      }
+    }
+
     h3 {
       text-align: center;
-      padding: 20px;
-      padding-bottom: 3.5rem;
+      transform: rotate(-90deg);
       -webkit-transform: rotate(-90deg);
       -moz-transform: rotate(-90deg);
       -ms-transform: rotate(-90deg);
       -o-transform: rotate(-90deg);
-      font-size: 150%;
-      text-shadow: 1px 3px #999;
-    }
-    .titulo-crear {
-      background: seagreen;
-    }
-    p {
-      padding-top: 1rem;
-      padding-left: 1rem;
+      font-size: 120%;
+      font-family: "Open sans";
     }
 
-    .parrafos-crear {
+    .card-icon {
       display: flex;
-      flex-wrap: wrap;
-      max-width: 80%;
+      margin-left: auto;
     }
 
-    .icono-crear {
-      display: flex;
-      float: left;
-      position: relative;
-    }
-
-    .titulo-crear:hover {
-      cursor: pointer;
-      animation: colores-crear 3s;
-      animation-fill-mode: forwards;
-      h3 {
-        animation: rotacion-crear 3s;
-        animation-fill-mode: forwards;
-      }
-    }
-    @keyframes colores-crear {
+    @keyframes cambiar-color {
       from {
         background: seagreen;
       }
@@ -182,7 +185,8 @@ export default {
         background: rgb(38, 141, 182);
       }
     }
-    @keyframes rotacion-crear {
+
+    @keyframes rotacion {
       from {
         -webkit-transform: rotate(-90deg);
         -moz-transform: rotate(-90deg);
@@ -197,6 +201,7 @@ export default {
       }
     }
   }
+
   .card-container-consultar {
     margin-bottom: 3rem;
     display: flex;
@@ -455,7 +460,7 @@ export default {
   }
 
   @media screen and (max-width: 1060px) {
-    .card-container-crear {
+    .card-container {
       img {
         display: none;
       }
@@ -477,10 +482,10 @@ export default {
     }
   }
   @media screen and (max-width: 800px) {
-    .card-container-crear {
-      .card-crear {
+    .card-container {
+      .card-content {
         width: 100%;
-        .titulo-crear {
+        .card-title {
           width: 100%;
           position: absolute;
           h3 {
@@ -493,13 +498,13 @@ export default {
             -o-transform: rotate(0deg);
           }
         }
-        .parrafos-crear {
+        .card-text {
           margin-top: 4rem;
         }
       }
 
-      .titulo-crear:hover {
-        @keyframes rotacion-crear {
+      .card-title:hover {
+        @keyframes rotacion {
           from {
             -webkit-transform: rotate(0deg);
             -moz-transform: rotate(0deg);
@@ -535,7 +540,7 @@ export default {
           margin-top: 4rem;
         }
       }
-      .titulo-crear:hover {
+      .card-title:hover {
         @keyframes rotacion-consultar {
           from {
             -webkit-transform: rotate(0deg);
@@ -562,6 +567,7 @@ export default {
             padding: 0px;
             padding-bottom: 1rem;
             padding-top: 1rem;
+            transform: rotate(0deg);
             -webkit-transform: rotate(0deg);
             -moz-transform: rotate(0deg);
             -ms-transform: rotate9(0deg);
@@ -572,7 +578,7 @@ export default {
           margin-top: 4rem;
         }
       }
-      .titulo-crear:hover {
+      .card-title:hover {
         @keyframes rotacion-compartir {
           from {
             -webkit-transform: rotate(0deg);
@@ -610,7 +616,7 @@ export default {
           margin-top: 4rem;
         }
       }
-      .titulo-crear:hover {
+      .card-title:hover {
         @keyframes rotacion-ayudar {
           from {
             -webkit-transform: rotate(0deg);
