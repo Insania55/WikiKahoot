@@ -40,5 +40,14 @@ class respuestas{
         );
         return $this->response;
     }
+
+    public function error_404($string = "Página no encontrada"){
+        $this->response['status'] = "error";
+        $this->response['status'] = array(
+            "error_id" => "404",
+            "error_msg" => $string
+        );
+        return $this->response;
+    }
 }
 ?>

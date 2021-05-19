@@ -133,11 +133,11 @@
 
           <label class="input" for="tiempoLimite">
             <input
-              list="browsers"
+              list="tiempo"
               name="myBrowser"
-              placeholder="5, 10, 20, 30, 60, 90, 120"
+              placeholder="5, 10, 20, 30, 60, 90, 120, 240"
             />
-            <datalist id="browsers">
+            <datalist id="tiempo">
               <option value="5"></option>
               <option value="10"></option>
               <option value="20"></option>
@@ -145,6 +145,7 @@
               <option value="60"></option>
               <option value="90"></option>
               <option value="120"></option>
+              <option value="240"></option>
             </datalist>
 
             <!-- <input

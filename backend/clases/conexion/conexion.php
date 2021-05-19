@@ -38,6 +38,8 @@ class conexion {
             }
         });
         return $array;
+
+        
     }
 
     //CONSULTA DE DATOS, FORMATO ARRAY

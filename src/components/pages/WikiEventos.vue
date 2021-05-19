@@ -14,15 +14,23 @@
     </EventFilters>
     <AppPaginatedTable
       :data="bddEventos"
+      title="Resultados de la búsqueda"
       :headerFields="camposHeader"
       :total-pages="Math.ceil(bddEventos.length / itemsPerPage)"
       :total="bddEventos.length"
       :perPage="itemsPerPage"
       :currentPage="currentPage"
       @page-changed="onPageChange"
+      @current-download="saveData"
       :selectCheckbox="true"
     >
     </AppPaginatedTable>
+    <!-- //TODO: Al cambiar de página, por un momento se pone activa la página Home -->
+    <div class="button-container">
+      <a @click="sendCurrentData" href="/descargarPreguntas/consultarSeleccion"
+        >Mostrar selección actual</a
+      >
+    </div>
   </div>
 </template>
 
@@ -42,11 +50,11 @@ export default {
         "Respuesta 4",
         "Respuesta correcta",
         "Tiempo límite",
-        "Enlace a imagen",
+        "Imagen",
       ],
       filtersDropdown: false,
       currentPage: 1,
-      itemsPerPage: 5,
+      itemsPerPage: 50,
       dataToDownload: [],
       bddEventos: [
         {
@@ -92,7 +100,8 @@ export default {
           imgLink: "https://unsplash.com/photos/fHXP17AxOEk",
         },
         {
-          enunciado: "¿En qué año se descubrió América?",
+          enunciado:
+            "¿En qué año se descubrió América? Vamos venga dímelo no podré vivir si no me lo dices venga vamos vamos vamos venga no puc venga vamos a qué esperas venga coñlo venga daiosudbasoidbasidu",
           respuesta1: "Idk",
           respuesta2: "No lo sé",
           respuesta3: "Who knows",
@@ -150,6 +159,13 @@ export default {
   },
 
   methods: {
+    saveData(ev) {
+      this.dataToDownload.push(ev);
+      console.log("dataToDownload", this.dataToDownload);
+    },
+    sendCurrentData() {
+      console.log("Enviando datos", this.dataToDownload);
+    },
     onPageChange(page) {
       this.currentPage = page;
     },

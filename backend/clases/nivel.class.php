@@ -8,7 +8,7 @@ class nivel extends conexion {
     private $nombre = "";
 
     public function listaNivel(){
-        $query = "SELECT Nombre FROM " . $this->tabla;
+        $query = "SELECT * FROM " . $this->tabla;
         $datos = parent::obtenerDatos($query);
         return $datos;
     }

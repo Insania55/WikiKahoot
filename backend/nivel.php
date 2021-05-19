@@ -1,14 +1,17 @@
 <?php
 require_once 'clases/respuestas.class.php';
 require_once 'clases/nivel.class.php';
+require_once './helpers/cors.php';
 
 $_respuestas = new respuestas;
 $_nivel = new nivel;
+$_cors = new cors;
+
+$_cors->cors();
 
 if($_SERVER['REQUEST_METHOD'] == "GET"){
     $listaNivel = $_nivel->listaNivel();
-    header("Content-Type: application/json");
-    echo json_encode($listaNivel);
+    print_r($listaNivel);
     http_response_code(200);
 }else if($_SERVER['REQUEST_METHOD'] == "POST"){
     //recibimos los datos enviados
@@ -17,7 +20,6 @@ if($_SERVER['REQUEST_METHOD'] == "GET"){
     $datosArray = $_nivel->post($postBody);
     //print_r($datosArray);
     //devolvemos una respuesta
-    header('Content-Type: application/json');
     if(isset($datosArray["result"]["error_id"])){
         $responseCode = $datosArray["result"]["error_id"];
         http_response_code($responseCode);
@@ -30,7 +32,6 @@ if($_SERVER['REQUEST_METHOD'] == "GET"){
 }else if ($_SERVER['REQUEST_METHOD'] == "DELETE"){
     echo "hola delete";
 }else{
-    header('Content-Type: application/json');
     $datosArray = $_respuestas->error_405();
     echo json_encode($datosArray);
 }

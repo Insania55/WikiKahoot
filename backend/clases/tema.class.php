@@ -9,7 +9,7 @@ class tema extends conexion {
     private $fk_idArea = "";
 
     public function listaTema($fk_idArea){
-        $query = "SELECT t.Nombre FROM `tema` t, `area` a WHERE a.IdArea = t.FK_IdArea and t.FK_IdArea = " . $fk_idArea;
+        $query = "SELECT t.IdTema, t.Nombre FROM `tema` t, `area` a WHERE a.IdArea = t.FK_IdArea and t.FK_IdArea = " . $fk_idArea;
         $datos = parent::obtenerDatos($query);
         return $datos;
     }

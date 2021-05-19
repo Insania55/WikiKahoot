@@ -1,59 +1,53 @@
 <?php
 require_once 'clases/respuestas.class.php';
-require_once 'clases/eventos.class.php';
-
-function cors() {
-    header('Access-Control-Allow-Origin: *');
-    header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
-    header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
-    header("Allow: GET, POST, OPTIONS, PUT, DELETE");
-    $method = $_SERVER['REQUEST_METHOD'];
-    if($method == "OPTIONS") {
-        die();
-    }
-}
+require_once 'clases/evento.class.php';
+require_once './helpers/cors.php';
 
 $_respuestas = new respuestas;
 $_eventos = new eventos;
-cors()
+$_cors = new cors;
+
+$_cors->cors();
+
+// array = ['page', 'codEvento'];
 
 if($_SERVER['REQUEST_METHOD'] == "GET"){
-    //eventos?page=x
+    //evento?page=x
     if(isset($_GET['page'])){
         $pagina = $_GET['page'];
         $listaEventos = $_eventos->listaEventos($pagina);
-        echo json_encode($listaEventos);
+        print_r($listaEventos);
         http_response_code(200);
-    //eventos?codEvento=x
+    //evento?codEvento=x
     }else if(isset($_GET['codEvento'])){
         $codEvento = $_GET['codEvento'];
         $datosEvento = $_eventos->obtenerEvento($codEvento);
-        echo json_encode($datosEvento);
+        print_r($datosEvento);
         http_response_code(200);
-    //eventos?idNivel=x
+    //evento?idNivel=x
     }else if(isset($_GET['idNivel'])){
         $idNivel = $_GET['idNivel'];
         $eventoPorNivel = $_eventos->buscarEventoPorNivel($idNivel);
-        echo json_encode($eventoPorNivel);
+        print_r($eventoPorNivel);
         http_response_code(200);
-    //eventos?idEtapa=x
+    //evento?idEtapa=x
     }else if(isset($_GET['idEtapa'])){
         $idEtapa = $_GET['idEtapa'];
         $eventoPorEtapa = $_eventos->buscarEventoPorEtapa($idEtapa);
-        echo json_encode($eventoPorEtapa);
+        print_r($eventoPorEtapa);
         http_response_code(200);
-    //eventos?idTema=x&idArea=x
+    //evento?idTema=x&idArea=x
     }else if(isset($_GET['idArea']) && isset($_GET['idTema'])){
         $idArea = $_GET['idArea'];
         $idTema = $_GET['idTema'];
         $eventoPorTema = $_eventos->buscarEventoPorTema($idArea, $idTema);
-        echo json_encode($eventoPorTema);
+        print_r($eventoPorTema);
         http_response_code(200);
-    //eventos?idArea=x
+    //evento?idArea=x
     }else if(isset($_GET['idArea'])){
         $idArea = $_GET['idArea'];
         $eventoPorArea = $_eventos->buscarEventoPorArea($idArea);
-        echo json_encode($eventoPorArea);
+        print_r($eventoPorArea);
         http_response_code(200);
     }
 }else if($_SERVER['REQUEST_METHOD'] == "POST"){

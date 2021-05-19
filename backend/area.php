@@ -1,25 +1,17 @@
 <?php
 require_once 'clases/respuestas.class.php';
 require_once 'clases/area.class.php';
-
-function cors() {
-    header('Access-Control-Allow-Origin: *');
-    header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
-    header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
-    header("Allow: GET, POST, OPTIONS, PUT, DELETE");
-    $method = $_SERVER['REQUEST_METHOD'];
-    if($method == "OPTIONS") {
-        die();
-    }
-}
+require_once './helpers/cors.php';
 
 $_respuestas = new respuestas;
 $_area = new area;
-cors();
+$_cors = new cors;
+
+$_cors->cors();
 
 if($_SERVER['REQUEST_METHOD'] == "GET"){
     $listaArea = $_area->listaArea();
-    echo json_encode($listaArea);
+    print_r($listaArea);
     http_response_code(200);
 }else if($_SERVER['REQUEST_METHOD'] == "POST"){
     //recibimos los datos enviados

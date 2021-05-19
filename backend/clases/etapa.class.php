@@ -8,7 +8,7 @@ class etapa extends conexion {
     private $nombre = "";
 
     public function listaEtapa(){
-        $query = "SELECT Nombre FROM " . $this->tabla;
+        $query = "SELECT * FROM " . $this->tabla;
         $datos = parent::obtenerDatos($query);
         return $datos;
     }
@@ -22,7 +22,7 @@ class etapa extends conexion {
             return $resp;
         }
     }
-    
+
     public function post($json){
         $_respuestas = new respuestas;
         $datos = json_decode($json,true);

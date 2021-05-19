@@ -33,7 +33,7 @@
         @click="setResult(result)"
         :class="{ 'is-active': index === currentPointer }"
       >
-        {{ result.name }}
+        {{ result.text }}
       </li>
     </ul>
   </div>
@@ -89,7 +89,7 @@ export default {
     setResult(result) {
       this.searchTerm = result.text;
       this.optionsDropdown = false;
-      this.$emit("selected-value", result.text);
+      this.$emit("selected-value", { text: result.text, value: result.value });
     },
     onChange() {
       //TODO: Esto no debería ser así, emite demasiado. Quizá un debounce?

@@ -10,12 +10,20 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}.html -f
 RewriteRule ^(.*)$ $1.html
 
+# si no introduce la url bien
+ErrorDocument 404 /clases/respuestas.class.php
+
+# Prevent Apache from serving .ht* files:
+<FilesMatch "^\.ht">
+Order allow,deny
+Deny from all
+</FilesMatch>
 
 # Si la ruta no es un archivo existente, ni una carpeta
 # Redirigir al index
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.+?)/?$ index.php?url=$1 [L,QSA]
+# RewriteCond %{REQUEST_FILENAME} !-f
+# RewriteCond %{REQUEST_FILENAME} !-d
+# RewriteRule ^(.+?)/?$ index.php?url=$1 [L,QSA]
 
 # Configuración de CORS
 <IfModule mod_headers.c>

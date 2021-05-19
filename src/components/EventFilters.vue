@@ -6,13 +6,13 @@
         :class="{ 'filter-dropdown': filtersDropdown }"
       >
         <div>
-          <button @click="searchByCodigo" class="filter-search-button">
+          <button @click="getEventoById" class="filter-search-button">
             <i class="fas fa-search"></i>
           </button>
 
           <input
             v-model="searchData.codigo"
-            @keydown.enter="searchByCodigo"
+            @keydown.enter="getEventoById"
             class="filter-search-input"
             type="search"
             placeholder="Busca por código de evento"
@@ -76,15 +76,10 @@
                 ></AppSelect>
               </div>
               <div class="button-container">
-                <button @click.prevent="saveData" class="filter-option-button">
-                  Buscar
-                </button>
-                <button
-                  @click.prevent="resetInputs"
-                  class="filter-option-button"
+                <AppButton @click.prevent="saveData" green>Buscar</AppButton>
+                <AppButton @click.prevent="resetInputs" normal
+                  >Borrar</AppButton
                 >
-                  Borrar
-                </button>
               </div>
             </form>
           </div>
@@ -96,11 +91,12 @@
 
 <script>
 import AppSelect from "./AppSelect.vue";
+import AppButton from "./AppButton.vue";
 import * as api from "./js/api.js";
 
 export default {
   name: "EventFilters",
-  components: { AppSelect },
+  components: { AppSelect, AppButton },
   data() {
     return {
       searchData: {
@@ -111,35 +107,10 @@ export default {
         tema: "",
       },
       optionsEtapa: [],
-      optionsNivel: [
-        {
-          name: "Fácil",
-          value: "facil",
-        },
-        {
-          name: "Intermedio",
-          value: "intermedio",
-        },
-        {
-          name: "Difícil",
-          value: "dificil",
-        },
-      ],
+      optionsNivel: [],
       optionsArea: [],
-      optionsTema: [
-        {
-          name: "Gormiti",
-          value: "gormiti",
-        },
-        {
-          name: "2ª Guerra Mundial",
-          value: "segunda guerra mundial",
-        },
-        {
-          name: "Barça",
-          value: "barça",
-        },
-      ],
+      optionsTema: [],
+      filteredData: [],
     };
   },
   props: {
@@ -149,12 +120,18 @@ export default {
     },
   },
   created() {
-    this.loadEtapas();
-    this.loadAreas();
+    this.loadEtapa();
+    this.loadArea();
+    this.loadNivel();
   },
   computed: {
     isTemaCargado: function () {
       return this.searchData.area !== "" && this.searchData.area !== undefined;
+    },
+  },
+  watch: {
+    "searchData.area": function () {
+      this.loadTema();
     },
   },
   methods: {
@@ -166,8 +143,8 @@ export default {
       //let data = this.searchData;
       console.log("Se ha intentado enviar el formulario");
     },
-    loadEtapas() {
-      api
+    async loadEtapa() {
+      await api
         .getEtapas()
         .then((response) => {
           if (response.status === 200 && response.data.length > 0) {
@@ -182,8 +159,8 @@ export default {
           console.log(error);
         });
     },
-    loadAreas() {
-      api
+    async loadArea() {
+      await api
         .getAreas()
         .then((response) => {
           if (response.status === 200 && response.data.length > 0) {
@@ -198,6 +175,68 @@ export default {
           console.log(error);
         });
     },
+    async loadNivel() {
+      await api
+        .getNiveles()
+        .then((response) => {
+          if (response.status === 200 && response.data.length > 0) {
+            const selectNiveles = response.data.reduce((acc, value) => {
+              acc.push({ value: value.IdArea, text: value.Nombre });
+              return acc;
+            }, []);
+            this.optionsNivel = selectNiveles;
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async loadTema() {
+      //TODO: Que no se repita la petición cuando el valor seleccionado es el mismo
+      let idArea = this.searchData.area.value;
+      if (this.searchData.area) {
+        await api
+          .getTemas(idArea)
+          .then((response) => {
+            if (response.status === 200 && response.data.length > 0) {
+              const selectTema = response.data.reduce((acc, value) => {
+                acc.push({ value: value.IdArea, text: value.Nombre });
+                return acc;
+              }, []);
+              this.optionsTema = selectTema;
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } else {
+        console.log("Área está vasío");
+      }
+    },
+    //TODO: Terminar esto
+    async getEventoById() {
+      try {
+        let codigoEvento = this.searchData.codigo;
+        console.log(codigoEvento);
+        if (codigoEvento !== undefined || codigoEvento !== "") {
+          await api
+            .getEventoById(codigoEvento)
+            .then((response) => {
+              if (response.status === 200 && response.data.length > 0) {
+                console.log(response.data);
+                // this.filteredData = selectTema;
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        } else {
+          console.log("Código es undefined o null");
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    },
     cerrarFiltros() {
       this.$emit("cerrar-filtros");
     },
@@ -211,17 +250,13 @@ export default {
       this.searchData.area = "";
       this.searchData.tema = "";
     },
-    //TODO: Generar llamada a backend para buscar las preguntas asociadas a un código de evento
-    searchByCodigo() {
-      console.log("Se ha intentado buscar por código");
-    },
   },
 };
 </script>
 
 <style lang="scss">
 .event-filters {
-  $--color-main-container: #bbb;
+  $--color-main-container: #bcc;
   $--color-dark-font: #2c3e50;
   $--select-border: #444;
   $--select-arrow: $--select-border;
@@ -275,12 +310,13 @@ export default {
         font-weight: 700;
       }
 
+      // Botón de 'Abrir filtros'
       .filter-search-options {
         position: absolute;
         text-align: right;
         top: 5px;
         right: 9px;
-        // TODO: Estilar mejor este botón
+
         > button {
           position: relative;
           display: inline-block;
@@ -317,70 +353,15 @@ export default {
       }
     }
   }
-  // TODO: Refactorizar estos botones y pasarlos a componente
+
   .button-container {
     display: flex;
-    justify-content: center;
+    justify-content: left;
     margin-bottom: 2rem;
-    margin-top: 1.5rem;
+    margin-top: 1.8rem;
 
-    button {
-      display: inline-block;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-family: "Montserrat", "Helvetica Neue", Helvetica, Arial, sans-serif;
-      font-weight: bold;
-      text-align: center;
-      min-height: 42px;
-      min-width: 7.5rem;
-      padding: 0px 16px 4px;
-      position: relative;
-      line-height: 0.9rem;
-      background: rgb(242, 242, 242) none repeat scroll 0% 0%;
-      box-shadow: rgba(0, 0, 0, 0.25) 0px -4px inset;
-      margin-right: 1em;
-
-      &:hover:enabled {
-        min-height: 40px;
-        margin-top: 2px;
-        background-color: rgb(223, 223, 223);
-        box-shadow: rgba(0, 0, 0, 0.25) 0px -2px inset;
-        padding-bottom: 2px;
-      }
-
-      &:active:enabled {
-        min-height: 38px;
-        margin-top: 4px;
-        padding-bottom: 0px;
-        box-shadow: none;
-        background-color: rgb(202, 202, 202);
-      }
-
-      &:last-child {
-        background: rgb(38, 137, 12) none repeat scroll 0% 0%;
-        color: white;
-
-        &:hover:enabled {
-          background-color: rgb(35, 126, 11);
-        }
-
-        &:active:enabled {
-          background-color: rgb(32, 115, 10);
-        }
-
-        &[disabled] {
-          cursor: not-allowed;
-          background-color: rgb(204, 204, 204);
-          color: white;
-          box-shadow: none;
-          padding-bottom: 0;
-
-          &:hover {
-            background-color: rgb(150, 150, 150);
-          }
-        }
-      }
+    :first-child {
+      margin-right: 0.6em;
     }
   }
 }
