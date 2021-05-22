@@ -216,7 +216,6 @@ $--color-label-unfocused: #d9d9d9;
     position: absolute;
     z-index: 555;
     width: 100%;
-    tabindex: 0;
   }
 
   .label {

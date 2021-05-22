@@ -30,6 +30,6 @@
     "vue-template-compiler": "^2.6.11",
     "vuelidate": "^0.7.6",
     "webpack": "^4.45.0",
-    "postcss": "8.2.10"
+    "postcss": "^8.2.10"
   }
 }

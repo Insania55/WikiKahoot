@@ -561,8 +561,8 @@ $--color-preguntas-text: #eee;
     padding-top: 1em;
   }
 
-  .input-label {
-  }
+  // .input-label {
+  // }
 }
 
 .separator {
