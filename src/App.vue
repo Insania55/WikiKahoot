@@ -18,7 +18,7 @@ export default {
 };
 </script>
 <style lang="scss">
-$--color-light-bg: #ffe;
+$--color-light-bg: #fff;
 
 * {
   box-sizing: border-box;

@@ -30,18 +30,19 @@
               <div class="option-container">
                 <AppSelect
                   ref="etapa"
-                  :options="optionsEtapa"
+                  :options="this.$store.state.optionsEtapa"
                   label="Etapa"
                   placeholder="Busca una etapa.."
                   @input="setData($event, 'etapa')"
                   @selected-value="setData($event, 'etapa')"
+                  isAsync
                 ></AppSelect>
               </div>
 
               <div class="option-container">
                 <AppSelect
                   ref="nivel"
-                  :options="optionsNivel"
+                  :options="this.$store.state.optionsNivel"
                   label="Nivel"
                   placeholder="Busca un nivel.."
                   @input="setData($event, 'nivel')"
@@ -52,7 +53,7 @@
               <div class="option-container">
                 <AppSelect
                   ref="area"
-                  :options="optionsArea"
+                  :options="this.$store.state.optionsArea"
                   label="Área"
                   placeholder="Busca un área.."
                   @input="setData($event, 'area')"
@@ -63,7 +64,7 @@
               <div class="option-container">
                 <AppSelect
                   ref="tema"
-                  :options="optionsTema"
+                  :options="this.$store.state.optionsTema"
                   label="Tema"
                   :placeholder="
                     !isTemaCargado
@@ -106,10 +107,6 @@ export default {
         area: "",
         tema: "",
       },
-      optionsEtapa: [],
-      optionsNivel: [],
-      optionsArea: [],
-      optionsTema: [],
       filteredData: [],
     };
   },
@@ -119,10 +116,14 @@ export default {
       default: true,
     },
   },
-  created() {
-    this.loadEtapa();
-    this.loadArea();
-    this.loadNivel();
+  async created() {
+    try {
+      await this.$store.dispatch("loadEtapas");
+      await this.$store.dispatch("loadAreas");
+      await this.$store.dispatch("loadNiveles");
+    } catch (error) {
+      console.log(error);
+    }
   },
   computed: {
     isTemaCargado: function () {
@@ -131,7 +132,7 @@ export default {
   },
   watch: {
     "searchData.area": function () {
-      this.loadTema();
+      this.$store.dispatch("loadTemas", this.searchData.area.value);
     },
   },
   methods: {
@@ -142,76 +143,6 @@ export default {
     saveData() {
       //let data = this.searchData;
       console.log("Se ha intentado enviar el formulario");
-    },
-    async loadEtapa() {
-      await api
-        .getEtapas()
-        .then((response) => {
-          if (response.status === 200 && response.data.length > 0) {
-            const selectEtapas = response.data.reduce((acc, value) => {
-              acc.push({ value: value.IdEtapa, text: value.Nombre });
-              return acc;
-            }, []);
-            this.optionsEtapa = selectEtapas;
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    async loadArea() {
-      await api
-        .getAreas()
-        .then((response) => {
-          if (response.status === 200 && response.data.length > 0) {
-            const selectAreas = response.data.reduce((acc, value) => {
-              acc.push({ value: value.IdArea, text: value.Nombre });
-              return acc;
-            }, []);
-            this.optionsArea = selectAreas;
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    async loadNivel() {
-      await api
-        .getNiveles()
-        .then((response) => {
-          if (response.status === 200 && response.data.length > 0) {
-            const selectNiveles = response.data.reduce((acc, value) => {
-              acc.push({ value: value.IdArea, text: value.Nombre });
-              return acc;
-            }, []);
-            this.optionsNivel = selectNiveles;
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    async loadTema() {
-      //TODO: Que no se repita la petición cuando el valor seleccionado es el mismo
-      let idArea = this.searchData.area.value;
-      if (this.searchData.area) {
-        await api
-          .getTemas(idArea)
-          .then((response) => {
-            if (response.status === 200 && response.data.length > 0) {
-              const selectTema = response.data.reduce((acc, value) => {
-                acc.push({ value: value.IdArea, text: value.Nombre });
-                return acc;
-              }, []);
-              this.optionsTema = selectTema;
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      } else {
-        console.log("Área está vasío");
-      }
     },
     //TODO: Terminar esto
     async getEventoById() {
@@ -260,6 +191,7 @@ export default {
   $--color-dark-font: #2c3e50;
   $--select-border: #444;
   $--select-arrow: $--select-border;
+  $filter-container-width: 32vw;
 
   .filter-search-container {
     display: flex;
@@ -279,7 +211,7 @@ export default {
       background: $--color-main-container;
       color: $--color-dark-font;
       border-radius: 5px;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
 
       // Lupa
       .filter-search-button {
@@ -332,9 +264,17 @@ export default {
     }
   }
 
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.5s;
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    opacity: 0;
+  }
+
   //* Filtros desplegados
   .filter-dropdown {
-    width: 40% !important;
+    width: $filter-container-width !important;
   }
 
   .filter-options-container {

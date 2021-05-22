@@ -23,31 +23,32 @@
           {{ header }}
         </div>
       </div>
-
-      <div
-        class="flex-table row"
-        v-for="(evento, index) in paginatedData"
-        :key="index"
-        :id="'row' + evento.id"
-      >
-        <div v-if="selectCheckbox" class="flex-row first">
-          <input type="checkbox" />
+      <transition-group name="fade">
+        <div
+          class="flex-table row"
+          v-for="(evento, index) in paginatedData"
+          :key="index"
+          :id="'row' + evento.id"
+        >
+          <div v-if="selectCheckbox" class="flex-row first">
+            <input type="checkbox" />
+          </div>
+          <div class="flex-row enunciado">{{ evento.enunciado }}</div>
+          <div class="flex-row r1">{{ evento.respuesta1 }}</div>
+          <div class="flex-row r2">{{ evento.respuesta2 }}</div>
+          <div class="flex-row r3">{{ evento.respuesta3 }}</div>
+          <div class="flex-row r4">{{ evento.respuesta4 }}</div>
+          <div class="flex-row respuesta-correcta">
+            {{ evento.respuestaCorrecta }}
+          </div>
+          <div class="flex-row tiempo-limite">{{ evento.timeLimit }}</div>
+          <div class="flex-row img-link">
+            <a :href="evento.imgLink" target="_blank"
+              ><i v-if="evento.imgLink" class="far fa-image"></i
+            ></a>
+          </div>
         </div>
-        <div class="flex-row enunciado">{{ evento.enunciado }}</div>
-        <div class="flex-row r1">{{ evento.respuesta1 }}</div>
-        <div class="flex-row r2">{{ evento.respuesta2 }}</div>
-        <div class="flex-row r3">{{ evento.respuesta3 }}</div>
-        <div class="flex-row r4">{{ evento.respuesta4 }}</div>
-        <div class="flex-row respuesta-correcta">
-          {{ evento.respuestaCorrecta }}
-        </div>
-        <div class="flex-row tiempo-limite">{{ evento.timeLimit }}</div>
-        <div class="flex-row img-link">
-          <a :href="evento.imgLink" target="_blank"
-            ><i v-if="evento.imgLink" class="far fa-image"></i
-          ></a>
-        </div>
-      </div>
+      </transition-group>
       <ul class="pagination" v-if="data.length > 5 || currentPage > 1">
         <li class="pagination-item">
           <button @click="onClickFirstPage" :disabled="isInFirstPage">
@@ -83,6 +84,7 @@
         </li>
       </ul>
     </div>
+
     <div v-if="selectCheckbox && !borrable" class="button-container">
       <!-- //TODO: Notificar al usuario de que se ha añadido el elemento a la descarga -->
       <AppButton @click="anyadirDescarga" normal
@@ -90,24 +92,23 @@
       >
       <AppButton
         @click="descargarExcel"
-        :disabled="dataToDownload.length === 0"
-        :green="dataToDownload.length !== 0"
+        :disabled="downloadData.length === 0"
+        :green="downloadData.length !== 0"
         >Descargar selección</AppButton
       >
-      <!-- <button @click="anyadirDescarga" class="add-button">
-        Añadir a la descarga
-      </button>
-      <button
-        :disabled="dataToDownload.length === 0"
-        @click="descargarExcel"
-        class="download-button"
-      >
-        Descargar selección
-      </button> -->
     </div>
-    <AppButton v-if="borrable" @click="borrarSeleccion" normal
-      >Borrar selección</AppButton
-    >
+    <div v-if="selectCheckbox && !borrable" class="button-container">
+      <AppButton
+        href="/descargarPreguntas/consultarSeleccion"
+        :disabled="downloadData.length === 0"
+        :normal="downloadData.length !== 0"
+        >Editar descarga actual</AppButton
+      >
+    </div>
+    <div v-if="borrable" class="button-container">
+      <AppButton href="/descargarPreguntas" normal>Volver atrás</AppButton>
+      <AppButton @click="borrarSeleccion" normal>Borrar selección</AppButton>
+    </div>
   </div>
 </template>
 
@@ -195,6 +196,9 @@ export default {
     };
   },
   computed: {
+    downloadData() {
+      return this.$store.state.downloadData;
+    },
     paginatedData() {
       let start = (this.currentPage - 1) * this.perPage;
       let end = start + this.perPage;
@@ -282,11 +286,11 @@ export default {
     },
 
     descargarExcel() {
-      if (this.dataToDownload.length !== 0) {
-        downloadAsExcel(this.spreadsheetColumns, this.dataToDownload);
+      if (this.downloadData.length !== 0) {
+        downloadAsExcel(this.spreadsheetColumns, this.downloadData);
         this.selectAllCheckbox(false);
         this.dataToDownload = [];
-        this.$store.state.downloadData = [];
+        this.$store.commit("setDownloadedData", []);
       }
     },
     selectAllCheckbox(state = true) {
@@ -394,28 +398,23 @@ $--color-row-bg: #f4f2f1;
 
   &.header {
     .flex-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
       max-height: max-content;
       font-weight: bold;
       text-align: center;
+      color: white;
+      background: $--color-table-header;
+      border-color: $--color-table-header-border;
     }
   }
 
-  &:first-of-type {
-    border-top: solid 1px $--color-table-header-border;
-    border-left: solid 1px $--color-table-header-border;
-  }
-  &:first-of-type .flex-row {
-    background: $--color-table-header;
-    border-color: $--color-table-header-border;
-    color: white;
-
-    // * Para centrar el checkbox
-    display: grid;
-    place-items: center;
-  }
   &.row:nth-child(odd) .flex-row {
     background: $--color-row-bg;
   }
+
   &:hover {
     background: #f5f5f5;
     transition: 500ms;
@@ -526,6 +525,14 @@ $--color-row-bg: #f4f2f1;
       }
     }
   }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.4s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
 
 .button-container {

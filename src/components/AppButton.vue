@@ -1,10 +1,20 @@
 <template>
   <div class="app-button">
-    <button v-if="normal" class="normal" @click="$emit('click', $event)">
+    <button
+      v-if="normal"
+      class="normal"
+      @click="!href ? $emit('click', $event) : $router.push(href)"
+    >
       <slot>Texto</slot>
     </button>
-    <button v-if="disabled" class="disabled"><slot>Texto</slot></button>
-    <button v-if="green" class="green" @click="$emit('click', $event)">
+    <button v-if="disabled" class="disabled">
+      <slot>Texto</slot>
+    </button>
+    <button
+      v-if="green"
+      class="green"
+      @click="!href ? $emit('click', $event) : $router.push(href)"
+    >
       <slot>Texto</slot>
     </button>
   </div>
@@ -17,6 +27,7 @@ export default {
     normal: Boolean,
     disabled: Boolean,
     green: Boolean,
+    href: String,
   },
   data() {
     return {};

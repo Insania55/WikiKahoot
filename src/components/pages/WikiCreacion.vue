@@ -4,40 +4,120 @@
       <div class="create-event-container">
         <h2>Crea un nuevo evento</h2>
         <form @submit.prevent>
-          <AppSelect
-            label="Etapa"
-            :options="optionsEtapa"
-            @input="consolear"
-            @selected-value="setData($event, 'etapa')"
-            placeholder="Etapa educativa. si procede"
-          ></AppSelect>
-          <AppSelect
-            label="Nivel"
-            :options="optionsNivel"
-            @input="consolear"
-            @selected-value="setData($event, 'nivel')"
-            placeholder="Nivel de complejidad"
-          ></AppSelect>
-          <AppSelect
-            label="Área"
-            :options="optionsArea"
-            @input="consolear"
-            @selected-value="setData($event, 'area')"
-            placeholder="Área temática general"
-          ></AppSelect>
-          <AppSelect
-            label="Tema"
-            :options="optionsTema"
-            @selected-value="setData($event, 'tema')"
-            @input="consolear"
-            placeholder="Tema concreto de la pregunta"
-          ></AppSelect>
-          <button @click="crearEvento">Crear evento</button>
+          <div class="form-option">
+            <AppSelect
+              ref="etapa"
+              label="Etapa"
+              :options="this.$store.state.optionsEtapa"
+              @input="consolear"
+              @selected-value="setData($event, 'etapa')"
+              placeholder="Etapa educativa. si procede"
+            ></AppSelect>
+
+            <i
+              @click="newEtapa.isAdded = !newEtapa.isAdded"
+              class="far fa-plus-square"
+            ></i>
+          </div>
+          <transition name="fade">
+            <div v-if="newEtapa.isAdded" class="new-field">
+              <input
+                placeholder="Añade una nueva etapa..."
+                v-model="newEtapa.value"
+                type="text"
+              />
+              <i @click="crearEtapa" class="far fa-save"></i>
+            </div>
+          </transition>
+
+          <div class="form-option">
+            <AppSelect
+              ref="nivel"
+              label="Nivel"
+              :options="this.$store.state.optionsNivel"
+              @input="consolear"
+              @selected-value="setData($event, 'nivel')"
+              placeholder="Nivel de complejidad"
+            ></AppSelect>
+            <i
+              @click="newNivel.isAdded = !newNivel.isAdded"
+              class="far fa-plus-square"
+            ></i>
+          </div>
+          <transition name="fade">
+            <div v-if="newNivel.isAdded" class="new-field">
+              <input
+                placeholder="Añade un nuevo nivel..."
+                v-model="newNivel.value"
+                type="text"
+              />
+              <i @click="crearNivel" class="far fa-save"></i>
+            </div>
+          </transition>
+
+          <div class="form-option">
+            <AppSelect
+              ref="area"
+              label="Área"
+              :options="this.$store.state.optionsArea"
+              @input="setData($event, 'area')"
+              @selected-value="setData($event, 'area')"
+              placeholder="Área temática general"
+            ></AppSelect>
+            <i
+              @click="newArea.isAdded = !newArea.isAdded"
+              class="far fa-plus-square"
+            ></i>
+          </div>
+          <transition name="fade">
+            <div v-if="newArea.isAdded" class="new-field">
+              <input
+                placeholder="Añade una nueva area..."
+                v-model="newArea.value"
+                type="text"
+              />
+              <i @click="crearArea" class="far fa-save"></i>
+            </div>
+          </transition>
+
+          <div class="form-option">
+            <AppSelect
+              ref="tema"
+              label="Tema"
+              :options="this.$store.state.optionsTema"
+              @selected-value="setData($event, 'tema')"
+              @input="consolear"
+              :placeholder="
+                !isTemaCargado
+                  ? 'Selecciona primero un área'
+                  : 'Tema concreto de la pregunta'
+              "
+              :disabled="!isTemaCargado"
+            ></AppSelect>
+            <i
+              @click="newTema.isAdded = !newTema.isAdded"
+              class="far fa-plus-square"
+            ></i>
+          </div>
+          <transition name="fade">
+            <div v-if="newTema.isAdded" class="new-field">
+              <input
+                placeholder="Añade un nuevo tema..."
+                v-model="newTema.value"
+                type="text"
+              />
+              <i @click="crearTema" class="far fa-save"></i>
+            </div>
+          </transition>
+
+          <!-- @click="descargarExcel" -->
+          <AppButton @click="crearEvento" green>Crear evento</AppButton>
         </form>
       </div>
       <span class="separator">O</span>
       <div class="add-event-container">
         <h2>Añade preguntas a un evento existente</h2>
+
         <div class="input-container">
           <label class="input" for="codigo">
             <input
@@ -49,7 +129,8 @@
             <span class="input-label">Código de evento</span>
           </label>
         </div>
-        <button @click="buscarEvento">Buscar evento</button>
+
+        <AppButton @click="buscarEvento" green>Buscar evento</AppButton>
       </div>
     </main>
 
@@ -60,6 +141,7 @@
           <label class="input" for="enunciado">
             <input
               v-model="nuevaPregunta.enunciado"
+              pattern="^{1,120}$"
               required
               name="enunciado"
               type="text"
@@ -72,6 +154,7 @@
           <label class="input" for="r1">
             <input
               v-model="nuevaPregunta.r1"
+              pattern="^{1,75}$"
               required
               name="r1"
               type="text"
@@ -84,6 +167,7 @@
           <label class="input" for="r2">
             <input
               v-model="nuevaPregunta.r2"
+              pattern="^{1,75}$"
               required
               name="r2"
               type="text"
@@ -96,6 +180,7 @@
           <label class="input" for="r3">
             <input
               v-model="nuevaPregunta.r3"
+              pattern="^{1,75}$"
               required
               name="r3"
               type="text"
@@ -108,6 +193,7 @@
           <label class="input" for="r4">
             <input
               v-model="nuevaPregunta.r4"
+              pattern="^{1,75}$"
               name="r4"
               type="text"
               placeholder=""
@@ -166,7 +252,6 @@
               required
               name="imgLink"
               type="text"
-              placeholder=""
             />
             <span class="input-label">Link hacia la imagen</span>
           </label>
@@ -197,9 +282,12 @@
 <script>
 import AppSelect from "../AppSelect.vue";
 import AppPaginatedTable from "../AppPaginatedTable.vue";
+import AppButton from "../AppButton.vue";
+import * as api from "../js/api.js";
 
 export default {
   name: "WikiCreacion",
+  components: { AppSelect, AppPaginatedTable, AppButton },
   data() {
     return {
       dataToSend: {
@@ -208,6 +296,11 @@ export default {
         area: "",
         tema: "",
       },
+      newEtapa: { isAdded: false, value: "" },
+      newNivel: { isAdded: false, value: "" },
+      newArea: { isAdded: false, value: "" },
+      newTema: { isAdded: false, value: "" },
+      codigoEvento: 0,
       preguntasAnyadidas: [],
       nuevaPregunta: {
         enunciado: "",
@@ -219,7 +312,6 @@ export default {
         tiempoLimite: "",
         imgLink: "",
       },
-
       eventoCargado: true,
       currentPage: 1,
       itemsPerPage: 5,
@@ -233,69 +325,35 @@ export default {
         "Tiempo límite",
         "Enlace a imagen",
       ],
-      optionsEtapa: [
-        {
-          name: "Primaria",
-          value: "primaria",
-        },
-        {
-          name: "Secundaria",
-          value: "secundaria",
-        },
-        {
-          name: "Bachiller",
-          value: "bachiller",
-        },
-      ],
-      optionsNivel: [
-        {
-          name: "Fácil",
-          value: "facil",
-        },
-        {
-          name: "Intermedio",
-          value: "intermedio",
-        },
-        {
-          name: "Difícil",
-          value: "dificil",
-        },
-      ],
-      optionsArea: [
-        {
-          name: "Anime",
-          value: "anime",
-        },
-        {
-          name: "Historia",
-          value: "historia",
-        },
-        {
-          name: "Furbo",
-          value: "furbo",
-        },
-      ],
-      optionsTema: [
-        {
-          name: "Gormiti",
-          value: "gormiti",
-        },
-        {
-          name: "2ª Guerra Mundial",
-          value: "segunda guerra mundial",
-        },
-        {
-          name: "Barça",
-          value: "barça",
-        },
-      ],
+      optionsTema: [],
     };
   },
-  components: { AppSelect, AppPaginatedTable },
+  computed: {
+    isTemaCargado: function () {
+      return this.dataToSend.area !== "" && this.dataToSend.area !== undefined;
+    },
+  },
+  async created() {
+    try {
+      await this.$store.dispatch("loadEtapas");
+      await this.$store.dispatch("loadAreas");
+      await this.$store.dispatch("loadNiveles");
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  watch: {
+    "dataToSend.area": function () {
+      this.$store.dispatch("loadTemas", this.dataToSend.area.value);
+    },
+  },
   methods: {
+    consolear(ev) {
+      console.log(ev);
+    },
     setData(data, target) {
-      console.log("Seteando data: " + data);
       this.dataToSend[target] = data;
+      console.log("Seteando data: " + data);
     },
     crearEvento() {
       console.log("Se ha intentado crear el evento", this.dataToSend);
@@ -321,14 +379,85 @@ export default {
         imgLink,
       });
     },
+    crearEtapa() {
+      let etapa = {
+        Nombre: this.newEtapa.value,
+      };
+
+      try {
+        api
+          .createEtapa(etapa)
+          .then((response) => response.data)
+          .then((data) => {
+            console.log(data.status);
+          }).catch;
+      } catch (e) {
+        console.log(e);
+      }
+      this.newEtapa.isAdded = !this.newEtapa.isAdded;
+      this.$refs.etapa.searchTerm = this.newEtapa.value;
+    },
+    crearNivel() {
+      let nivel = {
+        Nombre: this.newNivel.value,
+      };
+
+      try {
+        api
+          .createNivel(nivel)
+          .then((response) => response.data)
+          .then((data) => {
+            console.log(data.status);
+          }).catch;
+      } catch (e) {
+        console.log(e);
+      }
+      this.newNivel.isAdded = !this.newNivel.isAdded;
+      this.$refs.nivel.searchTerm = this.newNivel.value;
+    },
+    crearArea() {
+      let area = {
+        Nombre: this.newArea.value,
+      };
+
+      try {
+        api
+          .createArea(area)
+          .then((response) => response.data)
+          .then((data) => {
+            console.log(data.status);
+          }).catch;
+      } catch (e) {
+        console.log(e);
+      }
+      this.newArea.isAdded = !this.newArea.isAdded;
+      this.$refs.area.searchTerm = this.newArea.value;
+    },
+    crearTema() {
+      let tema = {
+        Nombre: this.newTema.value,
+        FK_IdArea: this.dataToSend.area.value,
+      };
+
+      try {
+        api
+          .createTema(tema)
+          .then((response) => response.data)
+          .then((data) => {
+            console.log(data.status);
+          }).catch;
+      } catch (e) {
+        console.log(e);
+      }
+      this.newTema.isAdded = !this.newTema.isAdded;
+      this.$refs.tema.searchTerm = this.newTema.value;
+    },
+
     anyadirPregunta() {},
 
     buscarEvento() {
       // TODO: Buscar evento en la base de datos cuando sea posible
       console.log("Se ha intentado buscar un evento");
-    },
-    consolear(ev) {
-      console.log("Consoleando", ev);
     },
     onPageChange() {
       console.log("Respuesta del paginador");
@@ -347,15 +476,93 @@ $--color-preguntas-text: #eee;
   flex-flow: row nowrap;
   flex: 0 0 30vw;
   justify-content: space-evenly;
-  background: #eee;
+  margin: 2em 0;
+
+  h2 {
+    // color: $--color-preguntas-text;
+    margin-bottom: 0.7rem;
+    border-bottom: 2px groove black;
+  }
+
+  > div {
+    background: inherit;
+    color: #211;
+    border: 3px solid black;
+    border-radius: 5px;
+    box-shadow: 0 0 2px;
+  }
 }
 
 .create-event-container {
-  background: lightpink;
+  padding: 1rem 1.5rem;
+
+  .app-select {
+    margin-top: 1.5em;
+
+    .label {
+      width: 200px;
+    }
+  }
+
+  .form-option {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: flex-end;
+
+    i {
+      margin-left: 0.5em;
+      cursor: pointer;
+      font-size: 1.4rem;
+      &:active {
+        transition: all 0.1ms ease-in-out;
+        transform: scale(0.9);
+        -webkit-transform: scale(0.9);
+        -ms-transform: scale(0.9);
+      }
+    }
+  }
+
+  .new-field {
+    margin-left: 3em;
+    margin-top: 1rem;
+
+    input {
+      border: none;
+      border-bottom: 1px solid black;
+      padding: 0.2rem 0.5rem 0.2rem 0.3rem;
+      min-width: 200px;
+    }
+
+    i {
+      margin-left: 0.5em;
+      cursor: pointer;
+      font-size: 1.2rem;
+      &:active {
+        transition: all 0.1ms ease-in-out;
+        transform: scale(0.9);
+        -webkit-transform: scale(0.9);
+        -ms-transform: scale(0.9);
+      }
+    }
+  }
+
+  .app-button {
+    margin-top: 1.6rem;
+  }
 }
 
 .add-event-container {
-  background: lightblue;
+  padding: 0.8rem 1.5rem;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+
+  > *:not(:first-child) {
+    padding-top: 1em;
+  }
+
+  .input-label {
+  }
 }
 
 .separator {
@@ -364,12 +571,12 @@ $--color-preguntas-text: #eee;
 }
 
 .form-container {
-  max-width: 700px;
+  max-width: 75vw;
   width: 100%;
   padding: 1.8rem 2rem;
   background: $--color-preguntas-container;
   border-radius: 5px;
-  // margin: 0 auto;
+  margin: 0 auto;
 
   h2 {
     font-size: 25px;
@@ -413,6 +620,7 @@ $--color-preguntas-text: #eee;
           & + .input-label {
             transform: translate(-0.5rem, -65%) scale(0.8);
             color: $--color-accent;
+            transition-duration: 0.2s;
           }
         }
       }
@@ -434,6 +642,15 @@ $--color-preguntas-text: #eee;
       line-height: 1.2;
     }
   }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+  // transition: all 0.4s ease-in;
 }
 
 .w-100 {

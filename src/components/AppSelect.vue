@@ -18,11 +18,13 @@
     <ul class="value-list open" v-if="optionsDropdown">
       <li v-if="isLoading" class="loading">Cargando resultados..</li>
       <li
+        :ref="'li' + index"
         v-else-if="isInputClicked"
         v-for="(option, index) in options"
         :key="index"
         @click="setResult(option)"
         :class="{ 'is-active': index === currentPointer }"
+        :current="index === currentPointer ? focusElement(index) : ''"
       >
         {{ option.text }}
       </li>
@@ -56,6 +58,7 @@ export default {
   data() {
     return {
       searchTerm: "",
+      observer: null,
       results: [],
       optionsDropdown: false,
       totalWidth: 0,
@@ -71,20 +74,36 @@ export default {
     document.removeEventListener("click", this.handleClickOutside);
   },
   watch: {
-    options: function (val, oldVal) {
+    "this.results": function (val, oldVal) {
       if (this.isAsync) {
+        console.log("Entra en el watcher", val, oldVal);
         this.results = val;
-        this.optionsDropdown = true;
+        // this.optionsDropdown = true;
         this.isLoading = false;
       }
     },
+    "this.currentPointer": function (val, oldVal) {
+      console.log("Cambia el puntero a posicion " + val);
+    },
   },
   methods: {
+    // TODO: Controlar scroll al subir o bajar con las flechas
+    focusElement(index) {
+      // console.log(this.$refs["li" + index][0]);
+      // console.log();
+      // this.$refs["li" + index][0].parentElement.scrollTop += 20;
+      // let activeEl = document.querySelector();
+      // console.log(activeEl);
+      // if (this.currentPointer === index) {
+      //   ev.target.focus();
+      // }
+    },
     filterResults() {
       this.results = this.options.filter(
         (item) =>
-          item.value.toLowerCase().indexOf(this.searchTerm.toLowerCase()) > -1
+          item.text.toLowerCase().indexOf(this.searchTerm.toLowerCase()) > -1
       );
+      this.isLoading = false;
     },
     setResult(result) {
       this.searchTerm = result.text;
@@ -92,16 +111,22 @@ export default {
       this.$emit("selected-value", { text: result.text, value: result.value });
     },
     onChange() {
-      //TODO: Esto no debería ser así, emite demasiado. Quizá un debounce?
-      this.$emit("input", this.searchTerm);
+      //TODO: Conseguir que funcione el debouncing
+      let funsion = function () {};
+      this.debounce(this.$emit("input", this.searchTerm));
       if (this.isAsync) {
         this.isLoading = true;
-      } else {
-        // ? Si el input ha sido clickado y no hay resultados, esto hará que no se muestre ningún desplegable
-        this.isInputClicked = false;
-        this.filterResults();
-        this.optionsDropdown = true;
       }
+      // ? Si el input ha sido clickado y no hay resultados, esto hará que no se muestre ningún desplegable
+      this.isInputClicked = false;
+      this.filterResults();
+      this.optionsDropdown = true;
+    },
+    onInputClick() {
+      this.optionsDropdown = !this.optionsDropdown;
+      this.isInputClicked = true;
+      const viewportOffset = this.getOffsetScreen(this.$el);
+      this.totalWidth = document.body.clientWidth - viewportOffset.left;
     },
     handleClickOutside(event) {
       if (!this.$el.contains(event.target)) {
@@ -109,11 +134,45 @@ export default {
         this.optionsDropdown = false;
       }
     },
-    onInputClick() {
-      this.optionsDropdown = !this.optionsDropdown;
-      this.isInputClicked = true;
-      const viewportOffset = this.getOffsetScreen(this.$el);
-      this.totalWidth = document.body.clientWidth - viewportOffset.left;
+
+    onArrowUp() {
+      if (this.currentPointer > 0) {
+        this.currentPointer = this.currentPointer - 1;
+      }
+    },
+    onArrowDown(array) {
+      if (array.length === 0) array = this.options;
+      if (this.currentPointer < array.length - 1) {
+        this.currentPointer = this.currentPointer + 1;
+      }
+    },
+    onEnter(array) {
+      // ? Si han hecho enter pero no han seleccionado ningún valor, se devuelve
+      if (this.currentPointer === -1) return;
+
+      // ? Si no han pasado un array por parámetro, es porque se ha abierto el desplegable mediante click y utilizamos las options por defecto
+      if (array.length === 0) array = this.options;
+      this.searchTerm = array[this.currentPointer].name;
+      this.currentPointer = -1;
+      this.optionsDropdown = false;
+      this.$emit("selected-value", this.searchTerm);
+    },
+    async infiniteScroll({ isIntersecting, target }) {
+      if (isIntersecting) {
+        const ul = target.offsetParent;
+        const scrollTop = target.offsetParent.scrollTop;
+        await this.$nextTick();
+        ul.scrollTop = scrollTop;
+      }
+    },
+    debounce(callback, timeout = 300) {
+      let timerId;
+      return (...args) => {
+        clearTimeout(timerId);
+        timerId = setTimeout(() => {
+          callback.apply(this, args);
+        }, timeout);
+      };
     },
     getOffsetScreen(_el) {
       const target = _el;
@@ -142,28 +201,6 @@ export default {
       moonwalk(target.offsetParent);
       return rect;
     },
-    onArrowUp() {
-      if (this.currentPointer > 0) {
-        this.currentPointer = this.currentPointer - 1;
-      }
-    },
-    onArrowDown(array) {
-      if (array.length === 0) array = this.options;
-      if (this.currentPointer < array.length - 1) {
-        this.currentPointer = this.currentPointer + 1;
-      }
-    },
-    onEnter(array) {
-      // ? Si han hecho enter pero no han seleccionado ningún valor, se devuelve
-      if (this.currentPointer === -1) return;
-
-      // ? Si no han pasado un array por parámetro, es porque se ha abierto el desplegable mediante click y utilizamos las options por defecto
-      if (array.length === 0) array = this.options;
-      this.searchTerm = array[this.currentPointer].name;
-      this.currentPointer = -1;
-      this.optionsDropdown = false;
-      this.$emit("selected-value", this.searchTerm);
-    },
   },
 };
 </script>
@@ -171,16 +208,19 @@ export default {
 //TODO: Refactorizar a código SCSS
 <style lang="scss" scoped>
 $select-width: 400px;
+$--color-input: #f2cd60;
+$--color-label-unfocused: #d9d9d9;
+
 .app-select {
   .value-list {
     position: absolute;
-    // top: 0;
-    // left: 0;
-    z-index: 999;
+    z-index: 555;
     width: 100%;
+    tabindex: 0;
   }
 
   .label {
+    font-size: 1.1rem;
     font-weight: 600;
     display: flex;
     flex-direction: row;
@@ -188,18 +228,19 @@ $select-width: 400px;
     width: $select-width;
     line-height: 28px;
     margin-left: 3rem;
+    border-bottom: 1px solid $--color-label-unfocused;
 
     input {
-      height: 30px;
+      // height: 30px;
       flex: 0 0 $select-width;
       margin-left: 10px;
     }
   }
 
   .chosen-value {
-    font-family: "Ek Mukta";
-    font-weight: 600;
-    font-size: 1rem;
+    font-family: "Open sans" sans-serif;
+    // font-weight: 600;
+    font-size: 0.9rem;
     // background-color: #fafcfd;
     border: 3px solid transparent;
     -webkit-transition: 0.3s ease-in-out;
@@ -209,7 +250,7 @@ $select-width: 400px;
     color: #333;
   }
   .chosen-value:hover {
-    background-color: #ff908b;
+    // background-color: $--color-input;
     cursor: pointer;
   }
   .chosen-value:hover::-webkit-input-placeholder {
@@ -219,7 +260,7 @@ $select-width: 400px;
   .chosen-value.open {
     box-shadow: 0px 5px 8px 0px rgba(0, 0, 0, 0.2);
     outline: 0;
-    background-color: #ff908b;
+    // background-color: $--color-input;
     color: #000;
     max-width: $select-width;
   }
@@ -265,7 +306,7 @@ $select-width: 400px;
   }
   .value-list li:hover,
   .is-active {
-    background-color: #ff908b !important;
+    background-color: $--color-input !important;
   }
   .value-list li.closed {
     max-height: 0;

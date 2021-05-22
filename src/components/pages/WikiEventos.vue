@@ -25,12 +25,6 @@
       :selectCheckbox="true"
     >
     </AppPaginatedTable>
-    <!-- //TODO: Al cambiar de página, por un momento se pone activa la página Home -->
-    <div class="button-container">
-      <a @click="sendCurrentData" href="/descargarPreguntas/consultarSeleccion"
-        >Mostrar selección actual</a
-      >
-    </div>
   </div>
 </template>
 
@@ -101,7 +95,7 @@ export default {
         },
         {
           enunciado:
-            "¿En qué año se descubrió América? Vamos venga dímelo no podré vivir si no me lo dices venga vamos vamos vamos venga no puc venga vamos a qué esperas venga coñlo venga daiosudbasoidbasidu",
+            "¿En qué año se descubrió América? Vamos venga dímelo no podré vivir si no me lo dices venga vamos",
           respuesta1: "Idk",
           respuesta2: "No lo sé",
           respuesta3: "Who knows",

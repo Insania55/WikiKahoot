@@ -22,3 +22,35 @@ export const getTemas = idArea => {
 export const getEventoById = eventID => {
 	return axios.get(`${BASE_URL}/evento?codEvento=${eventID}`);
 };
+
+export const createEtapa = nombre => {
+	return axios({
+		method: 'post',
+		url: `${BASE_URL}/etapa`,
+		data: nombre,
+	});
+};
+
+export const createNivel = nombre => {
+	return axios({
+		method: 'post',
+		url: `${BASE_URL}/nivel`,
+		data: nombre,
+	});
+};
+
+export const createArea = nombre => {
+	return axios({
+		method: 'post',
+		url: `${BASE_URL}/area`,
+		data: nombre,
+	});
+};
+
+export const createTema = nombre => {
+	return axios({
+		method: 'post',
+		url: `${BASE_URL}/tema`,
+		data: nombre,
+	});
+};
