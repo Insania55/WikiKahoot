@@ -344,7 +344,9 @@ export default {
   },
   watch: {
     "dataToSend.area": function () {
-      this.$store.dispatch("loadTemas", this.dataToSend.area.value);
+      if (this.dataToSend.area !== undefined) {
+        this.$store.dispatch("loadTemas", this.dataToSend.area.value);
+      }
     },
   },
   methods: {
@@ -353,9 +355,26 @@ export default {
     },
     setData(data, target) {
       this.dataToSend[target] = data;
-      console.log("Seteando data: " + data);
     },
     crearEvento() {
+      let fecha = new Date().toISOString().slice(0, 10);
+      // * comprobamos que ningún campo esté vacío antes de enviar
+      if (!Object.values(this.dataToSend).some((el) => el === "")) {
+        api
+          .createEvento(
+            this.dataToSend.etapa.value,
+            this.dataToSend.nivel.value,
+            this.dataToSend.area.value,
+            this.dataToSend.tema.value,
+            fecha
+          )
+          .then((response) => response.data)
+          .then((data) => console.log(data))
+          .catch((error) => console.log(error));
+      } else {
+        console.log("No ha sido posible enviar. Algún campo vacío");
+      }
+
       console.log("Se ha intentado crear el evento", this.dataToSend);
     },
     anyadirEvento(
@@ -468,7 +487,7 @@ export default {
 
 <style lang="scss" scoped>
 $--color-accent: goldenrod;
-$--color-preguntas-container: #421b93;
+$--color-preguntas-container: #2a2a3d;
 $--color-preguntas-text: #eee;
 
 .main-container {

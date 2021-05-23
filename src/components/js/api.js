@@ -54,3 +54,17 @@ export const createTema = nombre => {
 		data: nombre,
 	});
 };
+
+export const createEvento = (idEtapa, idNivel, idArea, idTema, fecha) => {
+	return axios({
+		method: 'post',
+		url: `${BASE_URL}/evento`,
+		data: {
+			FK_IdEtapa: idEtapa,
+			FK_IdNivel: idNivel,
+			FK_IdArea: idArea,
+			FK_IdTema: idTema,
+			Fecha: fecha,
+		},
+	});
+};
