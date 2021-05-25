@@ -168,6 +168,15 @@ export default {
         console.error(e);
       }
     },
+    // async getEvento(){
+    //   try {
+    //     if () {
+
+    //     }
+    //   } catch(error) {
+    //     console.error(error);
+    //   }
+    // },
     cerrarFiltros() {
       this.$emit("cerrar-filtros");
     },
@@ -255,7 +264,7 @@ export default {
           cursor: pointer;
           padding: 3px 8px;
           max-height: 30px;
-          background: transparent;
+          background-color: rgba(0, 0, 0, 0.2);
           border: 1px solid black;
           border-radius: 5px;
           box-shadow: 0px 1px 1px;

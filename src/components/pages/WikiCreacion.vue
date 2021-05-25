@@ -511,7 +511,7 @@ export default {
 
 <style lang="scss" scoped>
 $--color-accent: #fab700;
-$--color-preguntas-container: #2a2a3d;
+$--color-preguntas-container: #431b93;
 $--color-preguntas-text: #eee;
 
 .main-container {
@@ -523,32 +523,28 @@ $--color-preguntas-text: #eee;
 
   &::before {
     content: "";
-    // background-image: url("../../assets/logoBackground.png");
+    // background-image: url("../../assets/logo.png");
     // background-color: rgba(0, 0, 0, 0.1);
-    background-image: linear-gradient(
-      0deg,
-      #61b038 20%,
-      #6fb8e5
-    ); // background-position: center;
-    // background-size: cover;
+    // background-image: linear-gradient(0deg, #61b038 20%, #6fb8e5);
+    background-position: center;
+    background-size: fill;
     background-repeat: no-repeat;
     position: absolute;
     top: 0px;
     right: 0px;
     bottom: 0px;
     left: 0px;
-    opacity: 0.4;
+    // opacity: 0.3;
     // background-blend-mode: darken;
   }
 
   h2 {
     // color: $--color-preguntas-text;
     margin-bottom: 0.7rem;
-    border-bottom: 2px groove black;
+    border-bottom: 2px solid black;
   }
 
   > div:not(.separator) {
-    background: #fff;
     color: #211;
     border: 3px solid black;
     border-radius: 5px;
@@ -571,7 +567,7 @@ $--color-preguntas-text: #eee;
 .create-event-container {
   padding: 1rem 1.5rem;
   position: relative;
-
+  background: #60b038de;
   .form-option {
     display: flex;
     flex-flow: row wrap;
@@ -628,6 +624,7 @@ $--color-preguntas-text: #eee;
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
+  background: #6fb8e5;
 
   .input-container {
     .input > input {
@@ -636,7 +633,7 @@ $--color-preguntas-text: #eee;
     }
     .input-label {
       color: black;
-      background: white;
+      background: #6fb8e5;
     }
   }
 }
@@ -658,6 +655,7 @@ $--color-preguntas-text: #eee;
   border-radius: 5px;
   margin: 0 auto;
   padding: 1.8rem 2rem;
+  border: 2px solid black;
 
   h2 {
     font-size: 25px;

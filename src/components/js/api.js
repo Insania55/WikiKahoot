@@ -68,3 +68,10 @@ export const createEvento = (idEtapa, idNivel, idArea, idTema, fecha) => {
 		},
 	});
 };
+
+export const getEventoByTwoEntries = (str, str2, id, id2) => {
+	return axios({
+		method: 'get',
+		url: `${BASE_URL}/evento?str=${str}?id=${id}?str2=${str2}?id2=${id2}`,
+	});
+};

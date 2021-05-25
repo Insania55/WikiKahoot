@@ -9,14 +9,43 @@ $_cors = new cors;
 
 $_cors->cors();
 
-// array = ['page', 'codEvento'];
-
 if($_SERVER['REQUEST_METHOD'] == "GET"){
-    //evento?page=x
-    if(isset($_GET['page'])){
-        $pagina = $_GET['page'];
-        $listaEventos = $_eventos->listaEventos($pagina);
-        print_r($listaEventos);
+    //str = FK_IdNivel, FK_IdEtapa, FK_IdArea, FK_IdTema
+    //evento?str=""&id=x&str2=""&id2=x&str3=""&id3=x
+    if(isset($_GET['str']) && isset($_GET['id']) && isset($_GET['str2']) && isset($_GET['id2']) && isset($_GET['str3']) && isset($_GET['id3'])){
+        $str = $_GET['str'];
+        $id = $_GET['id'];
+        $str2 = $_GET['str2'];
+        $id2 = $_GET['id2'];
+        $str3 = $_GET['str3'];
+        $id3 = $_GET['id3'];
+        $buscarEvento = $_eventos->buscarEvento3Entradas($str, $str2, $str3, $id, $id2, $id3);
+        print_r($buscarEvento);
+        http_response_code(200);
+    //evento?str=""&id=x&str2=""&id2=x
+    }else if(isset($_GET['str']) && isset($_GET['id']) && isset($_GET['str2']) && isset($_GET['id2'])){
+        $str = $_GET['str'];
+        $id = $_GET['id'];
+        $str2 = $_GET['str2'];
+        $id2 = $_GET['id2'];
+        $buscarEvento = $_eventos->buscarEvento2Entradas($str, $str2, $id, $id2);
+        print_r($buscarEvento);
+        http_response_code(200);
+    //evento?idArea=x&idNivel=x&idEtapa=x&idTema=x
+    }else if(isset($_GET['idArea']) && isset($_GET['idNivel']) && isset($_GET['idEtapa']) && isset($_GET['idTema'])){
+        $id = $_GET['idArea'];
+        $id2 = $_GET['idNivel'];
+        $id3 = $_GET['idEtapa'];
+        $id4 = $_GET['idTema'];
+        $buscarEvento = $_eventos->buscarEvento4Entradas($id, $id2, $id3, $id4);
+        print_r($buscarEvento);
+        http_response_code(200);
+    //evento?str=""&id=x
+    }else if(isset($_GET['str']) && isset($_GET['id'])){
+        $str = $_GET['str'];
+        $id = $_GET['id'];
+        $buscarEvento = $_eventos->buscarEvento($str, $id);
+        print_r($buscarEvento);
         http_response_code(200);
     //evento?codEvento=x
     }else if(isset($_GET['codEvento'])){
@@ -24,30 +53,11 @@ if($_SERVER['REQUEST_METHOD'] == "GET"){
         $datosEvento = $_eventos->obtenerEvento($codEvento);
         print_r($datosEvento);
         http_response_code(200);
-    //evento?idNivel=x
-    }else if(isset($_GET['idNivel'])){
-        $idNivel = $_GET['idNivel'];
-        $eventoPorNivel = $_eventos->buscarEventoPorNivel($idNivel);
-        print_r($eventoPorNivel);
-        http_response_code(200);
-    //evento?idEtapa=x
-    }else if(isset($_GET['idEtapa'])){
-        $idEtapa = $_GET['idEtapa'];
-        $eventoPorEtapa = $_eventos->buscarEventoPorEtapa($idEtapa);
-        print_r($eventoPorEtapa);
-        http_response_code(200);
-    //evento?idTema=x&idArea=x
-    }else if(isset($_GET['idArea']) && isset($_GET['idTema'])){
-        $idArea = $_GET['idArea'];
-        $idTema = $_GET['idTema'];
-        $eventoPorTema = $_eventos->buscarEventoPorTema($idArea, $idTema);
-        print_r($eventoPorTema);
-        http_response_code(200);
-    //evento?idArea=x
-    }else if(isset($_GET['idArea'])){
-        $idArea = $_GET['idArea'];
-        $eventoPorArea = $_eventos->buscarEventoPorArea($idArea);
-        print_r($eventoPorArea);
+    //evento?page=x
+    }else if(isset($_GET['page'])){
+        $pagina = $_GET['page'];
+        $listaEventos = $_eventos->listaEventos($pagina);
+        print_r($listaEventos);
         http_response_code(200);
     }
 }else if($_SERVER['REQUEST_METHOD'] == "POST"){

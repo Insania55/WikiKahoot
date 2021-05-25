@@ -179,25 +179,25 @@ export default {
       padding: 0.5em 0;
     }
   }
-
-  &::before {
-    content: "";
-    // background-image: url("../../assets/logoBackground.png");
-    background-color: #eee;
-    background-image: linear-gradient(
-      0deg,
-      #61b038 20%,
-      #6fb8e5
-    ); // background-position: center;
-    // background-size: cover;
-    background-repeat: no-repeat;
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    bottom: 0px;
-    left: 0px;
-    opacity: 0.4;
-    background-blend-mode: darken;
-  }
+  background: #fff;
+  // &::before {
+  //   content: "";
+  //   // background-image: url("../../assets/logoBackground.png");
+  //   background-color: #fff;
+  //   background-image: linear-gradient(
+  //     0deg,
+  //     #61b038 20%,
+  //     #6fb8e5
+  //   ); // background-position: center;
+  //   // background-size: cover;
+  //   background-repeat: no-repeat;
+  //   position: absolute;
+  //   top: 0px;
+  //   right: 0px;
+  //   bottom: 0px;
+  //   left: 0px;
+  //   opacity: 0.4;
+  //   background-blend-mode: darken;
+  // }
 }
 </style>

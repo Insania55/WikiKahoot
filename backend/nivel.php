@@ -18,7 +18,6 @@ if($_SERVER['REQUEST_METHOD'] == "GET"){
     $postBody = file_get_contents("php://input");
     //enviamos los datos al controlador
     $datosArray = $_nivel->post($postBody);
-    //print_r($datosArray);
     //devolvemos una respuesta
     if(isset($datosArray["result"]["error_id"])){
         $responseCode = $datosArray["result"]["error_id"];
