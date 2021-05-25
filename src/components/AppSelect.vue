@@ -208,8 +208,9 @@ export default {
 //TODO: Refactorizar a código SCSS
 <style lang="scss" scoped>
 $select-width: 400px;
-$--color-input: #f2cd60;
+$--color-input: #fab700;
 $--color-label-unfocused: #d9d9d9;
+$--color-label-focused: $--color-input;
 
 .app-select {
   .value-list {
@@ -233,6 +234,11 @@ $--color-label-unfocused: #d9d9d9;
       // height: 30px;
       flex: 0 0 $select-width;
       margin-left: 10px;
+    }
+
+    &:hover {
+      box-shadow: 0 1px 0px $--color-label-focused;
+      // border-bottom: 2px solid $--color-label-focused;
     }
   }
 

@@ -1,11 +1,11 @@
 <template>
   <div id="app">
-    <AppHeader></AppHeader>
+    <AppNav></AppNav>
     <router-view />
   </div>
 </template>
 <script>
-import AppHeader from "./components/AppHeader.vue";
+import AppNav from "./components/AppNav.vue";
 
 export default {
   name: "App",
@@ -13,7 +13,7 @@ export default {
     return {};
   },
   components: {
-    AppHeader,
+    AppNav,
   },
 };
 </script>

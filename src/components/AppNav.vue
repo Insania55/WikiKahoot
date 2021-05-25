@@ -16,14 +16,19 @@ export default {};
 
 <style lang="scss">
 #app-nav {
-  text-align: center;
-  padding: 20px;
+  // text-align: center;
+  height: 65px;
+  padding: 23px;
+  padding-left: 8em;
   position: sticky;
   top: 1px;
-  background: rgba(238, 238, 238, 0.95);
   z-index: 1;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 1px 6px 0 rgba(32, 33, 36, 0.28);
+
   img {
-    height: 45px;
+    height: 48px;
     position: absolute;
     left: 0;
     top: 0;
@@ -34,9 +39,12 @@ export default {};
   a {
     font-weight: bold;
     color: #2c3e50;
+    margin: 0 4px;
+    text-decoration: none;
 
     &.router-link-exact-active {
       color: #42b983;
+      border-bottom: 1px solid currentColor;
     }
   }
 }

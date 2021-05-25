@@ -2,8 +2,8 @@
   <div class="app-button">
     <button
       v-if="normal"
-      class="normal"
       @click="!href ? $emit('click', $event) : $router.push(href)"
+      class="normal"
     >
       <slot>Texto</slot>
     </button>
@@ -12,8 +12,8 @@
     </button>
     <button
       v-if="green"
-      class="green"
       @click="!href ? $emit('click', $event) : $router.push(href)"
+      class="green"
     >
       <slot>Texto</slot>
     </button>

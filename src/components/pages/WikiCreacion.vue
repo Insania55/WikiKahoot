@@ -1,6 +1,7 @@
 <template>
   <div class="wiki-creacion-page">
     <main class="main-container">
+      <!-- // * Contenedor para crear un nuevo evento -->
       <div class="create-event-container">
         <h2>Crea un nuevo evento</h2>
         <form @submit.prevent>
@@ -11,7 +12,7 @@
               :options="this.$store.state.optionsEtapa"
               @input="consolear"
               @selected-value="setData($event, 'etapa')"
-              placeholder="Etapa educativa. si procede"
+              placeholder="Elegir etapa"
             ></AppSelect>
 
             <i
@@ -37,7 +38,7 @@
               :options="this.$store.state.optionsNivel"
               @input="consolear"
               @selected-value="setData($event, 'nivel')"
-              placeholder="Nivel de complejidad"
+              placeholder="Elegir nivel"
             ></AppSelect>
             <i
               @click="newNivel.isAdded = !newNivel.isAdded"
@@ -62,7 +63,7 @@
               :options="this.$store.state.optionsArea"
               @input="setData($event, 'area')"
               @selected-value="setData($event, 'area')"
-              placeholder="Área temática general"
+              placeholder="Elegir área"
             ></AppSelect>
             <i
               @click="newArea.isAdded = !newArea.isAdded"
@@ -88,9 +89,7 @@
               @selected-value="setData($event, 'tema')"
               @input="consolear"
               :placeholder="
-                !isTemaCargado
-                  ? 'Selecciona primero un área'
-                  : 'Tema concreto de la pregunta'
+                !isTemaCargado ? 'Selecciona primero un área' : 'Elegir tema'
               "
               :disabled="!isTemaCargado"
             ></AppSelect>
@@ -114,27 +113,27 @@
           <AppButton @click="crearEvento" green>Crear evento</AppButton>
         </form>
       </div>
-      <span class="separator">O</span>
+
+      <!-- <div class="separator"></div> -->
+
       <div class="add-event-container">
         <h2>Añade preguntas a un evento existente</h2>
-
-        <div class="input-container">
+        <div class="input-container w-100">
           <label class="input" for="codigo">
             <input
               v-model="codigoEvento"
               name="codigo"
               type="text"
-              placeholder="12345..."
+              placeholder="0, 1, 2, 3, 4..."
             />
             <span class="input-label">Código de evento</span>
           </label>
         </div>
-
         <AppButton @click="buscarEvento" green>Buscar evento</AppButton>
       </div>
     </main>
 
-    <div class="form-container">
+    <div v-if="anyadirPreguntaForm" class="form-container">
       <h2>Añadir preguntas</h2>
       <form @submit.prevent="anyadirPregunta">
         <div class="input-container w-100">
@@ -216,9 +215,9 @@
         <div class="input-container w-50">
           <!-- //TODO: Que solo se permita introducir valores dentro de array de posibilidades-->
           <!-- //TODO: Parsear a número antes de enviar -->
-
           <label class="input" for="tiempoLimite">
             <input
+              v-model="nuevaPregunta.tiempoLimite"
               list="tiempo"
               name="myBrowser"
               placeholder="5, 10, 20, 30, 60, 90, 120, 240"
@@ -248,8 +247,8 @@
         <div class="input-container w-100">
           <label class="input" for="imgLink">
             <input
+              placeholder=""
               v-model="nuevaPregunta.imgLink"
-              required
               name="imgLink"
               type="text"
             />
@@ -257,16 +256,16 @@
           </label>
         </div>
         <div class="button-container">
-          <button @click.prevent="saveData" class="filter-option-button">
-            Buscar
-          </button>
-          <button type="reset" class="filter-option-button">Borrar</button>
+          <AppButton @click.prevent="saveData" green>Añadir pregunta</AppButton>
+          <AppButton @click.prevent="resetForm" normal>Borrar</AppButton>
         </div>
+        <span><small>Los campos con (*) son obligatorios</small> </span>
       </form>
     </div>
-    <span><small>Los campos con (*) son obligatorios</small> </span>
+
+    <!-- // * Tabla para cargar las preguntas que se vayan añadiendo al evento  -->
     <AppPaginatedTable
-      v-if="eventoCargado"
+      v-if="preguntasAnyadidas.length !== 0"
       :data="preguntasAnyadidas"
       :headerFields="camposHeader"
       :total-pages="Math.ceil(preguntasAnyadidas.length / itemsPerPage)"
@@ -300,7 +299,8 @@ export default {
       newNivel: { isAdded: false, value: "" },
       newArea: { isAdded: false, value: "" },
       newTema: { isAdded: false, value: "" },
-      codigoEvento: 0,
+      anyadirPreguntaForm: false,
+      codigoEvento: "",
       preguntasAnyadidas: [],
       nuevaPregunta: {
         enunciado: "",
@@ -325,7 +325,6 @@ export default {
         "Tiempo límite",
         "Enlace a imagen",
       ],
-      optionsTema: [],
     };
   },
   computed: {
@@ -339,7 +338,7 @@ export default {
       await this.$store.dispatch("loadAreas");
       await this.$store.dispatch("loadNiveles");
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   },
   watch: {
@@ -429,7 +428,7 @@ export default {
             console.log(data.status);
           }).catch;
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
       this.newNivel.isAdded = !this.newNivel.isAdded;
       this.$refs.nivel.searchTerm = this.newNivel.value;
@@ -447,7 +446,7 @@ export default {
             console.log(data.status);
           }).catch;
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
       this.newArea.isAdded = !this.newArea.isAdded;
       this.$refs.area.searchTerm = this.newArea.value;
@@ -466,7 +465,7 @@ export default {
             console.log(data.status);
           }).catch;
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
       this.newTema.isAdded = !this.newTema.isAdded;
       this.$refs.tema.searchTerm = this.newTema.value;
@@ -476,7 +475,32 @@ export default {
 
     buscarEvento() {
       // TODO: Buscar evento en la base de datos cuando sea posible
+      // TODO: Comprobar que el dato que nos pasan es parseable a number
+      let eventID = parseInt(this.codigoEvento, 10);
+      try {
+        api
+          .getEventoById(eventID)
+          .then((response) => response.data)
+          .then((data) => {
+            console.log(data.status);
+          }).catch;
+      } catch (error) {
+        console.error(error);
+      }
+
       console.log("Se ha intentado buscar un evento");
+    },
+    resetForm() {
+      this.nuevaPregunta = {
+        enunciado: "",
+        r1: "",
+        r2: "",
+        r3: "",
+        r4: "",
+        respuestaCorrecta: "",
+        tiempoLimite: "",
+        imgLink: "",
+      };
     },
     onPageChange() {
       console.log("Respuesta del paginador");
@@ -486,7 +510,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$--color-accent: goldenrod;
+$--color-accent: #fab700;
 $--color-preguntas-container: #2a2a3d;
 $--color-preguntas-text: #eee;
 
@@ -497,14 +521,34 @@ $--color-preguntas-text: #eee;
   justify-content: space-evenly;
   margin: 2em 0;
 
+  &::before {
+    content: "";
+    // background-image: url("../../assets/logoBackground.png");
+    // background-color: rgba(0, 0, 0, 0.1);
+    background-image: linear-gradient(
+      0deg,
+      #61b038 20%,
+      #6fb8e5
+    ); // background-position: center;
+    // background-size: cover;
+    background-repeat: no-repeat;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    opacity: 0.4;
+    // background-blend-mode: darken;
+  }
+
   h2 {
     // color: $--color-preguntas-text;
     margin-bottom: 0.7rem;
     border-bottom: 2px groove black;
   }
 
-  > div {
-    background: inherit;
+  > div:not(.separator) {
+    background: #fff;
     color: #211;
     border: 3px solid black;
     border-radius: 5px;
@@ -512,16 +556,21 @@ $--color-preguntas-text: #eee;
   }
 }
 
+.app-select {
+  margin-top: 1.5em;
+
+  // .label:hover {
+  //   // width: 300px !important;
+  //   border-bottom-color: blue;
+
+  //   &:hover {
+  //   }
+  // }
+}
+
 .create-event-container {
   padding: 1rem 1.5rem;
-
-  .app-select {
-    margin-top: 1.5em;
-
-    .label {
-      width: 200px;
-    }
-  }
+  position: relative;
 
   .form-option {
     display: flex;
@@ -537,6 +586,9 @@ $--color-preguntas-text: #eee;
         transform: scale(0.9);
         -webkit-transform: scale(0.9);
         -ms-transform: scale(0.9);
+      }
+      &:hover {
+        color: $--color-accent;
       }
     }
   }
@@ -572,30 +624,40 @@ $--color-preguntas-text: #eee;
 
 .add-event-container {
   padding: 0.8rem 1.5rem;
+  position: relative;
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
 
-  > *:not(:first-child) {
-    padding-top: 1em;
+  .input-container {
+    .input > input {
+      color: black;
+      border-color: inherit;
+    }
+    .input-label {
+      color: black;
+      background: white;
+    }
   }
-
-  // .input-label {
-  // }
 }
 
 .separator {
-  display: flex;
-  align-items: center;
+  width: 400px;
+  // background: url("../../assets/logo.png");
+  // background-position: center;
+  // background-size: contain;
+  // background-repeat: no-repeat;
+  // background-blend-mode: $--color-accent;
 }
 
 .form-container {
-  max-width: 75vw;
   width: 100%;
-  padding: 1.8rem 2rem;
+  max-width: 70vw;
+  position: relative;
   background: $--color-preguntas-container;
   border-radius: 5px;
   margin: 0 auto;
+  padding: 1.8rem 2rem;
 
   h2 {
     font-size: 25px;
@@ -618,48 +680,48 @@ $--color-preguntas-text: #eee;
     display: flex;
     flex-flow: row wrap;
   }
+}
 
-  .input-container {
-    padding: 2em;
+.input-container {
+  padding: 2em;
 
-    .input {
-      position: relative;
+  .input {
+    position: relative;
 
-      > input {
-        display: block;
-        width: 100%;
-        border: 3px solid currentColor;
-        padding: 1rem 0.5rem;
-        color: $--color-preguntas-text;
-        background: transparent;
-        border-radius: 4px;
+    > input {
+      display: block;
+      width: 100%;
+      border: 3px solid currentColor;
+      padding: 1rem 0.5rem;
+      color: $--color-preguntas-text;
+      background: transparent;
+      border-radius: 4px;
 
-        &:focus,
-        &:not(:placeholder-shown) {
-          & + .input-label {
-            transform: translate(-0.5rem, -65%) scale(0.8);
-            color: $--color-accent;
-            transition-duration: 0.2s;
-          }
+      &:focus,
+      &:not(:placeholder-shown) {
+        & + .input-label {
+          transform: translate(-0.5rem, -65%) scale(0.8);
+          color: $--color-accent;
+          transition-duration: 0.2s;
         }
       }
     }
+  }
 
-    .input-label {
-      color: $--color-preguntas-text;
-      position: absolute;
-      left: 0;
-      top: 0;
-      padding: 6px 4px;
-      margin: 6px 8px;
-      background: $--color-preguntas-container;
-      white-space: nowrap;
-      transform: translate(0, 0);
-      transform-origin: 0, 0;
-      transition: transform 120ms ease-in;
-      font-weight: bold;
-      line-height: 1.2;
-    }
+  .input-label {
+    color: $--color-preguntas-text;
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 6px 4px;
+    margin: 6px 8px;
+    background: $--color-preguntas-container;
+    white-space: nowrap;
+    transform: translate(0, 0);
+    transform-origin: 0, 0;
+    transition: transform 120ms ease-in;
+    font-weight: bold;
+    line-height: 1.2;
   }
 }
 

@@ -426,7 +426,7 @@ $--color-row-bg: #f4f2f1;
       place-items: center;
       text-align: center;
       padding: 0.5rem;
-
+      background: #fff;
       // white-space: nowrap;
       // overflow: hidden;
       // text-overflow: ellipsis;
