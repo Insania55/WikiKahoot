@@ -69,9 +69,16 @@ export const createEvento = (idEtapa, idNivel, idArea, idTema, fecha) => {
 	});
 };
 
+export const getEventHeaders = codigoEvento => {
+	return axios.get(`${BASE_URL}/pregunta?codEvento=${codigoEvento}`);
+};
+
+export const getPreguntas = codigoEvento => {
+	return axios.get(`${BASE_URL}/pregunta?codEvento=6`);
+};
+
 export const getEventoByTwoEntries = (str, str2, id, id2) => {
-	return axios({
-		method: 'get',
-		url: `${BASE_URL}/evento?str=${str}?id=${id}?str2=${str2}?id2=${id2}`,
-	});
+	return axios.get(
+		`${BASE_URL}/evento?str=${str}?id=${id}?str2=${str2}?id2=${id2}`
+	);
 };

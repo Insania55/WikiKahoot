@@ -20,8 +20,8 @@ class eventos extends conexion {
             $cantidad = $cantidad * $pagina;
         }
 
-        //$query = "SELECT CodEventos FROM " . $this->tabla . " limit $inicio,$cantidad";
-        $query = "SELECT * FROM eventos e, area a where a.IdArea = e.FK_IdArea limit $inicio,$cantidad";
+        $query = "SELECT CodEventos FROM " . $this->tabla . " limit $inicio,$cantidad";
+        // $query = "SELECT * FROM eventos e, area a where a.IdArea = e.FK_IdArea limit $inicio,$cantidad";
         $datos = parent::obtenerDatos($query);
         return $datos;
     }
@@ -29,7 +29,6 @@ class eventos extends conexion {
     //Consulta evento
     public function obtenerEvento($codEvento){
         $query = "SELECT e.Nombre as nombreEtapa, n.Nombre as nombreNivel, a.Nombre as nombreArea, t.Nombre as nombreTema FROM eventos ev, etapa e, nivel n, area a, tema t WHERE ev.CodEventos = '$codEvento' AND ev.FK_IdEtapa = e.IdEtapa AND ev.FK_IdNivel = n.IdNivel AND ev.FK_IdArea = a.IdArea AND ev.FK_IdTema = t.IdTema AND t.FK_IdArea = a.IdArea";
-        print_r($query);
         return parent::obtenerDatos($query);
     }
 
@@ -146,21 +145,42 @@ class eventos extends conexion {
     }
 
     //busca el evento con dos combinaciones
-    public function buscarEvento2Entradas($str, $str2, $id, $id2){
-        $query = "SELECT * FROM " . $this->tabla . " WHERE " . $str . " = '" . $id . "' AND " . $str2 . " = '" . $id2 . "'";
-        return parent::obtenerDatos($query);
-    }
+    // public function buscarEvento2Entradas($str, $str2, $id, $id2){
+    //     $query = "SELECT * FROM " . $this->tabla . " WHERE " . $str . " = '" . $id . "' AND " . $str2 . " = '" . $id2 . "'";
+    //     return parent::obtenerDatos($query);
+    // }
 
-    //busca el evento con tres combinaciones
-    public function buscarEvento3Entradas($str, $str2, $str3, $id, $id2, $id3){
-        $query = "SELECT * FROM " . $this->tabla . " WHERE " . $str . " = '" . $id . "' AND " . $str2 . " = '" . $id2 . "' AND " . $str3 . " = '" . $id3 . "'";
-        return parent::obtenerDatos($query);
-    }
+    // //busca el evento con tres combinaciones
+    // public function buscarEvento3Entradas($str, $str2, $str3, $id, $id2, $id3){
+    //     $query = "SELECT * FROM " . $this->tabla . " WHERE " . $str . " = '" . $id . "' AND " . $str2 . " = '" . $id2 . "' AND " . $str3 . " = '" . $id3 . "'";
+    //     return parent::obtenerDatos($query);
+    // }
 
-    //busca el evento con todas las combinaciones
-    public function buscarEvento4Entradas($id, $id2, $id3, $id4){
-        //$query = "SELECT * FROM " . $this->tabla . " WHERE ev.FK_IdArea = '" . $id . "' AND FK_IdNivel = '" . $id2 . "' AND ev.FK_IdEtapa = '" . $id3 . "' AND ev.FK_IdTema = '" . $id4 . "'";
-        $query = "SELECT e.nombre, n.nombre, a.nombre, t.nombre FROM eventos ev, etapa e, nivel n, area a, tema t WHERE ev.FK_IdEtapa = e.IdEtapa AND ev.FK_IdNivel = n.IdNivel AND ev.FK_IdArea = a.IdArea AND ev.FK_IdTema = t.IdTema AND t.FK_IdArea = a.IdArea AND ev.FK_IdArea = '" . $id . "' AND ev.FK_IdNivel = '" . $id2 . "' AND ev.FK_IdEtapa = '" . $id3 . "' AND ev.FK_IdTema = '" . $id4 . "'";
-        return parent::obtenerDatos($query);
-    }
+    // //busca el evento con todas las combinaciones
+    // public function buscarEvento4Entradas($id, $id2, $id3, $id4){
+    //     //$query = "SELECT * FROM " . $this->tabla . " WHERE ev.FK_IdArea = '" . $id . "' AND FK_IdNivel = '" . $id2 . "' AND ev.FK_IdEtapa = '" . $id3 . "' AND ev.FK_IdTema = '" . $id4 . "'";
+    //     $query = "SELECT e.nombre, n.nombre, a.nombre, t.nombre FROM eventos ev, etapa e, nivel n, area a, tema t WHERE ev.FK_IdEtapa = e.IdEtapa AND ev.FK_IdNivel = n.IdNivel AND ev.FK_IdArea = a.IdArea AND ev.FK_IdTema = t.IdTema AND t.FK_IdArea = a.IdArea AND ev.FK_IdArea = '" . $id . "' AND ev.FK_IdNivel = '" . $id2 . "' AND ev.FK_IdEtapa = '" . $id3 . "' AND ev.FK_IdTema = '" . $id4 . "'";
+    //     return parent::obtenerDatos($query);
+    // }
+
+        //busca el evento con dos combinaciones
+        public function buscarEvento2Entradas($str, $str2, $id, $id2){
+            $query = "SELECT ev.codeventos, e.Nombre as nombreEtapa, n.Nombre as nombreNivel, a.Nombre as nombreArea, t.Nombre as nombreTema FROM eventos ev, etapa e, nivel n, area a, tema t WHERE ev.FK_IdEtapa = e.IdEtapa AND ev.FK_IdNivel = n.IdNivel AND ev.FK_IdArea = a.IdArea AND ev.FK_IdTema = t.IdTema AND t.FK_IdArea = a.IdArea AND ev." . $str . " = '" . $id . "' AND ev." . $str2 . " = '" . $id2 . "'";
+            return parent::obtenerDatos($query);
+        }
+    
+        //busca el evento con tres combinaciones
+        public function buscarEvento3Entradas($str, $str2, $str3, $id, $id2, $id3){
+            $query = "SELECT ev.codeventos, e.Nombre as nombreEtapa, n.Nombre as nombreNivel, a.Nombre as nombreArea, t.Nombre as nombreTema FROM eventos ev, etapa e, nivel n, area a, tema t WHERE ev.FK_IdEtapa = e.IdEtapa AND ev.FK_IdNivel = n.IdNivel AND ev.FK_IdArea = a.IdArea AND ev.FK_IdTema = t.IdTema AND t.FK_IdArea = a.IdArea AND ev." . $str . " = '" . $id . "' AND ev." . $str2 . " = '" . $id2 . "' AND ev." . $str3 . " = '" . $id3 . "'";
+            print_r($query);
+            return parent::obtenerDatos($query);
+        }
+    
+        //busca el evento con todas las combinaciones
+        public function buscarEvento4Entradas($id, $id2, $id3, $id4){
+            //$query = "SELECT * FROM " . $this->tabla . " WHERE ev.FK_IdArea = '" . $id . "' AND FK_IdNivel = '" . $id2 . "' AND ev.FK_IdEtapa = '" . $id3 . "' AND ev.FK_IdTema = '" . $id4 . "'";
+            $query = "SELECT ev.codeventos, e.Nombre as nombreEtapa, n.Nombre as nombreNivel, a.Nombre as nombreArea, t.Nombre as nombreTema FROM eventos ev, etapa e, nivel n, area a, tema t WHERE ev.FK_IdEtapa = e.IdEtapa AND ev.FK_IdNivel = n.IdNivel AND ev.FK_IdArea = a.IdArea AND ev.FK_IdTema = t.IdTema AND t.FK_IdArea = a.IdArea AND ev.FK_IdArea = '" . $id . "' AND ev.FK_IdNivel = '" . $id2 . "' AND ev.FK_IdEtapa = '" . $id3 . "' AND ev.FK_IdTema = '" . $id4 . "'";
+            print_r($query);
+            return parent::obtenerDatos($query);
+        }
 }

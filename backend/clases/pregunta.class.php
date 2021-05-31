@@ -79,5 +79,11 @@ class pregunta extends conexion {
             return 0;
         }
     }
+
+    //Consulta preguntas
+    public function obtenerPreguntasPorEvento($codEvento){
+        $query = "SELECT * FROM " . $this->tabla . " WHERE FK_Eventos = '$codEvento'";
+        return parent::obtenerDatos($query);
+    }
 }
 ?>

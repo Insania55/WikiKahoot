@@ -16,11 +16,18 @@ if($_SERVER['REQUEST_METHOD'] == "GET"){
         $datosPreguntas = $_pregunta->obtenerPregunta($idPregunta);
         print_r($datosPreguntas);
         http_response_code(200);
-    //evento?page=x
+    //pregunta?page=x
     }else if(isset($_GET['page'])){
         $pagina = $_GET['page'];
         $listaPreguntas = $_pregunta->listaPreguntas($pagina);
         print_r($listaPreguntas);
+        http_response_code(200);
+
+    //pregunta?codEvento=x
+    }else if(isset($_GET['codEvento'])){
+        $codEvento = $_GET['codEvento'];
+        $datosPreguntas = $_pregunta->obtenerPreguntasPorEvento($codEvento);
+        print_r($datosPreguntas);
         http_response_code(200);
     }
 }else if($_SERVER['REQUEST_METHOD'] == "POST"){

@@ -2,119 +2,125 @@
   <div class="wiki-creacion-page">
     <main class="main-container">
       <!-- // * Contenedor para crear un nuevo evento -->
-      <div class="create-event-container">
-        <h2>Crea un nuevo evento</h2>
-        <form @submit.prevent>
-          <div class="form-option">
-            <AppSelect
-              ref="etapa"
-              label="Etapa"
-              :options="this.$store.state.optionsEtapa"
-              @input="consolear"
-              @selected-value="setData($event, 'etapa')"
-              placeholder="Elegir etapa"
-            ></AppSelect>
+      <div class="helper-container">
+        <div class="create-event-container">
+          <h2>Crea un nuevo evento</h2>
+          <form @submit.prevent>
+            <div class="form-option">
+              <AppSelect
+                ref="etapa"
+                label="Etapa"
+                :options="this.$store.state.optionsEtapa"
+                @input="consolear"
+                @selected-value="setData($event, 'etapa')"
+                placeholder="Elegir etapa"
+              ></AppSelect>
 
-            <i
-              @click="newEtapa.isAdded = !newEtapa.isAdded"
-              class="far fa-plus-square"
-            ></i>
-          </div>
-          <transition name="fade">
-            <div v-if="newEtapa.isAdded" class="new-field">
-              <input
-                placeholder="Añade una nueva etapa..."
-                v-model="newEtapa.value"
-                type="text"
-              />
-              <i @click="crearEtapa" class="far fa-save"></i>
+              <i
+                @click="newEtapa.isAdded = !newEtapa.isAdded"
+                class="far fa-plus-square"
+              ></i>
             </div>
-          </transition>
+            <transition name="fade">
+              <div v-if="newEtapa.isAdded" class="new-field">
+                <input
+                  placeholder="Añade una nueva etapa..."
+                  v-model="newEtapa.value"
+                  type="text"
+                />
+                <i @click="crearEtapa" class="far fa-save"></i>
+              </div>
+            </transition>
 
-          <div class="form-option">
-            <AppSelect
-              ref="nivel"
-              label="Nivel"
-              :options="this.$store.state.optionsNivel"
-              @input="consolear"
-              @selected-value="setData($event, 'nivel')"
-              placeholder="Elegir nivel"
-            ></AppSelect>
-            <i
-              @click="newNivel.isAdded = !newNivel.isAdded"
-              class="far fa-plus-square"
-            ></i>
-          </div>
-          <transition name="fade">
-            <div v-if="newNivel.isAdded" class="new-field">
-              <input
-                placeholder="Añade un nuevo nivel..."
-                v-model="newNivel.value"
-                type="text"
-              />
-              <i @click="crearNivel" class="far fa-save"></i>
+            <div class="form-option">
+              <AppSelect
+                ref="nivel"
+                label="Nivel"
+                :options="this.$store.state.optionsNivel"
+                @input="consolear"
+                @selected-value="setData($event, 'nivel')"
+                placeholder="Elegir nivel"
+              ></AppSelect>
+              <i
+                @click="newNivel.isAdded = !newNivel.isAdded"
+                class="far fa-plus-square"
+              ></i>
             </div>
-          </transition>
+            <transition name="fade">
+              <div v-if="newNivel.isAdded" class="new-field">
+                <input
+                  placeholder="Añade un nuevo nivel..."
+                  v-model="newNivel.value"
+                  type="text"
+                />
+                <i @click="crearNivel" class="far fa-save"></i>
+              </div>
+            </transition>
 
-          <div class="form-option">
-            <AppSelect
-              ref="area"
-              label="Área"
-              :options="this.$store.state.optionsArea"
-              @input="setData($event, 'area')"
-              @selected-value="setData($event, 'area')"
-              placeholder="Elegir área"
-            ></AppSelect>
-            <i
-              @click="newArea.isAdded = !newArea.isAdded"
-              class="far fa-plus-square"
-            ></i>
-          </div>
-          <transition name="fade">
-            <div v-if="newArea.isAdded" class="new-field">
-              <input
-                placeholder="Añade una nueva area..."
-                v-model="newArea.value"
-                type="text"
-              />
-              <i @click="crearArea" class="far fa-save"></i>
+            <div class="form-option">
+              <AppSelect
+                ref="area"
+                label="Área"
+                :options="this.$store.state.optionsArea"
+                @input="setData($event, 'area')"
+                @selected-value="setData($event, 'area')"
+                placeholder="Elegir área"
+              ></AppSelect>
+              <i
+                @click="newArea.isAdded = !newArea.isAdded"
+                class="far fa-plus-square"
+              ></i>
             </div>
-          </transition>
+            <transition name="fade">
+              <div v-if="newArea.isAdded" class="new-field">
+                <input
+                  placeholder="Añade una nueva area..."
+                  v-model="newArea.value"
+                  type="text"
+                />
+                <i @click="crearArea" class="far fa-save"></i>
+              </div>
+            </transition>
 
-          <div class="form-option">
-            <AppSelect
-              ref="tema"
-              label="Tema"
-              :options="this.$store.state.optionsTema"
-              @selected-value="setData($event, 'tema')"
-              @input="consolear"
-              :placeholder="
-                !isTemaCargado ? 'Selecciona primero un área' : 'Elegir tema'
-              "
-              :disabled="!isTemaCargado"
-            ></AppSelect>
-            <i
-              @click="newTema.isAdded = !newTema.isAdded"
-              class="far fa-plus-square"
-            ></i>
-          </div>
-          <transition name="fade">
-            <div v-if="newTema.isAdded" class="new-field">
-              <input
-                placeholder="Añade un nuevo tema..."
-                v-model="newTema.value"
-                type="text"
-              />
-              <i @click="crearTema" class="far fa-save"></i>
+            <div class="form-option">
+              <AppSelect
+                ref="tema"
+                label="Tema"
+                :options="this.$store.state.optionsTema"
+                @selected-value="setData($event, 'tema')"
+                @input="consolear"
+                :placeholder="
+                  !isTemaCargado ? 'Selecciona primero un área' : 'Elegir tema'
+                "
+                :disabled="!isTemaCargado"
+              ></AppSelect>
+              <i
+                @click="newTema.isAdded = !newTema.isAdded"
+                class="far fa-plus-square"
+              ></i>
             </div>
-          </transition>
+            <transition name="fade">
+              <div v-if="newTema.isAdded" class="new-field">
+                <input
+                  placeholder="Añade un nuevo tema..."
+                  v-model="newTema.value"
+                  type="text"
+                />
+                <i @click="crearTema" class="far fa-save"></i>
+              </div>
+            </transition>
 
-          <!-- @click="descargarExcel" -->
-          <AppButton @click="crearEvento" green>Crear evento</AppButton>
-        </form>
+            <!-- @click="descargarExcel" -->
+            <AppButton @click="crearEvento" normal>Crear evento</AppButton>
+          </form>
+        </div>
+        <div class="help-tooltip">
+          <i class="fas fa-arrow-circle-left"></i>
+          <span>
+            ¿No encuentras un campo específico? <strong>¡Créalo!</strong></span
+          >
+        </div>
       </div>
-
-      <!-- <div class="separator"></div> -->
 
       <div class="add-event-container">
         <h2>Añade preguntas a un evento existente</h2>
@@ -125,16 +131,31 @@
               name="codigo"
               type="text"
               placeholder="0, 1, 2, 3, 4..."
+              @keydown.enter="buscarEvento"
             />
             <span class="input-label">Código de evento</span>
           </label>
         </div>
-        <AppButton @click="buscarEvento" green>Buscar evento</AppButton>
+        <AppButton @click="buscarEvento" normal>Buscar evento</AppButton>
       </div>
     </main>
 
     <div v-if="anyadirPreguntaForm" class="form-container">
-      <h2>Añadir preguntas</h2>
+      <div>
+        <span><strong>Etapa</strong> {{ eventNames.nombreEtapa }}</span>
+        <span><strong>Nivel</strong> {{ eventNames.nombreNivel }}</span>
+        <span><strong>Área</strong> {{ eventNames.nombreArea }}</span>
+        <span><strong>Tema</strong> {{ eventNames.nombreTema }}</span>
+      </div>
+      <div>
+        <h2>Añadir preguntas</h2>
+        <span
+          >Código de evento
+          <p>
+            {{ codigoEventoNuevo !== "" ? codigoEventoNuevo : codigoEvento }}
+          </p>
+        </span>
+      </div>
       <form @submit.prevent="anyadirPregunta">
         <div class="input-container w-100">
           <label class="input" for="enunciado">
@@ -259,7 +280,7 @@
           <AppButton @click.prevent="saveData" green>Añadir pregunta</AppButton>
           <AppButton @click.prevent="resetForm" normal>Borrar</AppButton>
         </div>
-        <span><small>Los campos con (*) son obligatorios</small> </span>
+        <!-- <span><small>Los campos con (*) son obligatorios</small> </span> -->
       </form>
     </div>
 
@@ -301,7 +322,10 @@ export default {
       newTema: { isAdded: false, value: "" },
       anyadirPreguntaForm: false,
       codigoEvento: "",
+      codigoEventoNuevo: "",
+
       preguntasAnyadidas: [],
+      eventNames: null,
       nuevaPregunta: {
         enunciado: "",
         r1: "",
@@ -342,9 +366,15 @@ export default {
     }
   },
   watch: {
-    "dataToSend.area": function () {
+    "dataToSend.area": function (oldVal, newVal) {
       if (this.dataToSend.area !== undefined) {
         this.$store.dispatch("loadTemas", this.dataToSend.area.value);
+      }
+      // * Si el área cambia y el tema ya ha sido seleccionado, se resetea el tema puesto que no tendrán correlación
+      if (this.dataToSend.tema !== "" && oldVal.value !== newVal.value) {
+        this.dataToSend.tema = "";
+        this.$refs.tema.searchTerm = "";
+        console.log("Tema alterado");
       }
     },
   },
@@ -353,12 +383,15 @@ export default {
       console.log(ev);
     },
     setData(data, target) {
+      console.log(data);
       this.dataToSend[target] = data;
+      console.log(this.dataToSend);
     },
     crearEvento() {
-      let fecha = new Date().toISOString().slice(0, 10);
-      // * comprobamos que ningún campo esté vacío antes de enviar
+      // * Comprobamos que ningún campo esté vacío antes de enviar
       if (!Object.values(this.dataToSend).some((el) => el === "")) {
+        let fecha = new Date().toISOString().slice(0, 10);
+
         api
           .createEvento(
             this.dataToSend.etapa.value,
@@ -368,7 +401,11 @@ export default {
             fecha
           )
           .then((response) => response.data)
-          .then((data) => console.log(data))
+          .then((data) => {
+            console.log(data);
+            this.anyadirPreguntaForm = true;
+            this.codigoEventoNuevo = data.result.CodEvento;
+          })
           .catch((error) => console.log(error));
       } else {
         console.log("No ha sido posible enviar. Algún campo vacío");
@@ -398,77 +435,83 @@ export default {
       });
     },
     crearEtapa() {
-      let etapa = {
-        Nombre: this.newEtapa.value,
-      };
-
-      try {
-        api
-          .createEtapa(etapa)
-          .then((response) => response.data)
-          .then((data) => {
-            console.log(data.status);
-          }).catch;
-      } catch (e) {
-        console.log(e);
+      if (this.newEtapa.value !== "" || this.newEtapa.value !== undefined) {
+        let etapa = {
+          Nombre: this.newEtapa.value,
+        };
+        try {
+          api
+            .createEtapa(etapa)
+            .then((response) => response.data)
+            .then((data) => {
+              console.log(data.status);
+            }).catch;
+        } catch (e) {
+          console.log(e);
+        }
+        this.newEtapa.isAdded = !this.newEtapa.isAdded;
+        this.$refs.etapa.searchTerm = this.newEtapa.value;
+      } else {
+        console.log("Etapa está vacía");
       }
-      this.newEtapa.isAdded = !this.newEtapa.isAdded;
-      this.$refs.etapa.searchTerm = this.newEtapa.value;
     },
     crearNivel() {
-      let nivel = {
-        Nombre: this.newNivel.value,
-      };
-
-      try {
-        api
-          .createNivel(nivel)
-          .then((response) => response.data)
-          .then((data) => {
-            console.log(data.status);
-          }).catch;
-      } catch (e) {
-        console.error(e);
+      if (this.newNivel.value !== "" || this.newNivel.value !== undefined) {
+        let nivel = {
+          Nombre: this.newNivel.value,
+        };
+        try {
+          api
+            .createNivel(nivel)
+            .then((response) => response.data)
+            .then((data) => {
+              console.log(data.status);
+            }).catch;
+        } catch (e) {
+          console.error(e);
+        }
+        this.newNivel.isAdded = !this.newNivel.isAdded;
+        this.$refs.nivel.searchTerm = this.newNivel.value;
       }
-      this.newNivel.isAdded = !this.newNivel.isAdded;
-      this.$refs.nivel.searchTerm = this.newNivel.value;
     },
     crearArea() {
-      let area = {
-        Nombre: this.newArea.value,
-      };
-
-      try {
-        api
-          .createArea(area)
-          .then((response) => response.data)
-          .then((data) => {
-            console.log(data.status);
-          }).catch;
-      } catch (e) {
-        console.error(e);
+      if (this.newArea.value !== "" || this.newArea.value !== undefined) {
+        let area = {
+          Nombre: this.newArea.value,
+        };
+        try {
+          api
+            .createArea(area)
+            .then((response) => response.data)
+            .then((data) => {
+              console.log(data.status);
+            }).catch;
+        } catch (e) {
+          console.error(e);
+        }
+        this.newArea.isAdded = !this.newArea.isAdded;
+        this.$refs.area.searchTerm = this.newArea.value;
       }
-      this.newArea.isAdded = !this.newArea.isAdded;
-      this.$refs.area.searchTerm = this.newArea.value;
     },
     crearTema() {
-      let tema = {
-        Nombre: this.newTema.value,
-        FK_IdArea: this.dataToSend.area.value,
-      };
-
-      try {
-        api
-          .createTema(tema)
-          .then((response) => response.data)
-          .then((data) => {
-            console.log(data.status);
-          }).catch;
-      } catch (e) {
-        console.error(e);
+      if (this.newTema.value !== "" || this.newTema.value !== undefined) {
+        let tema = {
+          Nombre: this.newTema.value,
+          FK_IdArea: this.dataToSend.area.value,
+        };
+        try {
+          api
+            .createTema(tema)
+            .then((response) => response.data)
+            .then((data) => {
+              console.log(data.status);
+            }).catch;
+        } catch (e) {
+          console.error(e);
+        }
+        this.newTema.isAdded = !this.newTema.isAdded;
+        this.$refs.tema.searchTerm = this.newTema.value;
       }
-      this.newTema.isAdded = !this.newTema.isAdded;
-      this.$refs.tema.searchTerm = this.newTema.value;
     },
 
     anyadirPregunta() {},
@@ -476,18 +519,26 @@ export default {
     buscarEvento() {
       // TODO: Buscar evento en la base de datos cuando sea posible
       // TODO: Comprobar que el dato que nos pasan es parseable a number
-      let eventID = parseInt(this.codigoEvento, 10);
+      if (this.codigoEvento === "") {
+        console.log("Código vacío");
+        return;
+      }
       try {
+        let eventID = Number(this.codigoEvento);
+        if (eventID === NaN) {
+          console.log("El código de evento pasado no es un número");
+          return;
+        }
         api
           .getEventoById(eventID)
           .then((response) => response.data)
           .then((data) => {
-            console.log(data.status);
+            this.eventNames = data[0];
+            this.anyadirPreguntaForm = true;
           }).catch;
       } catch (error) {
         console.error(error);
       }
-
       console.log("Se ha intentado buscar un evento");
     },
     resetForm() {
@@ -511,8 +562,10 @@ export default {
 
 <style lang="scss" scoped>
 $--color-accent: #fab700;
-$--color-preguntas-container: #431b93;
+$--color-preguntas-container: #371679;
 $--color-preguntas-text: #eee;
+$--color-create-event-container: #069415;
+$--color-add-event-container: #1989d2;
 
 .main-container {
   display: flex;
@@ -521,68 +574,57 @@ $--color-preguntas-text: #eee;
   justify-content: space-evenly;
   margin: 2em 0;
 
-  &::before {
-    content: "";
-    // background-image: url("../../assets/logo.png");
-    // background-color: rgba(0, 0, 0, 0.1);
-    // background-image: linear-gradient(0deg, #61b038 20%, #6fb8e5);
-    background-position: center;
-    background-size: fill;
-    background-repeat: no-repeat;
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    bottom: 0px;
-    left: 0px;
-    // opacity: 0.3;
-    // background-blend-mode: darken;
-  }
-
   h2 {
-    // color: $--color-preguntas-text;
     margin-bottom: 0.7rem;
-    border-bottom: 2px solid black;
   }
 
-  > div:not(.separator) {
+  > .add-event-container,
+  .create-event-container {
     color: #211;
-    border: 3px solid black;
     border-radius: 5px;
-    box-shadow: 0 0 2px;
+    box-shadow: 2px 2px 3px black;
   }
 }
 
-.app-select {
-  margin-top: 1.5em;
+.helper-container {
+  display: flex;
 
-  // .label:hover {
-  //   // width: 300px !important;
-  //   border-bottom-color: blue;
+  .help-tooltip {
+    max-height: 1em;
+    margin-top: 4.5em;
+    margin-left: 0.6em;
 
-  //   &:hover {
-  //   }
-  // }
+    i {
+      font-size: 1.1rem;
+      color: $--color-accent;
+    }
+  }
 }
 
 .create-event-container {
   padding: 1rem 1.5rem;
   position: relative;
-  background: #60b038de;
+  background: $--color-create-event-container;
+
   .form-option {
     display: flex;
     flex-flow: row wrap;
     align-items: flex-end;
+    margin-top: 1.5em;
 
     i {
       margin-left: 0.5em;
+      margin-bottom: 0.2em;
       cursor: pointer;
       font-size: 1.4rem;
+
       &:active {
         transition: all 0.1ms ease-in-out;
         transform: scale(0.9);
         -webkit-transform: scale(0.9);
         -ms-transform: scale(0.9);
       }
+
       &:hover {
         color: $--color-accent;
       }
@@ -592,11 +634,14 @@ $--color-preguntas-text: #eee;
   .new-field {
     margin-left: 3em;
     margin-top: 1rem;
+    display: flex;
+    align-items: center;
 
     input {
       border: none;
-      border-bottom: 1px solid black;
-      padding: 0.2rem 0.5rem 0.2rem 0.3rem;
+      // border-bottom: 1px solid black;
+      border-radius: 4px;
+      padding: 0.3rem 0.5rem 0.3rem 0.3rem;
       min-width: 200px;
     }
 
@@ -610,11 +655,15 @@ $--color-preguntas-text: #eee;
         -webkit-transform: scale(0.9);
         -ms-transform: scale(0.9);
       }
+      &:hover {
+        color: $--color-accent;
+      }
     }
   }
 
   .app-button {
     margin-top: 1.6rem;
+    text-align: center;
   }
 }
 
@@ -624,7 +673,7 @@ $--color-preguntas-text: #eee;
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
-  background: #6fb8e5;
+  background: $--color-add-event-container;
 
   .input-container {
     .input > input {
@@ -633,18 +682,9 @@ $--color-preguntas-text: #eee;
     }
     .input-label {
       color: black;
-      background: #6fb8e5;
+      background: $--color-add-event-container;
     }
   }
-}
-
-.separator {
-  width: 400px;
-  // background: url("../../assets/logo.png");
-  // background-position: center;
-  // background-size: contain;
-  // background-repeat: no-repeat;
-  // background-blend-mode: $--color-accent;
 }
 
 .form-container {
@@ -652,10 +692,65 @@ $--color-preguntas-text: #eee;
   max-width: 70vw;
   position: relative;
   background: $--color-preguntas-container;
-  border-radius: 5px;
   margin: 0 auto;
-  padding: 1.8rem 2rem;
+  margin-bottom: 2rem;
+  padding: 1.2rem 2rem 1.8rem 2rem;
   border: 2px solid black;
+  border-radius: 5px;
+
+  > div:first-child {
+    display: flex;
+    width: 60%;
+    justify-content: space-around;
+    border-radius: 5px;
+    border: 1px solid white;
+    margin: 0 auto;
+    margin-bottom: 0.6rem;
+    padding: 0.8rem;
+    color: $--color-preguntas-container;
+
+    > span {
+      color: white;
+      // font-weight: bold;
+
+      :not(strong) {
+        color: green;
+      }
+
+      strong {
+        // font-style: none;
+        color: $--color-preguntas-container;
+        border-bottom: 1px solid $--color-preguntas-container;
+        background: white;
+        border-radius: 50%;
+        padding: 0.4rem;
+        margin-right: 0.2rem;
+      }
+    }
+  }
+
+  > div:nth-child(2) {
+    display: flex;
+    flex-wrap: wrap;
+
+    span {
+      margin-left: auto;
+      color: #eee;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+
+      p {
+        background: white;
+        color: $--color-preguntas-container;
+        border-radius: 80%;
+        padding: 5px;
+        text-align: center;
+        width: 25px;
+        margin-left: 4px;
+      }
+    }
+  }
 
   h2 {
     font-size: 25px;
@@ -677,6 +772,11 @@ $--color-preguntas-text: #eee;
   form {
     display: flex;
     flex-flow: row wrap;
+
+    small {
+      font-size: 1.1rem;
+      color: white;
+    }
   }
 }
 
@@ -694,7 +794,7 @@ $--color-preguntas-text: #eee;
       color: $--color-preguntas-text;
       background: transparent;
       border-radius: 4px;
-
+      font-size: 0.9rem;
       &:focus,
       &:not(:placeholder-shown) {
         & + .input-label {

@@ -10,21 +10,29 @@
     <EventFilters
       :filters-dropdown="filtersDropdown"
       @cerrar-filtros="filtersDropdown = !filtersDropdown"
+      @data="saveFilterData"
+      @header-data="saveHeaderData"
     >
     </EventFilters>
     <AppPaginatedTable
       :data="bddEventos"
-      title="Resultados de la búsqueda"
       :headerFields="camposHeader"
       :total-pages="Math.ceil(bddEventos.length / itemsPerPage)"
       :total="bddEventos.length"
       :perPage="itemsPerPage"
       :currentPage="currentPage"
       @page-changed="onPageChange"
-      @current-download="saveData"
+      @current-download="saveDownloadData"
       :selectCheckbox="true"
     >
     </AppPaginatedTable>
+    <h2>Resultados de la búsqueda</h2>
+    <ul class="event-name-list">
+      <li>Área: {{}}</li>
+      <li>Etapa: {{}}</li>
+      <li>Nivel: {{}}</li>
+      <li>Tema: {{}}</li>
+    </ul>
   </div>
 </template>
 
@@ -50,100 +58,102 @@ export default {
       currentPage: 1,
       itemsPerPage: 50,
       dataToDownload: [],
+      eventNames: [],
+      eventosFiltrados: [],
       bddEventos: [
-        {
-          enunciado:
-            "¿Qué propiedad de CSS es la más apropiada para poner en negrita la letra?",
-          respuesta1: "font-weight",
-          respuesta2: "No lo sé",
-          respuesta3: "Who knows",
-          respuesta4: ":D",
-          timeLimit: 60,
-          respuestaCorrecta: "1,2",
-          imgLink: "https://unsplash.com/photos/fHXP17AxOEk",
-          // revisado: false,
-          // fecha: new Date().toLocaleString()
-        },
-        {
-          enunciado: "¿Quién creó Mortadelo y Filemón?",
-          respuesta1: "Idk",
-          respuesta2: "No lo sé",
-          respuesta3: "Francisco Ibáñez",
-          respuesta4: ":D",
-          timeLimit: 120,
-          respuestaCorrecta: 2,
-        },
-        {
-          enunciado: "¿En qué año se descubrió América?",
-          respuesta1: "Idk",
-          respuesta2: "No lo sé",
-          respuesta3: "Who knows",
-          respuesta4: "1492",
-          timeLimit: 90,
-          respuestaCorrecta: 4,
-          imgLink: "https://unsplash.com/photos/fHXP17AxOEk",
-        },
-        {
-          enunciado: "¿En qué año se descubrió América?",
-          respuesta1: "Idk",
-          respuesta2: "No lo sé",
-          respuesta3: "Who knows",
-          respuesta4: "1492",
-          timeLimit: 90,
-          respuestaCorrecta: 4,
-          imgLink: "https://unsplash.com/photos/fHXP17AxOEk",
-        },
-        {
-          enunciado:
-            "¿En qué año se descubrió América? Vamos venga dímelo no podré vivir si no me lo dices venga vamos",
-          respuesta1: "Idk",
-          respuesta2: "No lo sé",
-          respuesta3: "Who knows",
-          respuesta4: "1492",
-          timeLimit: 90,
-          respuestaCorrecta: 4,
-          imgLink: "https://unsplash.com/photos/fHXP17AxOEk",
-        },
-        {
-          enunciado: "¿En qué año se descubrió América?",
-          respuesta1: "Idk",
-          respuesta2: "No lo sé",
-          respuesta3: "Who knows",
-          respuesta4: "1492",
-          timeLimit: 90,
-          respuestaCorrecta: 4,
-          imgLink: "https://unsplash.com/photos/fHXP17AxOEk",
-        },
-        {
-          enunciado: "¿En qué año se descubrió América?",
-          respuesta1: "Idk",
-          respuesta2: "No lo sé",
-          respuesta3: "Who knows",
-          respuesta4: "1492",
-          timeLimit: 90,
-          respuestaCorrecta: 4,
-          imgLink: "https://unsplash.com/photos/fHXP17AxOEk",
-        },
-        {
-          enunciado: "¿En qué año se descubrió América?",
-          respuesta1: "Idk",
-          respuesta2: "No lo sé",
-          respuesta3: "Who knows",
-          respuesta4: "1492",
-          timeLimit: 90,
-          respuestaCorrecta: 4,
-          imgLink: "https://unsplash.com/photos/fHXP17AxOEk",
-        },
-        {
-          enunciado: "¿En qué año se descubrió América?",
-          respuesta1: "Idk",
-          respuesta2: "No lo sé",
-          respuesta3: "Who knows",
-          respuesta4: "1492",
-          timeLimit: 90,
-          respuestaCorrecta: 4,
-          imgLink: "https://unsplash.com/photos/fHXP17AxOEk",
-        },
+        // {
+        //   enunciado:
+        //     "¿Qué propiedad de CSS es la más apropiada para poner en negrita la letra?",
+        //   respuesta1: "font-weight",
+        //   respuesta2: "No lo sé",
+        //   respuesta3: "Who knows",
+        //   respuesta4: ":D",
+        //   timeLimit: 60,
+        //   respuestaCorrecta: "1,2",
+        //   imgLink: "https://unsplash.com/photos/fHXP17AxOEk",
+        //   // revisado: false,
+        //   // fecha: new Date().toLocaleString()
+        // },
+        // {
+        //   enunciado: "¿Quién creó Mortadelo y Filemón?",
+        //   respuesta1: "Idk",
+        //   respuesta2: "No lo sé",
+        //   respuesta3: "Francisco Ibáñez",
+        //   respuesta4: ":D",
+        //   timeLimit: 120,
+        //   respuestaCorrecta: 2,
+        // },
+        // {
+        //   enunciado: "¿En qué año se descubrió América?",
+        //   respuesta1: "Idk",
+        //   respuesta2: "No lo sé",
+        //   respuesta3: "Who knows",
+        //   respuesta4: "1492",
+        //   timeLimit: 90,
+        //   respuestaCorrecta: 4,
+        //   imgLink: "https://unsplash.com/photos/fHXP17AxOEk",
+        // },
+        // {
+        //   enunciado: "¿En qué año se descubrió América?",
+        //   respuesta1: "Idk",
+        //   respuesta2: "No lo sé",
+        //   respuesta3: "Who knows",
+        //   respuesta4: "1492",
+        //   timeLimit: 90,
+        //   respuestaCorrecta: 4,
+        //   imgLink: "https://unsplash.com/photos/fHXP17AxOEk",
+        // },
+        // {
+        //   enunciado:
+        //     "¿En qué año se descubrió América? Vamos venga dímelo no podré vivir si no me lo dices venga vamos",
+        //   respuesta1: "Idk",
+        //   respuesta2: "No lo sé",
+        //   respuesta3: "Who knows",
+        //   respuesta4: "1492",
+        //   timeLimit: 90,
+        //   respuestaCorrecta: 4,
+        //   imgLink: "https://unsplash.com/photos/fHXP17AxOEk",
+        // },
+        // {
+        //   enunciado: "¿En qué año se descubrió América?",
+        //   respuesta1: "Idk",
+        //   respuesta2: "No lo sé",
+        //   respuesta3: "Who knows",
+        //   respuesta4: "1492",
+        //   timeLimit: 90,
+        //   respuestaCorrecta: 4,
+        //   imgLink: "https://unsplash.com/photos/fHXP17AxOEk",
+        // },
+        // {
+        //   enunciado: "¿En qué año se descubrió América?",
+        //   respuesta1: "Idk",
+        //   respuesta2: "No lo sé",
+        //   respuesta3: "Who knows",
+        //   respuesta4: "1492",
+        //   timeLimit: 90,
+        //   respuestaCorrecta: 4,
+        //   imgLink: "https://unsplash.com/photos/fHXP17AxOEk",
+        // },
+        // {
+        //   enunciado: "¿En qué año se descubrió América?",
+        //   respuesta1: "Idk",
+        //   respuesta2: "No lo sé",
+        //   respuesta3: "Who knows",
+        //   respuesta4: "1492",
+        //   timeLimit: 90,
+        //   respuestaCorrecta: 4,
+        //   imgLink: "https://unsplash.com/photos/fHXP17AxOEk",
+        // },
+        // {
+        //   enunciado: "¿En qué año se descubrió América?",
+        //   respuesta1: "Idk",
+        //   respuesta2: "No lo sé",
+        //   respuesta3: "Who knows",
+        //   respuesta4: "1492",
+        //   timeLimit: 90,
+        //   respuestaCorrecta: 4,
+        //   imgLink: "https://unsplash.com/photos/fHXP17AxOEk",
+        // },
       ],
     };
   },
@@ -153,7 +163,15 @@ export default {
   },
 
   methods: {
-    saveData(ev) {
+    saveFilterData(data) {
+      this.eventosFiltrados = data;
+      console.log(this.eventosFiltrados);
+    },
+    saveHeaderData(data) {
+      this.eventNames = data;
+      console.log(this.eventNames);
+    },
+    saveDownloadData(ev) {
       this.dataToDownload.push(ev);
       console.log("dataToDownload", this.dataToDownload);
     },

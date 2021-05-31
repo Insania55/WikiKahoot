@@ -152,19 +152,19 @@ export default {
 
       // ? Si no han pasado un array por parámetro, es porque se ha abierto el desplegable mediante click y utilizamos las options por defecto
       if (array.length === 0) array = this.options;
-      this.searchTerm = array[this.currentPointer].name;
+      this.searchTerm = array[this.currentPointer].text;
       this.currentPointer = -1;
       this.optionsDropdown = false;
       this.$emit("selected-value", this.searchTerm);
     },
-    async infiniteScroll({ isIntersecting, target }) {
-      if (isIntersecting) {
-        const ul = target.offsetParent;
-        const scrollTop = target.offsetParent.scrollTop;
-        await this.$nextTick();
-        ul.scrollTop = scrollTop;
-      }
-    },
+    // async infiniteScroll({ isIntersecting, target }) {
+    //   if (isIntersecting) {
+    //     const ul = target.offsetParent;
+    //     const scrollTop = target.offsetParent.scrollTop;
+    //     await this.$nextTick();
+    //     ul.scrollTop = scrollTop;
+    //   }
+    // },
     debounce(callback, timeout = 300) {
       let timerId;
       return (...args) => {
@@ -210,13 +210,14 @@ export default {
 $select-width: 400px;
 $--color-input: #fab700;
 $--color-label-unfocused: #d9d9d9;
-$--color-label-focused: $--color-input;
+$--color-label-focused: black;
 
 .app-select {
   .value-list {
     position: absolute;
     z-index: 555;
     width: 100%;
+    opacity: 1;
   }
 
   .label {
@@ -228,18 +229,18 @@ $--color-label-focused: $--color-input;
     width: $select-width;
     line-height: 28px;
     margin-left: 3rem;
-    border-bottom: 1px solid $--color-label-unfocused;
 
     input {
       // height: 30px;
       flex: 0 0 $select-width;
       margin-left: 10px;
+      border-radius: 3px;
     }
 
-    &:hover {
-      box-shadow: 0 1px 0px $--color-label-focused;
-      // border-bottom: 2px solid $--color-label-focused;
-    }
+    // &:hover {
+    //   box-shadow: 0 1px 0px $--color-label-focused;
+    //   border-bottom: 2px solid $--color-label-focused;
+    // }
   }
 
   .chosen-value {

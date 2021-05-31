@@ -6,13 +6,13 @@
         :class="{ 'filter-dropdown': filtersDropdown }"
       >
         <div>
-          <button @click="getEventoById" class="filter-search-button">
+          <button @click="getPreguntasById" class="filter-search-button">
             <i class="fas fa-search"></i>
           </button>
 
           <input
             v-model="searchData.codigo"
-            @keydown.enter="getEventoById"
+            @keydown.enter="getPreguntasById"
             class="filter-search-input"
             type="search"
             placeholder="Busca por código de evento"
@@ -107,7 +107,8 @@ export default {
         area: "",
         tema: "",
       },
-      filteredData: [],
+      eventHeaders: [],
+      filteredData: null,
     };
   },
   props: {
@@ -144,18 +145,16 @@ export default {
       //let data = this.searchData;
       console.log("Se ha intentado enviar el formulario");
     },
-    //TODO: Terminar esto
-    async getEventoById() {
+    async getEventHeaders() {
       try {
         let codigoEvento = this.searchData.codigo;
-        console.log(codigoEvento);
         if (codigoEvento !== undefined || codigoEvento !== "") {
           await api
-            .getEventoById(codigoEvento)
+            .getEventHeaders(codigoEvento)
             .then((response) => {
               if (response.status === 200 && response.data.length > 0) {
-                console.log(response.data);
-                // this.filteredData = selectTema;
+                this.eventHeaders = response.data.data;
+                this.$emit("header-data", this.eventHeaders);
               }
             })
             .catch((error) => {
@@ -168,15 +167,28 @@ export default {
         console.error(e);
       }
     },
-    // async getEvento(){
-    //   try {
-    //     if () {
-
-    //     }
-    //   } catch(error) {
-    //     console.error(error);
-    //   }
-    // },
+    async getPreguntasById() {
+      try {
+        let codigoEvento = this.searchData.codigo;
+        if (codigoEvento !== undefined && codigoEvento !== "") {
+          await api
+            .getPreguntas(codigoEvento)
+            .then((response) => {
+              if (response.status === 200 && response.data.length > 0) {
+                this.filteredData = response.data.data;
+                this.$emit("data", this.filteredData);
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        } else {
+          console.log("Código es undefined o null", codigoEvento);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    },
     cerrarFiltros() {
       this.$emit("cerrar-filtros");
     },
