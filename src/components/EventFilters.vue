@@ -6,13 +6,13 @@
         :class="{ 'filter-dropdown': filtersDropdown }"
       >
         <div>
-          <button @click="getPreguntasById" class="filter-search-button">
+          <button @click="handleData" class="filter-search-button">
             <i class="fas fa-search"></i>
           </button>
 
           <input
             v-model="searchData.codigo"
-            @keydown.enter="getPreguntasById"
+            @keydown.enter="handleData"
             class="filter-search-input"
             type="search"
             placeholder="Busca por código de evento"
@@ -145,15 +145,20 @@ export default {
       //let data = this.searchData;
       console.log("Se ha intentado enviar el formulario");
     },
+    async handleData() {
+      await this.getEventHeaders();
+      await this.getPreguntasById();
+    },
     async getEventHeaders() {
       try {
         let codigoEvento = this.searchData.codigo;
         if (codigoEvento !== undefined || codigoEvento !== "") {
           await api
-            .getEventHeaders(codigoEvento)
+            .getEventoById(codigoEvento)
             .then((response) => {
+              console.log(response);
               if (response.status === 200 && response.data.length > 0) {
-                this.eventHeaders = response.data.data;
+                this.eventHeaders = response.data;
                 this.$emit("header-data", this.eventHeaders);
               }
             })
@@ -175,7 +180,7 @@ export default {
             .getPreguntas(codigoEvento)
             .then((response) => {
               if (response.status === 200 && response.data.length > 0) {
-                this.filteredData = response.data.data;
+                this.filteredData = response.data;
                 this.$emit("data", this.filteredData);
               }
             })
@@ -185,8 +190,8 @@ export default {
         } else {
           console.log("Código es undefined o null", codigoEvento);
         }
-      } catch (e) {
-        console.error(e);
+      } catch (error) {
+        console.error(error);
       }
     },
     cerrarFiltros() {
@@ -209,9 +214,7 @@ export default {
 <style lang="scss">
 .event-filters {
   $--color-main-container: #bcc;
-  $--color-dark-font: #2c3e50;
-  $--select-border: #444;
-  $--select-arrow: $--select-border;
+  $--color-dark-font: #232d38;
   $filter-container-width: 32vw;
 
   .filter-search-container {
@@ -227,21 +230,22 @@ export default {
     .filter-search-form {
       position: relative;
       width: 350px;
-      min-height: 34px;
-      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+      min-height: 36px;
+      box-shadow: 0 2px 6px 0 rgba(32, 33, 36, 0.28);
       background: $--color-main-container;
       color: $--color-dark-font;
       border-radius: 5px;
       transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
 
-      // Lupa
+      // * Icono de lupa
       .filter-search-button {
         position: absolute;
-        top: 5px;
-        left: 9px;
+        top: 9px;
+        left: 8px;
         height: 18px;
         width: 20px;
-        padding: 0;
         border: none;
         background: none;
         cursor: pointer;
@@ -250,47 +254,39 @@ export default {
 
       .filter-search-input {
         position: absolute;
-        top: 5px;
-        left: 31px;
+        top: 9px;
+        left: 35px;
         font-size: 15px;
         background: none;
         color: rgb(15, 34, 34);
-        width: 92%;
-        height: 20px;
-        color: #001;
+        max-width: 250px;
+        width: 220px;
         border: none;
         appearance: none;
-        font-weight: 700;
+        font-weight: 500;
+        font-family: "Montserrat";
       }
 
-      // Botón de 'Abrir filtros'
+      // * Botón 'Filtros'
       .filter-search-options {
         position: absolute;
-        text-align: right;
         top: 5px;
         right: 9px;
 
         > button {
           position: relative;
-          display: inline-block;
           cursor: pointer;
-          padding: 3px 8px;
-          max-height: 30px;
+          padding: 4px 8px;
           background-color: rgba(0, 0, 0, 0.2);
-          border: 1px solid black;
-          border-radius: 5px;
-          box-shadow: 0px 1px 1px;
+          border: 1px solid rgba(0, 0, 0, 0.5);
+          border-radius: 6px;
+          font-family: "Montserrat";
+          font-weight: 600;
+          // color: #0b0d0f;
+          color: inherit;
         }
       }
     }
-  }
-
-  .fade-enter-active,
-  .fade-leave-active {
-    transition: opacity 0.5s;
-  }
-  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-    opacity: 0;
   }
 
   //* Filtros desplegados
@@ -299,9 +295,8 @@ export default {
   }
 
   .filter-options-container {
-    margin: 37px 20px 1rem;
+    margin-left: 1.2rem;
     justify-content: flex-start;
-    // width: 100%;
 
     .option-container {
       position: relative;
@@ -324,6 +319,15 @@ export default {
     :first-child {
       margin-right: 0.6em;
     }
+  }
+
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.5s;
+  }
+  .fade-enter,
+  .fade-leave-to {
+    opacity: 0;
   }
 }
 </style>

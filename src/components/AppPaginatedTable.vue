@@ -1,8 +1,7 @@
 <template>
   <div class="app-paginated-table">
-    <h2 class="table-title">{{ title }}</h2>
     <div v-if="selectCheckbox" class="seleccionar-todos-container">
-      <span class="seleccionar-todos-txt">Seleccionar fila</span>
+      <span>Seleccionar fila</span>
       <i class="fas fa-arrow-down"></i>
     </div>
     <div class="table-container">
@@ -33,18 +32,18 @@
           <div v-if="selectCheckbox" class="flex-row first">
             <input type="checkbox" />
           </div>
-          <div class="flex-row enunciado">{{ evento.enunciado }}</div>
-          <div class="flex-row r1">{{ evento.respuesta1 }}</div>
-          <div class="flex-row r2">{{ evento.respuesta2 }}</div>
-          <div class="flex-row r3">{{ evento.respuesta3 }}</div>
-          <div class="flex-row r4">{{ evento.respuesta4 }}</div>
+          <div class="flex-row enunciado">{{ evento.Pregunta }}</div>
+          <div class="flex-row r1">{{ evento.Respuesta1 }}</div>
+          <div class="flex-row r2">{{ evento.Respuesta2 }}</div>
+          <div class="flex-row r3">{{ evento.Respuesta3 }}</div>
+          <div class="flex-row r4">{{ evento.Respuesta4 }}</div>
           <div class="flex-row respuesta-correcta">
-            {{ evento.respuestaCorrecta }}
+            {{ evento.Correcta }}
           </div>
-          <div class="flex-row tiempo-limite">{{ evento.timeLimit }}</div>
+          <div class="flex-row tiempo-limite">{{ evento.Tiempo }}</div>
           <div class="flex-row img-link">
-            <a :href="evento.imgLink" target="_blank"
-              ><i v-if="evento.imgLink" class="far fa-image"></i
+            <a :href="evento.Imagen" target="_blank"
+              ><i v-if="evento.Imagen" class="far fa-image"></i
             ></a>
           </div>
         </div>
@@ -88,25 +87,26 @@
     <div v-if="selectCheckbox && !borrable" class="button-container">
       <!-- //TODO: Notificar al usuario de que se ha añadido el elemento a la descarga -->
       <AppButton @click="anyadirDescarga" normal
-        >Añadir a la descarga</AppButton
-      >
+        >Añadir a la descarga
+      </AppButton>
       <AppButton
         @click="descargarExcel"
         :disabled="downloadData.length === 0"
         :green="downloadData.length !== 0"
-        >Descargar selección</AppButton
-      >
+        >Descargar selección
+        <template #icon><i class="far fa-file-excel"></i></template>
+      </AppButton>
     </div>
     <div v-if="selectCheckbox && !borrable" class="button-container">
       <AppButton
-        href="/descargarPreguntas/consultarSeleccion"
+        href="/consultar/consultarSeleccion"
         :disabled="downloadData.length === 0"
         :normal="downloadData.length !== 0"
         >Editar descarga actual</AppButton
       >
     </div>
     <div v-if="borrable" class="button-container">
-      <AppButton href="/descargarPreguntas" normal>Volver atrás</AppButton>
+      <AppButton href="/consultar" normal>Volver atrás</AppButton>
       <AppButton @click="borrarSeleccion" normal>Borrar selección</AppButton>
     </div>
   </div>
@@ -125,10 +125,6 @@ export default {
     data: {
       type: Array,
       required: true,
-    },
-    title: {
-      type: String,
-      required: false,
     },
     headerFields: {
       type: Array,
@@ -186,7 +182,7 @@ export default {
         { label: "Answer 4 - max 75 characters", value: "respuesta4" },
         {
           label: "Time limit (sec) – 5, 10, 20, 30, 60, 90, 120, or 240 secs",
-          value: "timeLimit",
+          value: "tiempoLimite",
         },
         {
           label: "Correct answer(s) - choose at least one",
@@ -239,32 +235,32 @@ export default {
   },
   methods: {
     anyadirEvento(
-      enunciado,
-      respuesta1,
-      respuesta2,
-      respuesta3,
-      respuesta4,
-      respuestaCorrecta,
-      timeLimit,
-      imgLink,
+      Pregunta,
+      Respuesta1,
+      Respuesta2,
+      Respuesta3,
+      Respuesta4,
+      Correcta,
+      Tiempo,
+      Imagen,
       id
     ) {
       this.dataToDownload.push({
-        enunciado,
-        respuesta1,
-        respuesta2,
-        respuesta3,
-        respuesta4,
-        respuestaCorrecta,
-        timeLimit,
-        imgLink,
+        Pregunta,
+        Respuesta1,
+        Respuesta2,
+        Respuesta3,
+        Respuesta4,
+        Correcta,
+        Tiempo,
+        Imagen,
         id,
       });
     },
-    //TODO: Que muestre un mensaje confirmando que se ha añadido a la descarga (o no)
+    //TODO: Mostrar mensaje confirmando que se ha añadido a la descarga (o no)
     anyadirDescarga() {
       document.querySelectorAll(".flex-table.row").forEach((fila) => {
-        // ? Si el checkbox de dicha fila está en estado 'checked' significa que lo han seleccionado para descargar
+        // * Si el checkbox de dicha fila está en estado 'checked' significa que lo han seleccionado para descargar
         if (fila.firstChild.firstChild.checked === true) {
           this.anyadirEvento(
             fila.children[1].textContent.trim(),
@@ -280,7 +276,7 @@ export default {
         }
         this.$store.commit("newId");
       });
-      // ? Controlamos los datos descargados con Vuex para almacenarlos en el estado de la app
+      // * Controlamos los datos descargados con Vuex para almacenarlos en el estado de la app
       this.$store.commit("setDownloadedData", this.dataToDownload);
       this.selectAllCheckbox(false);
     },
@@ -291,10 +287,13 @@ export default {
         this.selectAllCheckbox(false);
         this.dataToDownload = [];
         this.$store.commit("setDownloadedData", []);
+      } else {
+        //TODO: Cambiar esto por mensaje de error
+        console.log("Todavía no hay datos para descargar");
       }
     },
     selectAllCheckbox(state = true) {
-      // ? Si se pasa true, se seleccionan todos, de lo contrario se desmarcan
+      // * Si se pasa true, se seleccionan todos, de lo contrario se desmarcan
       let checker = this.$refs.checkboxManager;
       let checkboxes = document.querySelectorAll(
         "input[type=checkbox]:first-child"
@@ -319,9 +318,9 @@ export default {
     },
     borrarSeleccion() {
       document.querySelectorAll(".flex-table.row").forEach((fila) => {
-        // ? Si el checkbox de dicha fila está en estado 'checked' significa que lo han seleccionado para descargar
+        // * Si el checkbox de dicha fila está en estado 'checked' significa que lo han seleccionado para descargar
         if (fila.firstChild.firstChild.checked === true) {
-          // ? Conseguimos el número del id de dicha fila  (Teniendo en cuenta que las id son row1, row4, row123...)
+          // * Conseguimos el número del id de dicha fila  (Teniendo en cuenta que las id son row1, row4, row123...)
           let id = fila.id.split("w")[1];
           this.$store.dispatch("deleteItem", id);
         }
@@ -330,23 +329,23 @@ export default {
     },
     onClickFirstPage() {
       this.$emit("page-changed", 1);
-      this.selectAllCheckbox(false);
+      if (this.selectCheckbox) this.selectAllCheckbox(false);
     },
     onClickLastPage() {
       this.$emit("page-changed", this.totalPages);
-      this.selectAllCheckbox(false);
+      if (this.selectCheckbox) this.selectAllCheckbox(false);
     },
     onClickNextPage() {
       this.$emit("page-changed", this.currentPage + 1);
-      this.selectAllCheckbox(false);
+      if (this.selectCheckbox) this.selectAllCheckbox(false);
     },
     onClickPreviousPage() {
       this.$emit("page-changed", this.currentPage - 1);
-      this.selectAllCheckbox(false);
+      if (this.selectCheckbox) this.selectAllCheckbox(false);
     },
     onClickPage(page) {
       this.$emit("page-changed", page);
-      this.selectAllCheckbox(false);
+      if (this.selectCheckbox) this.selectAllCheckbox(false);
     },
     isPageActive(page) {
       return this.currentPage === page;
@@ -361,33 +360,25 @@ $--color-table-header-border: #1565c0;
 $--color-table-border: #d9d9d9;
 $--color-row-bg: #f4f2f1;
 
-.hidden {
-  display: none;
-}
-
-.table-title {
-  text-align: center;
-}
-
 .table-container {
   display: block;
-  margin: 1em 3em 2em 3em;
-  max-width: 100vw;
+  margin: 0 3em;
+  margin-bottom: 5em;
+  max-width: 110vw;
+  // ! Tener en cuenta que la mayoría de margins/paddings son relativos al tamaño de fuente
   font-size: 0.8rem;
-  // width: 100%;
 }
 
 .seleccionar-todos-container {
   width: 100px;
   display: flex;
   flex-flow: column nowrap;
-  align-items: center;
   text-align: center;
-  margin-left: 0.45rem;
+  margin-left: 0.4rem;
   font-weight: bold;
   font-family: "Montserrat";
   font-size: 0.9em;
-  // justify-content: center;
+  margin-bottom: 10px;
 }
 
 .flex-table {
@@ -397,49 +388,54 @@ $--color-row-bg: #f4f2f1;
   transition: 0.5s;
 
   &.header {
+    font-size: 0.9rem;
+    line-height: 1rem;
+    font-family: Montserrat;
+
     .flex-row {
       display: flex;
       justify-content: center;
       align-items: center;
-
-      max-height: max-content;
-      font-weight: bold;
       text-align: center;
+
       color: white;
       background: $--color-table-header;
       border-color: $--color-table-header-border;
+      padding: 0.4rem;
+      font-weight: 500;
     }
-  }
-
-  &.row:nth-child(odd) .flex-row {
-    background: $--color-row-bg;
-  }
-
-  &:hover {
-    background: #f5f5f5;
-    transition: 500ms;
   }
 
   &.row {
     .flex-row {
-      display: grid;
-      place-items: center;
-      padding: 0.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
       background: #fff;
-      // white-space: nowrap;
-      // overflow: hidden;
-      // text-overflow: ellipsis;
-      // max-height: 4em;
-      .img-link {
-        font-size: 1.1rem;
+      font-family: "open sans";
+      max-height: 4em;
+      padding: 0.5rem;
+
+      &.img-link i {
+        font-size: 0.9rem;
       }
     }
+    &:nth-child(odd) .flex-row {
+      background: $--color-row-bg;
+    }
+
+    //TODO: Conseguir que este hover funcione
+    // &:hover {
+    //   transition: all 0.5s;
+    //   background-color: $--color-row-bg;
+    // }
   }
 }
 
-// En total tiene que sumar un 100% o cosas raras empiezan a suceder
+// * En total tiene que sumar un 100% o cosas raras empiezan a suceder
 .enunciado {
-  width: 35%;
+  width: 30%;
 }
 
 .r1,
@@ -459,7 +455,7 @@ $--color-row-bg: #f4f2f1;
 
 .respuesta-correcta,
 .tiempo-limite {
-  width: 4%;
+  width: 6.5%;
 }
 
 .flex-row {

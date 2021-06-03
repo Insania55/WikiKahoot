@@ -41,17 +41,17 @@ class pregunta extends conexion {
         $_respuestas = new respuestas;
         $datos = json_decode($json,true);
 
-        if(!isset($datos['Pregunta']) || !isset($datos['Respuesta1']) || !isset($datos['Respuesta2']) || !isset($datos['Tiempo']) || !isset($datos['Correcta'])){
+        if(!isset($datos['Pregunta']) || !isset($datos['FK_Eventos']) || !isset($datos['Respuesta1']) || !isset($datos['Respuesta2']) || !isset($datos['Tiempo']) || !isset($datos['Correcta'])){
             return $_respuestas->error_400();
         }else{
-            $this->nombre = $datos['Pregunta'];
-            if(isset($datos['FK_Eventos'])) {$this->fk_Eventos = $datos['FK_Eventos'];}
-            $this->nombre = $datos['Respuesta1'];
-            $this->nombre = $datos['Respuesta2'];
+            $this->pregunta = $datos['Pregunta'];
+            $this->fk_Eventos = $datos['FK_Eventos'];
+            $this->respuesta1 = $datos['Respuesta1'];
+            $this->respuesta2 = $datos['Respuesta2'];
             if(isset($datos['Respuesta3'])) {$this->respuesta3 = $datos['Respuesta3'];}
             if(isset($datos['Respuesta4'])) {$this->respuesta4 = $datos['Respuesta4'];}
-            $this->nombre = $datos['Tiempo'];
-            $this->nombre = $datos['Correcta'];
+            $this->tiempo = $datos['Tiempo'];
+            $this->correcta = $datos['Correcta'];
             if(isset($datos['Imagen'])) {$this->imagen = $datos['Imagen'];}
             if(isset($datos['Fecha'])) {$this->fecha = $datos['Fecha'];}
             $resp = $this->insertarPregunta();
@@ -68,10 +68,10 @@ class pregunta extends conexion {
     }
 
     private function insertarPregunta(){
-        $query = "INSERT INTO " . $this->tabla . " (`Id`, `FK_Eventos`, `Pregunta`, `Respuesta1`, `Respuesta2`, `Respuesta3`, `Respuesta4`, `Tiempo`, `Correcta`, `Imagen`, `Fecha`, `Revisado`) 
+        $query = "INSERT INTO " . $this->tabla . " (`FK_Eventos`, `Pregunta`, `Respuesta1`, `Respuesta2`, `Respuesta3`, `Respuesta4`, `Tiempo`, `Correcta`, `Imagen`, `Fecha`) 
         VALUES 
-        ('" . $this->idPregunta . "', '" . $this->fk_Eventos . "', '" . $this->pregunta . "', '" . $this->respuesta1 . "', '" . $this->respuesta2 . "', '" . $this->respuesta3 . "', '" . $this->respuesta4 . "', '" . $this->tiempo . "', '" . $this->correcta . "', '" . $this->imagen . "', '" . $this->fecha . "')";
-        //print_r($query);
+        ('" . $this->fk_Eventos . "', '" . $this->pregunta . "', '" . $this->respuesta1 . "', '" . $this->respuesta2 . "', '" . $this->respuesta3 . "', '" . $this->respuesta4 . "', '" . $this->tiempo . "', '" . $this->correcta . "', '" . $this->imagen . "', '" . $this->fecha . "')";
+        print_r($query);
         $resp = parent::nonQueryId($query);
         if($resp){
             return $resp;

@@ -10,29 +10,44 @@
     <EventFilters
       :filters-dropdown="filtersDropdown"
       @cerrar-filtros="filtersDropdown = !filtersDropdown"
-      @data="saveFilterData"
-      @header-data="saveHeaderData"
+      @data="getFilterData"
+      @header-data="getHeaderData"
     >
     </EventFilters>
+
+    <div class="event-names-container">
+      <h2>- Resultados de la búsqueda -</h2>
+      <ul v-if="eventosFiltrados.length !== 0">
+        <li>
+          <span>Etapa</span>
+          <p>{{ eventNames.nombreEtapa }}</p>
+        </li>
+        <li>
+          <span>Área</span>
+          <p>{{ eventNames.nombreArea }}</p>
+        </li>
+        <li>
+          <span>Nivel</span>
+          <p>{{ eventNames.nombreNivel }}</p>
+        </li>
+        <li>
+          <span>Tema</span>
+          <p>{{ eventNames.nombreTema }}</p>
+        </li>
+      </ul>
+    </div>
+
     <AppPaginatedTable
-      :data="bddEventos"
+      :data="eventosFiltrados"
       :headerFields="camposHeader"
-      :total-pages="Math.ceil(bddEventos.length / itemsPerPage)"
-      :total="bddEventos.length"
+      :total-pages="Math.ceil(eventosFiltrados.length / itemsPerPage)"
+      :total="eventosFiltrados.length"
       :perPage="itemsPerPage"
       :currentPage="currentPage"
       @page-changed="onPageChange"
-      @current-download="saveDownloadData"
       :selectCheckbox="true"
     >
     </AppPaginatedTable>
-    <h2>Resultados de la búsqueda</h2>
-    <ul class="event-name-list">
-      <li>Área: {{}}</li>
-      <li>Etapa: {{}}</li>
-      <li>Nivel: {{}}</li>
-      <li>Tema: {{}}</li>
-    </ul>
   </div>
 </template>
 
@@ -60,101 +75,6 @@ export default {
       dataToDownload: [],
       eventNames: [],
       eventosFiltrados: [],
-      bddEventos: [
-        // {
-        //   enunciado:
-        //     "¿Qué propiedad de CSS es la más apropiada para poner en negrita la letra?",
-        //   respuesta1: "font-weight",
-        //   respuesta2: "No lo sé",
-        //   respuesta3: "Who knows",
-        //   respuesta4: ":D",
-        //   timeLimit: 60,
-        //   respuestaCorrecta: "1,2",
-        //   imgLink: "https://unsplash.com/photos/fHXP17AxOEk",
-        //   // revisado: false,
-        //   // fecha: new Date().toLocaleString()
-        // },
-        // {
-        //   enunciado: "¿Quién creó Mortadelo y Filemón?",
-        //   respuesta1: "Idk",
-        //   respuesta2: "No lo sé",
-        //   respuesta3: "Francisco Ibáñez",
-        //   respuesta4: ":D",
-        //   timeLimit: 120,
-        //   respuestaCorrecta: 2,
-        // },
-        // {
-        //   enunciado: "¿En qué año se descubrió América?",
-        //   respuesta1: "Idk",
-        //   respuesta2: "No lo sé",
-        //   respuesta3: "Who knows",
-        //   respuesta4: "1492",
-        //   timeLimit: 90,
-        //   respuestaCorrecta: 4,
-        //   imgLink: "https://unsplash.com/photos/fHXP17AxOEk",
-        // },
-        // {
-        //   enunciado: "¿En qué año se descubrió América?",
-        //   respuesta1: "Idk",
-        //   respuesta2: "No lo sé",
-        //   respuesta3: "Who knows",
-        //   respuesta4: "1492",
-        //   timeLimit: 90,
-        //   respuestaCorrecta: 4,
-        //   imgLink: "https://unsplash.com/photos/fHXP17AxOEk",
-        // },
-        // {
-        //   enunciado:
-        //     "¿En qué año se descubrió América? Vamos venga dímelo no podré vivir si no me lo dices venga vamos",
-        //   respuesta1: "Idk",
-        //   respuesta2: "No lo sé",
-        //   respuesta3: "Who knows",
-        //   respuesta4: "1492",
-        //   timeLimit: 90,
-        //   respuestaCorrecta: 4,
-        //   imgLink: "https://unsplash.com/photos/fHXP17AxOEk",
-        // },
-        // {
-        //   enunciado: "¿En qué año se descubrió América?",
-        //   respuesta1: "Idk",
-        //   respuesta2: "No lo sé",
-        //   respuesta3: "Who knows",
-        //   respuesta4: "1492",
-        //   timeLimit: 90,
-        //   respuestaCorrecta: 4,
-        //   imgLink: "https://unsplash.com/photos/fHXP17AxOEk",
-        // },
-        // {
-        //   enunciado: "¿En qué año se descubrió América?",
-        //   respuesta1: "Idk",
-        //   respuesta2: "No lo sé",
-        //   respuesta3: "Who knows",
-        //   respuesta4: "1492",
-        //   timeLimit: 90,
-        //   respuestaCorrecta: 4,
-        //   imgLink: "https://unsplash.com/photos/fHXP17AxOEk",
-        // },
-        // {
-        //   enunciado: "¿En qué año se descubrió América?",
-        //   respuesta1: "Idk",
-        //   respuesta2: "No lo sé",
-        //   respuesta3: "Who knows",
-        //   respuesta4: "1492",
-        //   timeLimit: 90,
-        //   respuestaCorrecta: 4,
-        //   imgLink: "https://unsplash.com/photos/fHXP17AxOEk",
-        // },
-        // {
-        //   enunciado: "¿En qué año se descubrió América?",
-        //   respuesta1: "Idk",
-        //   respuesta2: "No lo sé",
-        //   respuesta3: "Who knows",
-        //   respuesta4: "1492",
-        //   timeLimit: 90,
-        //   respuestaCorrecta: 4,
-        //   imgLink: "https://unsplash.com/photos/fHXP17AxOEk",
-        // },
-      ],
     };
   },
   components: {
@@ -163,17 +83,13 @@ export default {
   },
 
   methods: {
-    saveFilterData(data) {
+    getFilterData(data) {
       this.eventosFiltrados = data;
       console.log(this.eventosFiltrados);
     },
-    saveHeaderData(data) {
-      this.eventNames = data;
+    getHeaderData(data) {
+      this.eventNames = data[0];
       console.log(this.eventNames);
-    },
-    saveDownloadData(ev) {
-      this.dataToDownload.push(ev);
-      console.log("dataToDownload", this.dataToDownload);
     },
     sendCurrentData() {
       console.log("Enviando datos", this.dataToDownload);
@@ -197,25 +113,54 @@ export default {
       padding: 0.5em 0;
     }
   }
-  background: #fff;
-  // &::before {
-  //   content: "";
-  //   // background-image: url("../../assets/logoBackground.png");
-  //   background-color: #fff;
-  //   background-image: linear-gradient(
-  //     0deg,
-  //     #61b038 20%,
-  //     #6fb8e5
-  //   ); // background-position: center;
-  //   // background-size: cover;
-  //   background-repeat: no-repeat;
-  //   position: absolute;
-  //   top: 0px;
-  //   right: 0px;
-  //   bottom: 0px;
-  //   left: 0px;
-  //   opacity: 0.4;
-  //   background-blend-mode: darken;
-  // }
+
+  .event-names-container {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    flex-direction: column;
+
+    h2 {
+      margin-bottom: 1rem;
+    }
+
+    ul {
+      max-width: 500px;
+      flex-grow: 1;
+      max-width: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 400px;
+      margin: 0 auto;
+      padding: 0.4rem;
+      border-radius: 5px;
+      box-shadow: 0 3px 6px 1px rgba(32, 33, 36, 0.28);
+
+      li {
+        display: flex;
+        flex-direction: column;
+        list-style: none;
+        width: 100px;
+        margin: 0.6rem;
+
+        p {
+          font-weight: 500;
+          font-family: "Open sans";
+        }
+      }
+    }
+
+    span {
+      font-family: "Open sans";
+      font-weight: bold;
+      font-size: 17px;
+      padding-top: 5px;
+      text-decoration: underline;
+      margin-bottom: 0.4rem;
+      color: #15527a;
+      border-radius: 12px;
+    }
+  }
 }
 </style>

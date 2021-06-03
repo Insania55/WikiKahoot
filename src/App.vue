@@ -22,9 +22,9 @@ $--color-light-bg: #fff;
 
 * {
   box-sizing: border-box;
-  outline: none;
-  margin: 0;
   padding: 0;
+  margin: 0;
+  outline: none;
 }
 
 body {
@@ -32,6 +32,7 @@ body {
   padding: 0;
   margin: 0;
   outline: none;
+  font-size: 16px;
 }
 
 #app {
@@ -42,5 +43,11 @@ body {
   box-sizing: border-box;
   outline: none;
   background-color: $--color-light-bg;
+
+  h2,
+  h3 {
+    font-family: "francois one";
+    letter-spacing: 1px;
+  }
 }
 </style>

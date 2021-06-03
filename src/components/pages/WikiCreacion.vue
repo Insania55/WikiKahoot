@@ -158,12 +158,11 @@
       </div>
       <form @submit.prevent="anyadirPregunta">
         <div class="input-container w-100">
-          <label class="input" for="enunciado">
+          <label class="input" for="Pregunta">
             <input
-              v-model="nuevaPregunta.enunciado"
-              pattern="^{1,120}$"
+              v-model="nuevaPregunta.Pregunta"
               required
-              name="enunciado"
+              name="Pregunta"
               type="text"
               placeholder="El enunciado de la pregunta"
             />
@@ -173,8 +172,7 @@
         <div class="input-container w-50">
           <label class="input" for="r1">
             <input
-              v-model="nuevaPregunta.r1"
-              pattern="^{1,75}$"
+              v-model="nuevaPregunta.Respuesta1"
               required
               name="r1"
               type="text"
@@ -186,8 +184,7 @@
         <div class="input-container w-50">
           <label class="input" for="r2">
             <input
-              v-model="nuevaPregunta.r2"
-              pattern="^{1,75}$"
+              v-model="nuevaPregunta.Respuesta2"
               required
               name="r2"
               type="text"
@@ -199,8 +196,7 @@
         <div class="input-container w-50">
           <label class="input" for="r3">
             <input
-              v-model="nuevaPregunta.r3"
-              pattern="^{1,75}$"
+              v-model="nuevaPregunta.Respuesta3"
               required
               name="r3"
               type="text"
@@ -212,8 +208,7 @@
         <div class="input-container w-50">
           <label class="input" for="r4">
             <input
-              v-model="nuevaPregunta.r4"
-              pattern="^{1,75}$"
+              v-model="nuevaPregunta.Respuesta4"
               name="r4"
               type="text"
               placeholder=""
@@ -223,10 +218,10 @@
         </div>
         <div class="input-container w-50">
           <!-- //TODO: Troquelar espacios antes de enviar-->
-          <label class="input" for="respuestaCorrecta">
+          <label class="input" for="Correcta">
             <input
-              v-model="nuevaPregunta.respuestaCorrecta"
-              name="respuestaCorrecta"
+              v-model="nuevaPregunta.Correcta"
+              name="Correcta"
               type="text"
               placeholder="1, 2.."
             />
@@ -236,13 +231,14 @@
         <div class="input-container w-50">
           <!-- //TODO: Que solo se permita introducir valores dentro de array de posibilidades-->
           <!-- //TODO: Parsear a número antes de enviar -->
-          <label class="input" for="tiempoLimite">
+          <label class="input" for="Tiempo">
             <input
-              v-model="nuevaPregunta.tiempoLimite"
+              v-model="nuevaPregunta.Tiempo"
               list="tiempo"
-              name="myBrowser"
+              name="Tiempo"
               placeholder="5, 10, 20, 30, 60, 90, 120, 240"
             />
+            <span class="input-label">Tiempo límite*</span>
             <datalist id="tiempo">
               <option value="5"></option>
               <option value="10"></option>
@@ -253,37 +249,39 @@
               <option value="120"></option>
               <option value="240"></option>
             </datalist>
-
-            <!-- <input
-              v-model="nuevaPregunta.tiempoLimite"
-              required
-              name="tiempoLimite"
-              type="text"
-              placeholder=""
-            /> -->
-            <span class="input-label">Tiempo límite*</span>
           </label>
         </div>
 
         <div class="input-container w-100">
-          <label class="input" for="imgLink">
+          <label class="input" for="Imagen">
             <input
               placeholder=""
-              v-model="nuevaPregunta.imgLink"
-              name="imgLink"
+              v-model="nuevaPregunta.Imagen"
+              name="Imagen"
               type="text"
             />
             <span class="input-label">Link hacia la imagen</span>
           </label>
         </div>
+        <div class="required-fields-tooltip w-100">
+          <small>Los campos con (*) son obligatorios</small>
+        </div>
+
         <div class="button-container">
-          <AppButton @click.prevent="saveData" green>Añadir pregunta</AppButton>
+          <AppButton @click.prevent="anyadirPregunta" green
+            >Añadir pregunta</AppButton
+          >
           <AppButton @click.prevent="resetForm" normal>Borrar</AppButton>
         </div>
-        <!-- <span><small>Los campos con (*) son obligatorios</small> </span> -->
       </form>
     </div>
 
+    <h2
+      v-if="preguntasAnyadidas.length !== 0"
+      class="preguntas-anyadidas-title"
+    >
+      - Preguntas añadidas al evento -
+    </h2>
     <!-- // * Tabla para cargar las preguntas que se vayan añadiendo al evento  -->
     <AppPaginatedTable
       v-if="preguntasAnyadidas.length !== 0"
@@ -323,24 +321,28 @@ export default {
       anyadirPreguntaForm: false,
       codigoEvento: "",
       codigoEventoNuevo: "",
-
       preguntasAnyadidas: [],
-      eventNames: null,
-      nuevaPregunta: {
-        enunciado: "",
-        r1: "",
-        r2: "",
-        r3: "",
-        r4: "",
-        respuestaCorrecta: "",
-        tiempoLimite: "",
-        imgLink: "",
+      eventNames: {
+        nombreEtapa: "",
+        nombreNivel: "",
+        nombreArea: "",
+        nombreTema: "",
       },
-      eventoCargado: true,
+      nuevaPregunta: {
+        Pregunta: "",
+        Respuesta1: "",
+        Respuesta2: "",
+        Respuesta3: "",
+        Respuesta4: "",
+        Correcta: "",
+        Tiempo: "",
+        Imagen: "",
+      },
+      // eventoCargado: true,
       currentPage: 1,
-      itemsPerPage: 5,
+      itemsPerPage: 20,
       camposHeader: [
-        "Enunciado",
+        "Pregunta",
         "Respuesta 1",
         "Respuesta 2",
         "Respuesta 3",
@@ -374,7 +376,6 @@ export default {
       if (this.dataToSend.tema !== "" && oldVal.value !== newVal.value) {
         this.dataToSend.tema = "";
         this.$refs.tema.searchTerm = "";
-        console.log("Tema alterado");
       }
     },
   },
@@ -383,9 +384,7 @@ export default {
       console.log(ev);
     },
     setData(data, target) {
-      console.log(data);
       this.dataToSend[target] = data;
-      console.log(this.dataToSend);
     },
     crearEvento() {
       // * Comprobamos que ningún campo esté vacío antes de enviar
@@ -402,9 +401,12 @@ export default {
           )
           .then((response) => response.data)
           .then((data) => {
-            console.log(data);
-            this.anyadirPreguntaForm = true;
+            this.eventNames.nombreEtapa = this.dataToSend.etapa.text;
+            this.eventNames.nombreNivel = this.dataToSend.nivel.text;
+            this.eventNames.nombreArea = this.dataToSend.area.text;
+            this.eventNames.nombreTema = this.dataToSend.tema.text;
             this.codigoEventoNuevo = data.result.CodEvento;
+            this.anyadirPreguntaForm = true;
           })
           .catch((error) => console.log(error));
       } else {
@@ -413,27 +415,7 @@ export default {
 
       console.log("Se ha intentado crear el evento", this.dataToSend);
     },
-    anyadirEvento(
-      enunciado,
-      r1,
-      r2,
-      r3,
-      r4,
-      respuestaCorrecta,
-      timeLimit,
-      imgLink
-    ) {
-      this.preguntasAnyadidas.push({
-        enunciado,
-        r1,
-        r2,
-        r3,
-        r4,
-        respuestaCorrecta,
-        timeLimit,
-        imgLink,
-      });
-    },
+    //TODO: La creación de nuevo campo se debería hacer al pulsar en "Crear evento" y no al guardar
     crearEtapa() {
       if (this.newEtapa.value !== "" || this.newEtapa.value !== undefined) {
         let etapa = {
@@ -444,10 +426,10 @@ export default {
             .createEtapa(etapa)
             .then((response) => response.data)
             .then((data) => {
-              console.log(data.status);
+              console.log(data);
             }).catch;
-        } catch (e) {
-          console.log(e);
+        } catch (error) {
+          console.error(error);
         }
         this.newEtapa.isAdded = !this.newEtapa.isAdded;
         this.$refs.etapa.searchTerm = this.newEtapa.value;
@@ -513,19 +495,52 @@ export default {
         this.$refs.tema.searchTerm = this.newTema.value;
       }
     },
+    anyadirPregunta() {
+      try {
+        let codigoEvento =
+          this.codigoEventoNuevo !== ""
+            ? this.codigoEventoNuevo
+            : this.codigoEvento;
+        codigoEvento = Number(codigoEvento);
+        let fecha = new Date().toISOString().slice(0, 10);
 
-    anyadirPregunta() {},
-
+        api
+          .anyadirPregunta(
+            codigoEvento,
+            this.nuevaPregunta.Pregunta,
+            this.nuevaPregunta.Respuesta1,
+            this.nuevaPregunta.Respuesta2,
+            this.nuevaPregunta.Respuesta3,
+            this.nuevaPregunta.Respuesta4,
+            this.nuevaPregunta.Correcta,
+            this.nuevaPregunta.Limite,
+            this.nuevaPregunta.Imagen,
+            fecha
+          )
+          .then((response) => {
+            console.log(response);
+            if (response.status === 200) {
+              this.preguntasAnyadidas.push(this.nuevaPregunta);
+            }
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    },
     buscarEvento() {
-      // TODO: Buscar evento en la base de datos cuando sea posible
-      // TODO: Comprobar que el dato que nos pasan es parseable a number
       if (this.codigoEvento === "") {
+        //TODO: Cambiar a notificación para el usuario
         console.log("Código vacío");
         return;
       }
       try {
+        // * Reseteamos el formulario y las preguntas añadidas, en caso de que se haya intentado buscar un evento nuevo tras ya haber buscado uno
+        this.resetForm();
+        this.preguntasAnyadidas = [];
+
         let eventID = Number(this.codigoEvento);
         if (eventID === NaN) {
+          //TODO: Cambiar a notificación para el usuario
           console.log("El código de evento pasado no es un número");
           return;
         }
@@ -533,7 +548,10 @@ export default {
           .getEventoById(eventID)
           .then((response) => response.data)
           .then((data) => {
-            this.eventNames = data[0];
+            this.eventNames.nombreEtapa = data[0].nombreEtapa;
+            this.eventNames.nombreNivel = data[0].nombreNivel;
+            this.eventNames.nombreArea = data[0].nombreArea;
+            this.eventNames.nombreTema = data[0].nombreTema;
             this.anyadirPreguntaForm = true;
           }).catch;
       } catch (error) {
@@ -543,14 +561,14 @@ export default {
     },
     resetForm() {
       this.nuevaPregunta = {
-        enunciado: "",
-        r1: "",
-        r2: "",
-        r3: "",
-        r4: "",
-        respuestaCorrecta: "",
-        tiempoLimite: "",
-        imgLink: "",
+        Pregunta: "",
+        Respuesta1: "",
+        Respuesta2: "",
+        Respuesta3: "",
+        Respuesta4: "",
+        Correcta: "",
+        Tiempo: "",
+        Imagen: "",
       };
     },
     onPageChange() {
@@ -562,7 +580,7 @@ export default {
 
 <style lang="scss" scoped>
 $--color-accent: #fab700;
-$--color-preguntas-container: #371679;
+$--color-preguntas-container: #431b93;
 $--color-preguntas-text: #eee;
 $--color-create-event-container: #069415;
 $--color-add-event-container: #1989d2;
@@ -687,40 +705,45 @@ $--color-add-event-container: #1989d2;
   }
 }
 
+.preguntas-anyadidas-title {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
 .form-container {
   width: 100%;
   max-width: 70vw;
   position: relative;
   background: $--color-preguntas-container;
-  margin: 0 auto;
-  margin-bottom: 2rem;
-  padding: 1.2rem 2rem 1.8rem 2rem;
+  margin: 4rem auto 2rem auto;
+  padding: 1.5rem;
+  padding-bottom: 0.5rem;
   border: 2px solid black;
   border-radius: 5px;
 
+  form {
+    display: flex;
+    flex-flow: row wrap;
+  }
+
+  // * Recuadro para mostrar el nombre de las columnas (etapa, nivel..) en el formulario
   > div:first-child {
     display: flex;
     width: 60%;
     justify-content: space-around;
-    border-radius: 5px;
-    border: 1px solid white;
+    // border-radius: 5px;
     margin: 0 auto;
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.5rem;
     padding: 0.8rem;
     color: $--color-preguntas-container;
+    // border-bottom: 1px solid white;
 
     > span {
       color: white;
       // font-weight: bold;
-
-      :not(strong) {
-        color: green;
-      }
-
       strong {
         // font-style: none;
         color: $--color-preguntas-container;
-        border-bottom: 1px solid $--color-preguntas-container;
         background: white;
         border-radius: 50%;
         padding: 0.4rem;
@@ -729,6 +752,7 @@ $--color-add-event-container: #1989d2;
     }
   }
 
+  // * Span para mostrar el código de evento
   > div:nth-child(2) {
     display: flex;
     flex-wrap: wrap;
@@ -746,7 +770,7 @@ $--color-add-event-container: #1989d2;
         border-radius: 80%;
         padding: 5px;
         text-align: center;
-        width: 25px;
+        width: 45px;
         margin-left: 4px;
       }
     }
@@ -768,15 +792,17 @@ $--color-add-event-container: #1989d2;
       background: linear-gradient(136deg, lightpink, violet);
     }
   }
-
-  form {
-    display: flex;
-    flex-flow: row wrap;
-
+  .required-fields-tooltip {
+    height: 40px;
     small {
-      font-size: 1.1rem;
       color: white;
+      font-weight: bold;
+      margin-left: 2rem;
     }
+  }
+
+  .button-container {
+    margin: 0.8rem 0 2rem 1.8rem;
   }
 }
 
@@ -795,6 +821,8 @@ $--color-add-event-container: #1989d2;
       background: transparent;
       border-radius: 4px;
       font-size: 0.9rem;
+      outline-style: none;
+
       &:focus,
       &:not(:placeholder-shown) {
         & + .input-label {
@@ -802,6 +830,10 @@ $--color-add-event-container: #1989d2;
           color: $--color-accent;
           transition-duration: 0.2s;
         }
+      }
+
+      &::placeholder {
+        font-family: "open sans";
       }
     }
   }
@@ -811,11 +843,12 @@ $--color-add-event-container: #1989d2;
     position: absolute;
     left: 0;
     top: 0;
-    padding: 6px 4px;
+    padding: 2px 4px;
     margin: 6px 8px;
     background: $--color-preguntas-container;
     white-space: nowrap;
     transform: translate(0, 0);
+    -webkit-transform-origin: 0;
     transform-origin: 0, 0;
     transition: transform 120ms ease-in;
     font-weight: bold;

@@ -11,7 +11,7 @@ const routes = [
 		component: Home,
 	},
 	{
-		path: '/descargarPreguntas',
+		path: '/consultar',
 		name: 'Descargar',
 		// route level code-splitting
 		// this generates a separate chunk (about.[hash].js) for this route
@@ -32,7 +32,7 @@ const routes = [
 		component: () => import('../components/pages/WikiHelp.vue'),
 	},
 	{
-		path: '/descargarPreguntas/consultarSeleccion',
+		path: '/consultar/consultarSeleccion',
 		name: 'Descarga actual',
 		component: () => import('../components/CurrentDownload.vue'),
 	},

@@ -14,8 +14,6 @@
       selectCheckbox
     >
     </AppPaginatedTable>
-    <!-- <button @click="getDowloadedData">Consolear</button> -->
-    <!-- //TODO: Botón para volver a la página anterior -->
   </div>
 </template>
 

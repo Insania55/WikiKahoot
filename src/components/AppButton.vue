@@ -16,6 +16,7 @@
       class="green"
     >
       <slot>Texto</slot>
+      <slot name="icon" class="icon"></slot>
     </button>
   </div>
 </template>
@@ -44,6 +45,7 @@ export default {
     cursor: pointer;
     font-family: "Montserrat", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: bold;
+    font-size: 0.8rem;
     text-align: center;
     min-height: 42px;
     min-width: 7.5rem;
@@ -93,6 +95,10 @@ export default {
       padding-bottom: 0px;
       box-shadow: none;
       background-color: rgb(32, 115, 10);
+    }
+
+    i {
+      font-size: 15px;
     }
   }
 

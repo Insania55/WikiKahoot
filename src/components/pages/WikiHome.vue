@@ -7,9 +7,11 @@
     </header>
     <div class="card-home-left">
       <div class="card-left">
-        <div class="card-title-crear">
-          <h3>CREA EVENTOS</h3>
-        </div>
+        <router-link to="/creacionEventos">
+          <div class="card-title-crear">
+            <h3>CREA EVENTOS</h3>
+          </div>
+        </router-link>
         <div class="card-content">
           <img
             class="img-right"
@@ -27,9 +29,11 @@
     </div>
     <div class="card-home-right">
       <div class="card-right">
-        <div class="card-title-consultar">
-          <h3>CONSULTA EVENTOS</h3>
-        </div>
+        <router-link to="/consultar">
+          <div class="card-title-consultar">
+            <h3>CONSULTA EVENTOS</h3>
+          </div>
+        </router-link>
         <div class="card-content">
           <img
             class="img-left"
@@ -66,9 +70,11 @@
     </div>
     <div class="card-home-right">
       <div class="card-right">
-        <div class="card-title-ayudar">
-          <h3>AYUDA</h3>
-        </div>
+        <router-link to="/ayuda">
+          <div class="card-title-ayudar">
+            <h3>AYUDA</h3>
+          </div>
+        </router-link>
         <div class="card-content">
           <img
             class="img-left"
@@ -113,6 +119,7 @@ export default {
       -moz-backdrop-filter: blur(1.5rem);
     }
   }
+
   .card-home-left {
     display: flex;
     width: 60%;
@@ -132,6 +139,7 @@ export default {
       }
     }
   }
+
   .card-home-right {
     display: flex;
     width: 60%;
@@ -152,12 +160,16 @@ export default {
       }
     }
   }
+
   .text {
     color: white;
     line-height: 2rem;
     display: block;
     padding: 2rem;
+    font-family: "open sans";
+    font-size: 1.1rem;
   }
+
   .card-title-crear {
     display: flex;
     justify-content: center;
@@ -172,6 +184,7 @@ export default {
     animation: cambiar-color-crear 2s;
     animation-fill-mode: forwards;
   }
+
   @keyframes cambiar-color-crear {
     from {
       background: #237e0b;
@@ -199,7 +212,7 @@ export default {
       background: #f25757;
     }
     to {
-      background: rgb(223, 205, 51);
+      background: #f8cc6a;
     }
   }
   .card-title-compartir {
@@ -257,6 +270,13 @@ export default {
     bottom: 30px;
     right: 30px;
     border-radius: 100%;
+  }
+  a {
+    text-decoration: none;
+    &:active,
+    &:visited {
+      color: white;
+    }
   }
 }
 </style>

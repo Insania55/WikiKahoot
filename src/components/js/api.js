@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const BASE_URL = 'http://localhost/WikiKahoot/backend';
-// Llamadas al backend
+// * Llamadas al backend
 
 export const getEtapas = () => {
 	return axios.get(`${BASE_URL}/etapa`);
@@ -17,10 +17,6 @@ export const getAreas = () => {
 
 export const getTemas = idArea => {
 	return axios.get(`${BASE_URL}/tema?idArea=${idArea}`);
-};
-
-export const getEventoById = eventID => {
-	return axios.get(`${BASE_URL}/evento?codEvento=${eventID}`);
 };
 
 export const createEtapa = nombre => {
@@ -69,12 +65,42 @@ export const createEvento = (idEtapa, idNivel, idArea, idTema, fecha) => {
 	});
 };
 
-export const getEventHeaders = codigoEvento => {
-	return axios.get(`${BASE_URL}/pregunta?codEvento=${codigoEvento}`);
+export const anyadirPregunta = (
+	FK_Eventos,
+	Pregunta,
+	Respuesta1,
+	Respuesta2,
+	Respuesta3,
+	Respuesta4,
+	Correcta,
+	Tiempo,
+	Imagen,
+	Fecha
+) => {
+	return axios({
+		method: 'post',
+		url: `${BASE_URL}/pregunta`,
+		data: {
+			FK_Eventos,
+			Pregunta,
+			Respuesta1,
+			Respuesta2,
+			Respuesta3,
+			Respuesta4,
+			Correcta,
+			Imagen,
+			Tiempo,
+			Fecha,
+		},
+	});
+};
+
+export const getEventoById = eventID => {
+	return axios.get(`${BASE_URL}/evento?codEvento=${eventID}`);
 };
 
 export const getPreguntas = codigoEvento => {
-	return axios.get(`${BASE_URL}/pregunta?codEvento=6`);
+	return axios.get(`${BASE_URL}/pregunta?codEvento=${codigoEvento}`);
 };
 
 export const getEventoByTwoEntries = (str, str2, id, id2) => {

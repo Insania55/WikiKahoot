@@ -112,7 +112,6 @@ export default {
     },
     onChange() {
       //TODO: Conseguir que funcione el debouncing
-      let funsion = function () {};
       this.debounce(this.$emit("input", this.searchTerm));
       if (this.isAsync) {
         this.isLoading = true;
@@ -217,7 +216,7 @@ $--color-label-focused: black;
     position: absolute;
     z-index: 555;
     width: 100%;
-    opacity: 1;
+    // opacity: 1;
   }
 
   .label {
@@ -228,13 +227,12 @@ $--color-label-focused: black;
     justify-content: flex-end;
     width: $select-width;
     line-height: 28px;
-    margin-left: 3rem;
+    margin-left: 3.5rem;
 
     input {
-      // height: 30px;
       flex: 0 0 $select-width;
       margin-left: 10px;
-      border-radius: 3px;
+      border-radius: 2px;
     }
 
     // &:hover {
@@ -244,10 +242,9 @@ $--color-label-focused: black;
   }
 
   .chosen-value {
-    font-family: "Open sans" sans-serif;
-    // font-weight: 600;
+    font-family: "Open sans";
     font-size: 0.9rem;
-    // background-color: #fafcfd;
+    // font-weight: 600;
     border: 3px solid transparent;
     -webkit-transition: 0.3s ease-in-out;
     transition: 0.3s ease-in-out;
@@ -266,7 +263,6 @@ $--color-label-focused: black;
   .chosen-value.open {
     box-shadow: 0px 5px 8px 0px rgba(0, 0, 0, 0.2);
     outline: 0;
-    // background-color: $--color-input;
     color: #000;
     max-width: $select-width;
   }
@@ -277,30 +273,31 @@ $--color-label-focused: black;
 
   .value-list {
     list-style: none;
-    // margin-top: 2rem;
     box-shadow: 0px 5px 8px 0px rgba(0, 0, 0, 0.2);
     overflow: hidden;
     max-height: 0;
-    max-width: 401px;
+    max-width: $select-width;
     -webkit-transition: 0.3s ease-in-out;
     transition: 0.3s ease-in-out;
     border: 1px solid black;
   }
+
   .value-list.open {
-    margin-left: 2.95em;
+    margin-left: 3.5rem;
     max-height: 320px;
     overflow: auto;
     overflow-x: hidden;
+    background-color: #eee;
+    padding: 0;
   }
   .value-list li {
     position: relative;
     height: 4rem;
-    width: 400px;
     background-color: #fafcfd;
-    padding: 1rem;
+    padding: 1rem 0.4rem;
     font-size: 1.1rem;
-    display: -webkit-box;
-    display: -ms-flexbox;
+    // display: -webkit-box;
+    // display: -ms-flexbox;
     display: flex;
     -webkit-box-align: center;
     -ms-flex-align: center;
@@ -308,17 +305,15 @@ $--color-label-focused: black;
     cursor: pointer;
     -webkit-transition: background-color 0.3s;
     transition: background-color 0.3s;
-    opacity: 1;
   }
   .value-list li:hover,
   .is-active {
     background-color: $--color-input !important;
   }
   .value-list li.closed {
-    max-height: 0;
     overflow: hidden;
+    max-height: 0;
     padding: 0;
-    opacity: 0;
   }
 }
 </style>
