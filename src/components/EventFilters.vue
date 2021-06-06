@@ -26,7 +26,7 @@
 
           <!-- // * Desplegable de filtros -->
           <div class="filter-options-container" v-if="filtersDropdown">
-            <form @submit.prevent="saveData">
+            <form @submit.prevent="saveFilteredData">
               <div class="option-container">
                 <AppSelect
                   ref="etapa"
@@ -77,9 +77,14 @@
                 ></AppSelect>
               </div>
               <div class="button-container">
-                <AppButton @click.prevent="saveData" green>Buscar</AppButton>
+                <AppButton @click.prevent="saveFilteredData" green
+                  >Buscar</AppButton
+                >
                 <AppButton @click.prevent="resetInputs" normal
                   >Borrar</AppButton
+                >
+                <AppButton @click.prevent="opcionesParaFiltrar" normal
+                  >Probar</AppButton
                 >
               </div>
             </form>
@@ -107,6 +112,7 @@ export default {
         area: "",
         tema: "",
       },
+
       eventHeaders: [],
       filteredData: null,
     };
@@ -137,11 +143,24 @@ export default {
     },
   },
   methods: {
+    opcionesParaFiltrar: function () {
+      let optionsFiltro = [
+        { nombre: "FK_IdEtapa", value: this.searchData.etapa.value },
+        { nombre: "FK_IdNivel", value: this.searchData.nivel.value },
+        { nombre: "FK_IdArea", value: this.searchData.area.value },
+        { nombre: "FK_IdTema", value: this.searchData.tema.value },
+      ];
+      let nani = optionsFiltro.filter((item) => {
+        return item.value;
+      });
+
+      console.log(nani);
+    },
     setData(value, target) {
       this.searchData[target] = value;
     },
     //TODO: Generar llamada al backend consiguiendo los datos filtrados asociados al valor de la búsqueda
-    saveData() {
+    saveFilteredData() {
       //let data = this.searchData;
       console.log("Se ha intentado enviar el formulario");
     },

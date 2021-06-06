@@ -20,25 +20,30 @@
       <ul v-if="eventosFiltrados.length !== 0">
         <li>
           <span>Etapa</span>
-          <p>{{ eventNames.nombreEtapa }}</p>
+          <span>{{ eventNames.nombreEtapa }}</span>
         </li>
         <li>
           <span>Área</span>
-          <p>{{ eventNames.nombreArea }}</p>
+          <span>{{ eventNames.nombreArea }}</span>
         </li>
         <li>
           <span>Nivel</span>
-          <p>{{ eventNames.nombreNivel }}</p>
+          <span>{{ eventNames.nombreNivel }}</span>
         </li>
         <li>
           <span>Tema</span>
-          <p>{{ eventNames.nombreTema }}</p>
+          <span>{{ eventNames.nombreTema }}</span>
+        </li>
+
+        <li>
+          <span>Nº Preguntas</span>
+          <span>{{ eventosFiltrados.length }}</span>
         </li>
       </ul>
     </div>
 
     <AppPaginatedTable
-      :data="eventosFiltrados"
+      :data="eventosFiltrados.length === 0 ? filteredData : eventosFiltrados"
       :headerFields="camposHeader"
       :total-pages="Math.ceil(eventosFiltrados.length / itemsPerPage)"
       :total="eventosFiltrados.length"
@@ -48,6 +53,8 @@
       :selectCheckbox="true"
     >
     </AppPaginatedTable>
+    <span class="ir-arriba" @click="$store.commit('scrollToView', $event)">
+    </span>
   </div>
 </template>
 
@@ -81,15 +88,19 @@ export default {
     EventFilters,
     AppPaginatedTable,
   },
-
+  computed: {
+    filteredData() {
+      return this.$store.state.filteredData;
+    },
+  },
   methods: {
     getFilterData(data) {
       this.eventosFiltrados = data;
-      console.log(this.eventosFiltrados);
+      // * Mantenemos en la store los datos filtrados
+      this.$store.commit("saveFilteredData", data);
     },
     getHeaderData(data) {
       this.eventNames = data[0];
-      console.log(this.eventNames);
     },
     sendCurrentData() {
       console.log("Enviando datos", this.dataToDownload);
@@ -125,41 +136,31 @@ export default {
     }
 
     ul {
-      max-width: 500px;
-      flex-grow: 1;
-      max-width: 400px;
+      width: 40vw;
+      font-family: "Open sans";
       display: flex;
       align-items: center;
-      justify-content: center;
-      width: 400px;
+      justify-content: space-around;
+      box-shadow: 0 3px 6px 1px rgba(32, 33, 36, 0.28);
+      border-radius: 5px;
       margin: 0 auto;
       padding: 0.4rem;
-      border-radius: 5px;
-      box-shadow: 0 3px 6px 1px rgba(32, 33, 36, 0.28);
 
       li {
         display: flex;
         flex-direction: column;
-        list-style: none;
-        width: 100px;
+        list-style-type: none;
         margin: 0.6rem;
-
-        p {
-          font-weight: 500;
-          font-family: "Open sans";
-        }
       }
     }
 
-    span {
-      font-family: "Open sans";
+    span:first-child {
       font-weight: bold;
       font-size: 17px;
       padding-top: 5px;
       text-decoration: underline;
       margin-bottom: 0.4rem;
       color: #15527a;
-      border-radius: 12px;
     }
   }
 }

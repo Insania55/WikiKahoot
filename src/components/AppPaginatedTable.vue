@@ -175,18 +175,18 @@ export default {
         "img-link",
       ],
       spreadsheetColumns: [
-        { label: "Question", value: "enunciado" },
-        { label: "Answer 1 - max 75 characters", value: "respuesta1" },
-        { label: "Answer 2 - max 75 characters", value: "respuesta2" },
-        { label: "Answer 3 - max 75 characters", value: "respuesta3" },
-        { label: "Answer 4 - max 75 characters", value: "respuesta4" },
+        { label: "Question", value: "Pregunta" },
+        { label: "Answer 1 - max 75 characters", value: "Respuesta1" },
+        { label: "Answer 2 - max 75 characters", value: "Respuesta2" },
+        { label: "Answer 3 - max 75 characters", value: "Respuesta3" },
+        { label: "Answer 4 - max 75 characters", value: "Respuesta4" },
         {
           label: "Time limit (sec) – 5, 10, 20, 30, 60, 90, 120, or 240 secs",
-          value: "tiempoLimite",
+          value: "Tiempo",
         },
         {
           label: "Correct answer(s) - choose at least one",
-          value: "respuestaCorrecta",
+          value: "Correcta",
         },
       ],
     };
@@ -273,11 +273,14 @@ export default {
             fila.children[8].firstChild.href,
             this.$store.state.downloadItemId
           );
+          // * Aumentamos un id para asignar a cada elemento una ID diferente
+          this.$store.commit("newId");
         }
-        this.$store.commit("newId");
       });
-      // * Controlamos los datos descargados con Vuex para almacenarlos en el estado de la app
-      this.$store.commit("setDownloadedData", this.dataToDownload);
+      // * Controlamos los datos descargados con Vuex almacenados en el estado global de la app
+      this.dataToDownload.forEach((element) => {
+        this.$store.commit("addToDownloadedData", element);
+      });
       this.selectAllCheckbox(false);
     },
 
@@ -371,13 +374,13 @@ $--color-row-bg: #f4f2f1;
 
 .seleccionar-todos-container {
   width: 100px;
-  display: flex;
-  flex-flow: column nowrap;
-  text-align: center;
-  margin-left: 0.4rem;
-  font-weight: bold;
   font-family: "Montserrat";
   font-size: 0.9em;
+  font-weight: bold;
+  text-align: center;
+  display: flex;
+  flex-flow: column nowrap;
+  margin-left: 0.5rem;
   margin-bottom: 10px;
 }
 
@@ -414,8 +417,7 @@ $--color-row-bg: #f4f2f1;
       text-align: center;
       background: #fff;
       font-family: "open sans";
-      max-height: 4em;
-      padding: 0.5rem;
+      padding: 0.8rem;
 
       &.img-link i {
         font-size: 0.9rem;
@@ -433,7 +435,7 @@ $--color-row-bg: #f4f2f1;
   }
 }
 
-// * En total tiene que sumar un 100% o cosas raras empiezan a suceder
+// * En total tiene que sumar un 100% o el layout no cuadrará (está feo pero es lo que hay)
 .enunciado {
   width: 30%;
 }
@@ -459,7 +461,6 @@ $--color-row-bg: #f4f2f1;
 }
 
 .flex-row {
-  padding: 0.5em;
   border-right: solid 1px $--color-table-border;
   border-bottom: solid 1px $--color-table-border;
 }

@@ -49,5 +49,17 @@ body {
     font-family: "francois one";
     letter-spacing: 1px;
   }
+
+  .ir-arriba {
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    background-image: url("./assets/icono-subir.png");
+    background-size: 100% 100%;
+    cursor: pointer;
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    border-radius: 100%;
+  }
 }
 </style>

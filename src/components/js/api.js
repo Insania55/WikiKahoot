@@ -108,3 +108,15 @@ export const getEventoByTwoEntries = (str, str2, id, id2) => {
 		`${BASE_URL}/evento?str=${str}?id=${id}?str2=${str2}?id2=${id2}`
 	);
 };
+
+export const getEventoByThreeEntries = (str, str2, id, id2) => {
+	return axios.get(
+		`${BASE_URL}/evento?str=${str}?id=${id}?str2=${str2}?id2=${id2}`
+	);
+};
+
+export const getEventoByFourEntries = (id, id2, id3, id4) => {
+	return axios.get(
+		`${BASE_URL}/evento?id1=${id}?id2=${id2}?id3=${id3}?id4=${id4}`
+	);
+};

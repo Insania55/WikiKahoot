@@ -46,20 +46,6 @@ export default {};
     margin: 0 4px;
     text-decoration: none;
 
-    // &:after {
-    //   transition: all 0.5s;
-    //   position: absolute;
-    //   bottom: 0;
-    //   left: 0;
-    //   right: 0;
-    //   margin: auto;
-    //   width: 0%;
-    //   content: ".";
-    //   color: transparent;
-    //   background: #aaa;
-    //   height: 1px;
-    // }
-
     &:hover {
       color: #42b983;
       transition: all 0.2s;

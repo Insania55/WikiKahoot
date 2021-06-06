@@ -1,7 +1,7 @@
 <template>
   <div class="wiki-creacion-page">
     <main class="main-container">
-      <!-- // * Contenedor para crear un nuevo evento -->
+      <!-- // ? Contenedor para crear un nuevo evento -->
       <div class="helper-container">
         <div class="create-event-container">
           <h2>Crea un nuevo evento</h2>
@@ -31,7 +31,6 @@
                 <i @click="crearEtapa" class="far fa-save"></i>
               </div>
             </transition>
-
             <div class="form-option">
               <AppSelect
                 ref="nivel"
@@ -56,7 +55,6 @@
                 <i @click="crearNivel" class="far fa-save"></i>
               </div>
             </transition>
-
             <div class="form-option">
               <AppSelect
                 ref="area"
@@ -81,7 +79,6 @@
                 <i @click="crearArea" class="far fa-save"></i>
               </div>
             </transition>
-
             <div class="form-option">
               <AppSelect
                 ref="tema"
@@ -122,6 +119,7 @@
         </div>
       </div>
 
+      <!-- // ? Contenedor para buscar un evento por ID -->
       <div class="add-event-container">
         <h2>Añade preguntas a un evento existente</h2>
         <div class="input-container w-100">
@@ -140,12 +138,42 @@
       </div>
     </main>
 
+    <h2 v-if="anyadirPreguntaForm" class="form-title">Formulario de adición</h2>
     <div v-if="anyadirPreguntaForm" class="form-container">
-      <div>
+      <!-- <div>
         <span><strong>Etapa</strong> {{ eventNames.nombreEtapa }}</span>
         <span><strong>Nivel</strong> {{ eventNames.nombreNivel }}</span>
         <span><strong>Área</strong> {{ eventNames.nombreArea }}</span>
         <span><strong>Tema</strong> {{ eventNames.nombreTema }}</span>
+        <span
+          ><strong>Nº Preguntas</strong> {{ numeroPreguntasAsociadas }}</span
+        >
+      </div>
+      -->
+      <div class="event-names-container">
+        <ul>
+          <li>
+            <span>Etapa</span>
+            <span>{{ eventNames.nombreEtapa }}</span>
+          </li>
+          <li>
+            <span>Área</span>
+            <span>{{ eventNames.nombreArea }}</span>
+          </li>
+          <li>
+            <span>Nivel</span>
+            <span>{{ eventNames.nombreNivel }}</span>
+          </li>
+          <li>
+            <span>Tema</span>
+            <span>{{ eventNames.nombreTema }}</span>
+          </li>
+
+          <li>
+            <span>Nº Preguntas</span>
+            <span>{{ numeroPreguntasAsociadas }}</span>
+          </li>
+        </ul>
       </div>
       <div>
         <h2>Añadir preguntas</h2>
@@ -294,6 +322,8 @@
       @page-changed="onPageChange"
     >
     </AppPaginatedTable>
+    <span class="ir-arriba" @click="$store.commit('scrollToView', $event)">
+    </span>
   </div>
 </template>
 
@@ -328,6 +358,7 @@ export default {
         nombreArea: "",
         nombreTema: "",
       },
+      numeroPreguntasAsociadas: "",
       nuevaPregunta: {
         Pregunta: "",
         Respuesta1: "",
@@ -338,7 +369,6 @@ export default {
         Tiempo: "",
         Imagen: "",
       },
-      // eventoCargado: true,
       currentPage: 1,
       itemsPerPage: 20,
       camposHeader: [
@@ -415,7 +445,7 @@ export default {
 
       console.log("Se ha intentado crear el evento", this.dataToSend);
     },
-    //TODO: La creación de nuevo campo se debería hacer al pulsar en "Crear evento" y no al guardar
+    //TODO: El request al backend se debería hacer al pulsar en "Crear evento" y no al guardar
     crearEtapa() {
       if (this.newEtapa.value !== "" || this.newEtapa.value !== undefined) {
         let etapa = {
@@ -521,6 +551,7 @@ export default {
             console.log(response);
             if (response.status === 200) {
               this.preguntasAnyadidas.push(this.nuevaPregunta);
+              this.resetForm();
             }
           });
       } catch (error) {
@@ -533,17 +564,17 @@ export default {
         console.log("Código vacío");
         return;
       }
+      if (Number(this.codigoEvento) === NaN) {
+        console.log("El código de evento pasado no es un número");
+        return;
+      }
+
       try {
         // * Reseteamos el formulario y las preguntas añadidas, en caso de que se haya intentado buscar un evento nuevo tras ya haber buscado uno
         this.resetForm();
         this.preguntasAnyadidas = [];
-
         let eventID = Number(this.codigoEvento);
-        if (eventID === NaN) {
-          //TODO: Cambiar a notificación para el usuario
-          console.log("El código de evento pasado no es un número");
-          return;
-        }
+
         api
           .getEventoById(eventID)
           .then((response) => response.data)
@@ -553,7 +584,14 @@ export default {
             this.eventNames.nombreArea = data[0].nombreArea;
             this.eventNames.nombreTema = data[0].nombreTema;
             this.anyadirPreguntaForm = true;
-          }).catch;
+          });
+
+        api
+          .getPreguntas(eventID)
+          .then((response) => response.data)
+          .then((data) => {
+            this.numeroPreguntasAsociadas = data.length;
+          });
       } catch (error) {
         console.error(error);
       }
@@ -609,8 +647,9 @@ $--color-add-event-container: #1989d2;
 
   .help-tooltip {
     max-height: 1em;
-    margin-top: 4.5em;
-    margin-left: 0.6em;
+    margin-top: 4.8rem;
+    margin-left: 0.6rem;
+    font-family: "open sans";
 
     i {
       font-size: 1.1rem;
@@ -650,7 +689,7 @@ $--color-add-event-container: #1989d2;
   }
 
   .new-field {
-    margin-left: 3em;
+    margin-left: 3.5rem;
     margin-top: 1rem;
     display: flex;
     align-items: center;
@@ -708,6 +747,13 @@ $--color-add-event-container: #1989d2;
 .preguntas-anyadidas-title {
   text-align: center;
   margin-bottom: 1rem;
+  font-size: 1.7rem;
+}
+
+.form-title {
+  text-align: center;
+  font-size: 1.9rem;
+  margin-top: 3rem;
 }
 
 .form-container {
@@ -715,7 +761,7 @@ $--color-add-event-container: #1989d2;
   max-width: 70vw;
   position: relative;
   background: $--color-preguntas-container;
-  margin: 4rem auto 2rem auto;
+  margin: 1rem auto 2rem auto;
   padding: 1.5rem;
   padding-bottom: 0.5rem;
   border: 2px solid black;
@@ -727,30 +773,30 @@ $--color-add-event-container: #1989d2;
   }
 
   // * Recuadro para mostrar el nombre de las columnas (etapa, nivel..) en el formulario
-  > div:first-child {
-    display: flex;
-    width: 60%;
-    justify-content: space-around;
-    // border-radius: 5px;
-    margin: 0 auto;
-    margin-bottom: 0.5rem;
-    padding: 0.8rem;
-    color: $--color-preguntas-container;
-    // border-bottom: 1px solid white;
+  // > div:first-child {
+  //   display: flex;
+  //   width: 70%;
+  //   justify-content: space-around;
+  //   margin: 0 auto;
+  //   margin-bottom: 0.5rem;
+  //   padding: 0.8rem;
+  //   color: $--color-preguntas-container;
+  //   // border-radius: 5px;
+  //   // border-bottom: 1px solid white;
 
-    > span {
-      color: white;
-      // font-weight: bold;
-      strong {
-        // font-style: none;
-        color: $--color-preguntas-container;
-        background: white;
-        border-radius: 50%;
-        padding: 0.4rem;
-        margin-right: 0.2rem;
-      }
-    }
-  }
+  //   > span {
+  //     color: white;
+  //     // font-weight: bold;
+  //     strong {
+  //       // font-style: none;
+  //       color: $--color-preguntas-container;
+  //       background: white;
+  //       border-radius: 50%;
+  //       padding: 0.4rem;
+  //       margin-right: 0.2rem;
+  //     }
+  //   }
+  // }
 
   // * Span para mostrar el código de evento
   > div:nth-child(2) {
@@ -776,8 +822,47 @@ $--color-add-event-container: #1989d2;
     }
   }
 
+  .event-names-container {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    flex-direction: column;
+
+    h2 {
+      margin-bottom: 1rem;
+    }
+
+    ul {
+      background-color: rgba(255, 255, 255, 0.9);
+      width: 40vw;
+      font-family: "Open sans";
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      border: 1px solid black;
+      border-radius: 5px;
+      margin: 0 auto;
+
+      li {
+        display: flex;
+        flex-direction: column;
+        list-style-type: none;
+        margin: 0.6rem;
+      }
+    }
+
+    span:first-child {
+      font-weight: bolder;
+      font-size: 18px;
+      padding-top: 5px;
+      text-decoration: underline;
+      margin-bottom: 3px;
+      color: #2c3e50;
+    }
+  }
+
   h2 {
-    font-size: 25px;
+    font-size: 26px;
     position: relative;
     color: #eee;
 

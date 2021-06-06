@@ -183,6 +183,8 @@
         </div>
       </div>
     </div>
+    <span class="ir-arriba" @click="$store.commit('scrollToView', $event)">
+    </span>
   </div>
 </template>
 

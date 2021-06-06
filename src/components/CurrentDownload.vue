@@ -14,6 +14,8 @@
       selectCheckbox
     >
     </AppPaginatedTable>
+    <span class="ir-arriba" @click="$store.commit('scrollToView', $event)">
+    </span>
   </div>
 </template>
 

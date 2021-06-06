@@ -13,6 +13,7 @@ export default new Vuex.Store({
 	],
 	state: {
 		downloadData: [],
+		filteredData: [],
 		downloadItemId: 0,
 		optionsEtapa: [],
 		optionsNivel: [],
@@ -22,6 +23,9 @@ export default new Vuex.Store({
 	mutations: {
 		setDownloadedData(state, data) {
 			state.downloadData = data;
+		},
+		addToDownloadedData(state, data) {
+			state.downloadData.push(data);
 		},
 		setEtapas(state, data) {
 			state.optionsEtapa = data;
@@ -35,8 +39,16 @@ export default new Vuex.Store({
 		setTemas(state, data) {
 			state.optionsTema = data;
 		},
+		saveFilteredData(state, data) {
+			state.filteredData = data;
+		},
 		newId(state) {
 			state.downloadItemId++;
+		},
+		scrollToView(ev) {
+			ev.target.onclick = document.documentElement.scrollIntoView({
+				behavior: 'smooth',
+			});
 		},
 	},
 	actions: {

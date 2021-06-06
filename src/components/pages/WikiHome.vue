@@ -89,7 +89,8 @@
         </div>
       </div>
     </div>
-    <span class="ir-arriba"> </span>
+    <span class="ir-arriba" @click="$store.commit('scrollToView', $event)">
+    </span>
   </div>
 </template>
 
@@ -260,17 +261,6 @@ export default {
     }
   }
 
-  .ir-arriba {
-    filter: drop-shadow(8px 8px 10px gray);
-    padding: 20px;
-    background-image: url("../../assets/icono-subir.png");
-    background-size: 100% 100%;
-    cursor: pointer;
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    border-radius: 100%;
-  }
   a {
     text-decoration: none;
     &:active,
