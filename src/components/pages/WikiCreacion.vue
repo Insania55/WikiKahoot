@@ -492,14 +492,9 @@ export default {
     },
     crearEvento() {
       // * Comprobamos que ningún campo esté vacío antes de enviar
-
       // !Object.values(this.dataToSend).some((el) => el === "")
-      if (
-        Object.keys(this.dataToSend.etapa) === "" ||
-        Object.keys(this.dataToSend.nivel) === "" ||
-        Object.keys(this.dataToSend.area) === "" ||
-        Object.keys(this.dataToSend.tema) === ""
-      ) {
+      // console.log(Object.keys(this.dataToSend.nivel));
+      if (Object.keys(this.dataToSend.nivel).length !== 0) {
         let fecha = new Date().toISOString().slice(0, 10);
         api
           .createEvento(

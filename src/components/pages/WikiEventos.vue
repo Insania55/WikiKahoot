@@ -138,7 +138,6 @@ export default {
   },
   methods: {
     getFilterData(data) {
-      //TODO: Comprobar si nos llega un error para mostrarlo con la función
       if (Array.isArray(data)) {
         this.eventosFiltrados = data;
         // * Mantenemos en la store los datos filtrados

@@ -22,33 +22,33 @@
           {{ header }}
         </div>
       </div>
-      <transition-group name="table-fade">
-        <!-- // * 'Id' es el id del evento en la BDD, 'id' lo generamos nosotros para identificar al row y poder borrarlo después -->
-        <div
-          class="flex-table row"
-          v-for="evento in paginatedData"
-          :key="evento.Pregunta + Date.now()"
-          :id="'row' + evento.id"
-        >
-          <div v-if="selectCheckbox" class="flex-row first">
-            <input type="checkbox" />
-          </div>
-          <div class="flex-row enunciado">{{ evento.Pregunta }}</div>
-          <div class="flex-row r1">{{ evento.Respuesta1 }}</div>
-          <div class="flex-row r2">{{ evento.Respuesta2 }}</div>
-          <div class="flex-row r3">{{ evento.Respuesta3 }}</div>
-          <div class="flex-row r4">{{ evento.Respuesta4 }}</div>
-          <div class="flex-row respuesta-correcta">
-            {{ evento.Correcta }}
-          </div>
-          <div class="flex-row tiempo-limite">{{ evento.Tiempo }}</div>
-          <div class="flex-row img-link">
-            <a :href="evento.Imagen" target="_blank"
-              ><i v-if="evento.Imagen" class="far fa-image"></i
-            ></a>
-          </div>
+      <!-- <transition-group name="table-fade"> -->
+      <!-- // * 'Id' es el id del evento en la BDD, 'id' lo generamos nosotros para identificar al row y poder borrarlo después -->
+      <div
+        class="flex-table row"
+        v-for="evento in paginatedData"
+        :key="evento.Pregunta + Date.now()"
+        :id="'row' + evento.id"
+      >
+        <div v-if="selectCheckbox" class="flex-row first">
+          <input type="checkbox" />
         </div>
-      </transition-group>
+        <div class="flex-row enunciado">{{ evento.Pregunta }}</div>
+        <div class="flex-row r1">{{ evento.Respuesta1 }}</div>
+        <div class="flex-row r2">{{ evento.Respuesta2 }}</div>
+        <div class="flex-row r3">{{ evento.Respuesta3 }}</div>
+        <div class="flex-row r4">{{ evento.Respuesta4 }}</div>
+        <div class="flex-row respuesta-correcta">
+          {{ evento.Correcta }}
+        </div>
+        <div class="flex-row tiempo-limite">{{ evento.Tiempo }}</div>
+        <div class="flex-row img-link">
+          <a :href="evento.Imagen" target="_blank"
+            ><i v-if="evento.Imagen" class="far fa-image"></i
+          ></a>
+        </div>
+      </div>
+      <!-- </transition-group> -->
       <ul class="pagination" v-if="data.length > 5 || currentPage > 1">
         <li class="pagination-item">
           <button @click="onClickFirstPage" :disabled="isInFirstPage">
@@ -301,6 +301,7 @@ export default {
         this.$store.commit("addToDownloadedData", element);
       });
       this.selectAllCheckbox(false);
+      this.notifySuccess("Preguntas añadidas a la descarga.");
     },
 
     descargarExcel() {
