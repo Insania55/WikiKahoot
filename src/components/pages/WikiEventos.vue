@@ -16,37 +16,61 @@
     </EventFilters>
 
     <div class="event-names-container">
-      <h2>- Resultados de la búsqueda -</h2>
-      <ul v-if="eventosFiltrados.length !== 0">
+      <h2>Resultados de la búsqueda</h2>
+      <ul v-if="eventosFiltrados.length !== 0 || filteredData.length !== 0">
         <li>
           <span>Etapa</span>
-          <span>{{ eventNames.nombreEtapa }}</span>
-        </li>
-        <li>
-          <span>Área</span>
-          <span>{{ eventNames.nombreArea }}</span>
+          <span>{{
+            eventNames.length !== 0
+              ? eventNames.nombreEtapa
+              : filteredHeaders.nombreEtapa
+          }}</span>
         </li>
         <li>
           <span>Nivel</span>
-          <span>{{ eventNames.nombreNivel }}</span>
+          <span>{{
+            eventNames.length !== 0
+              ? eventNames.nombreNivel
+              : filteredHeaders.nombreNivel
+          }}</span>
+        </li>
+        <li>
+          <span>Área</span>
+          <span>{{
+            eventNames.length !== 0
+              ? eventNames.nombreArea
+              : filteredHeaders.nombreArea
+          }}</span>
         </li>
         <li>
           <span>Tema</span>
-          <span>{{ eventNames.nombreTema }}</span>
+          <span>{{
+            eventNames.length !== 0
+              ? eventNames.nombreTema
+              : filteredHeaders.nombreTema
+          }}</span>
         </li>
-
         <li>
           <span>Nº Preguntas</span>
-          <span>{{ eventosFiltrados.length }}</span>
+          <span>{{ eventosFiltrados.length || filteredData.length }}</span>
         </li>
       </ul>
     </div>
 
+    <!-- // * Si no tenemos datos en eventosFiltrados, conseguimos los datos de la store (si los hay) -->
     <AppPaginatedTable
       :data="eventosFiltrados.length === 0 ? filteredData : eventosFiltrados"
       :headerFields="camposHeader"
-      :total-pages="Math.ceil(eventosFiltrados.length / itemsPerPage)"
-      :total="eventosFiltrados.length"
+      :total-pages="
+        eventosFiltrados.length === 0
+          ? Math.ceil(filteredData.length / itemsPerPage)
+          : Math.ceil(eventosFiltrados.length / itemsPerPage)
+      "
+      :total="
+        eventosFiltrados.length === 0
+          ? filteredData.length
+          : eventosFiltrados.length
+      "
       :perPage="itemsPerPage"
       :currentPage="currentPage"
       @page-changed="onPageChange"
@@ -55,6 +79,18 @@
     </AppPaginatedTable>
     <span class="ir-arriba" @click="$store.commit('scrollToView', $event)">
     </span>
+
+    <transition name="diluir">
+      <div v-if="error" class="alert-box error">
+        <span><i class="fas fa-times"></i>{{ errorMsg }}</span>
+      </div>
+    </transition>
+
+    <transition name="diluir">
+      <div v-if="success" class="alert-box success">
+        <span><i class="fas fa-check"></i>{{ successMsg }}</span>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -82,6 +118,10 @@ export default {
       dataToDownload: [],
       eventNames: [],
       eventosFiltrados: [],
+      error: false,
+      success: false,
+      errorMsg: "",
+      successMsg: "",
     };
   },
   components: {
@@ -92,24 +132,47 @@ export default {
     filteredData() {
       return this.$store.state.filteredData;
     },
+    filteredHeaders() {
+      return this.$store.state.filteredHeaders;
+    },
   },
   methods: {
     getFilterData(data) {
-      this.eventosFiltrados = data;
-      // * Mantenemos en la store los datos filtrados
-      this.$store.commit("saveFilteredData", data);
+      //TODO: Comprobar si nos llega un error para mostrarlo con la función
+      if (Array.isArray(data)) {
+        this.eventosFiltrados = data;
+        // * Mantenemos en la store los datos filtrados
+        this.$store.commit("saveFilteredData", data);
+        // * Al recibir datos de búsqueda, reseteamos el índice del paginador
+        this.currentPage = 1;
+      } else {
+        this.notifyError(data.msg);
+      }
     },
     getHeaderData(data) {
-      this.eventNames = data[0];
-    },
-    sendCurrentData() {
-      console.log("Enviando datos", this.dataToDownload);
+      this.eventNames = data;
+      // * Mantenemos en la store los headers filtrados
+      this.$store.commit("saveFilteredHeaders", data);
     },
     onPageChange(page) {
       this.currentPage = page;
     },
     openFiltersDropdown() {
       this.filtersDropdown = !this.filtersDropdown;
+    },
+    notifyError(msg) {
+      this.errorMsg = msg;
+      this.error = true;
+      this.timeout = setTimeout(() => {
+        this.error = false;
+      }, 1500);
+    },
+    notifySuccess(msg) {
+      this.successMsg = msg;
+      this.success = true;
+      this.timeout = setTimeout(() => {
+        this.success = false;
+      }, 1500);
     },
   },
 };
@@ -139,7 +202,6 @@ export default {
       width: 40vw;
       font-family: "Open sans";
       display: flex;
-      align-items: center;
       justify-content: space-around;
       box-shadow: 0 3px 6px 1px rgba(32, 33, 36, 0.28);
       border-radius: 5px;
@@ -162,6 +224,51 @@ export default {
       margin-bottom: 0.4rem;
       color: #15527a;
     }
+  }
+
+  .alert-box {
+    position: fixed;
+    bottom: 0;
+    right: 5rem;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    margin: 1rem;
+    padding: 1rem 3rem;
+    font-family: "open sans";
+    font-weight: 500;
+
+    i {
+      margin-right: 6px;
+    }
+
+    &.error {
+      color: #a94442;
+      background-color: #f2dede;
+      border-color: #ebccd1;
+    }
+
+    &.success {
+      color: #3c763d;
+      background-color: #dff0d8;
+      border-color: #d6e9c6;
+    }
+
+    &.warning {
+      color: #8a6d3b;
+      background-color: #fcf8e3;
+      border-color: #faebcc;
+    }
+  }
+
+  .diluir-enter-active {
+    transition: opacity 0.3s ease;
+  }
+  .diluir-leave-active {
+    transition: opacity 0.7s ease;
+  }
+  .diluir-enter, .diluir-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    opacity: 0;
+    // transition: all 0.4s ease-in;
   }
 }
 </style>

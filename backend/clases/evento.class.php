@@ -161,7 +161,6 @@ class eventos extends conexion {
         public function buscarEvento4Entradas($id, $id2, $id3, $id4){
         //$query = "SELECT * FROM " . $this->tabla . " WHERE ev.FK_IdArea = '" . $id . "' AND FK_IdNivel = '" . $id2 . "' AND ev.FK_IdEtapa = '" . $id3 . "' AND ev.FK_IdTema = '" . $id4 . "'";
         $query = "SELECT ev.codeventos, e.Nombre as nombreEtapa, n.Nombre as nombreNivel, a.Nombre as nombreArea, t.Nombre as nombreTema FROM eventos ev, etapa e, nivel n, area a, tema t WHERE ev.FK_IdEtapa = e.IdEtapa AND ev.FK_IdNivel = n.IdNivel AND ev.FK_IdArea = a.IdArea AND ev.FK_IdTema = t.IdTema AND t.FK_IdArea = a.IdArea AND ev.FK_IdArea = '" . $id . "' AND ev.FK_IdNivel = '" . $id2 . "' AND ev.FK_IdEtapa = '" . $id3 . "' AND ev.FK_IdTema = '" . $id4 . "'";
-        print_r($query);
         return parent::obtenerDatos($query);
         }
 }

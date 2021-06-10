@@ -11,7 +11,7 @@
                 ref="etapa"
                 label="Etapa"
                 :options="this.$store.state.optionsEtapa"
-                @input="consolear"
+                @input="setData($event, 'etapa')"
                 @selected-value="setData($event, 'etapa')"
                 placeholder="Elegir etapa"
               ></AppSelect>
@@ -25,7 +25,7 @@
               <div v-if="newEtapa.isAdded" class="new-field">
                 <input
                   placeholder="Añade una nueva etapa..."
-                  v-model="newEtapa.value"
+                  v-model="newEtapa.text"
                   type="text"
                 />
                 <i @click="crearEtapa" class="far fa-save"></i>
@@ -36,7 +36,7 @@
                 ref="nivel"
                 label="Nivel"
                 :options="this.$store.state.optionsNivel"
-                @input="consolear"
+                @input="setData($event, 'nivel')"
                 @selected-value="setData($event, 'nivel')"
                 placeholder="Elegir nivel"
               ></AppSelect>
@@ -49,7 +49,7 @@
               <div v-if="newNivel.isAdded" class="new-field">
                 <input
                   placeholder="Añade un nuevo nivel..."
-                  v-model="newNivel.value"
+                  v-model="newNivel.text"
                   type="text"
                 />
                 <i @click="crearNivel" class="far fa-save"></i>
@@ -63,6 +63,7 @@
                 @input="setData($event, 'area')"
                 @selected-value="setData($event, 'area')"
                 placeholder="Elegir área"
+                @submit.prevent
               ></AppSelect>
               <i
                 @click="newArea.isAdded = !newArea.isAdded"
@@ -73,8 +74,9 @@
               <div v-if="newArea.isAdded" class="new-field">
                 <input
                   placeholder="Añade una nueva area..."
-                  v-model="newArea.value"
+                  v-model="newArea.text"
                   type="text"
+                  @keydown.enter="crearArea"
                 />
                 <i @click="crearArea" class="far fa-save"></i>
               </div>
@@ -85,7 +87,7 @@
                 label="Tema"
                 :options="this.$store.state.optionsTema"
                 @selected-value="setData($event, 'tema')"
-                @input="consolear"
+                @input="setData($event, 'tema')"
                 :placeholder="
                   !isTemaCargado ? 'Selecciona primero un área' : 'Elegir tema'
                 "
@@ -100,7 +102,7 @@
               <div v-if="newTema.isAdded" class="new-field">
                 <input
                   placeholder="Añade un nuevo tema..."
-                  v-model="newTema.value"
+                  v-model="newTema.text"
                   type="text"
                 />
                 <i @click="crearTema" class="far fa-save"></i>
@@ -140,16 +142,6 @@
 
     <h2 v-if="anyadirPreguntaForm" class="form-title">Formulario de adición</h2>
     <div v-if="anyadirPreguntaForm" class="form-container">
-      <!-- <div>
-        <span><strong>Etapa</strong> {{ eventNames.nombreEtapa }}</span>
-        <span><strong>Nivel</strong> {{ eventNames.nombreNivel }}</span>
-        <span><strong>Área</strong> {{ eventNames.nombreArea }}</span>
-        <span><strong>Tema</strong> {{ eventNames.nombreTema }}</span>
-        <span
-          ><strong>Nº Preguntas</strong> {{ numeroPreguntasAsociadas }}</span
-        >
-      </div>
-      -->
       <div class="event-names-container">
         <ul>
           <li>
@@ -157,12 +149,12 @@
             <span>{{ eventNames.nombreEtapa }}</span>
           </li>
           <li>
-            <span>Área</span>
-            <span>{{ eventNames.nombreArea }}</span>
-          </li>
-          <li>
             <span>Nivel</span>
             <span>{{ eventNames.nombreNivel }}</span>
+          </li>
+          <li>
+            <span>Área</span>
+            <span>{{ eventNames.nombreArea }}</span>
           </li>
           <li>
             <span>Tema</span>
@@ -180,7 +172,9 @@
         <span
           >Código de evento
           <p>
-            {{ codigoEventoNuevo !== "" ? codigoEventoNuevo : codigoEvento }}
+            {{
+              codigoEventoNuevo !== "" ? codigoEventoNuevo : codigoEventoCopia
+            }}
           </p>
         </span>
       </div>
@@ -192,7 +186,7 @@
               required
               name="Pregunta"
               type="text"
-              placeholder="El enunciado de la pregunta"
+              placeholder="¿En qué año se creó la World Wide Web?"
             />
             <span class="input-label">Enunciado*</span>
           </label>
@@ -204,7 +198,7 @@
               required
               name="r1"
               type="text"
-              placeholder=""
+              placeholder="Primera respuesta"
             />
             <span class="input-label">Respuesta 1*</span>
           </label>
@@ -216,7 +210,7 @@
               required
               name="r2"
               type="text"
-              placeholder=""
+              placeholder="Segunda respuesta"
             />
             <span class="input-label">Respuesta 2*</span>
           </label>
@@ -225,10 +219,9 @@
           <label class="input" for="r3">
             <input
               v-model="nuevaPregunta.Respuesta3"
-              required
               name="r3"
               type="text"
-              placeholder=""
+              placeholder="Tercera respuesta"
             />
             <span class="input-label">Respuesta 3</span>
           </label>
@@ -239,7 +232,7 @@
               v-model="nuevaPregunta.Respuesta4"
               name="r4"
               type="text"
-              placeholder=""
+              placeholder="Cuarta respuesta"
             />
             <span class="input-label">Respuesta 4</span>
           </label>
@@ -249,6 +242,7 @@
           <label class="input" for="Correcta">
             <input
               v-model="nuevaPregunta.Correcta"
+              required
               name="Correcta"
               type="text"
               placeholder="1, 2.."
@@ -262,6 +256,7 @@
           <label class="input" for="Tiempo">
             <input
               v-model="nuevaPregunta.Tiempo"
+              required
               list="tiempo"
               name="Tiempo"
               placeholder="5, 10, 20, 30, 60, 90, 120, 240"
@@ -283,7 +278,7 @@
         <div class="input-container w-100">
           <label class="input" for="Imagen">
             <input
-              placeholder=""
+              placeholder="https://ejemploImagen.com"
               v-model="nuevaPregunta.Imagen"
               name="Imagen"
               type="text"
@@ -294,7 +289,6 @@
         <div class="required-fields-tooltip w-100">
           <small>Los campos con (*) son obligatorios</small>
         </div>
-
         <div class="button-container">
           <AppButton @click.prevent="anyadirPregunta" green
             >Añadir pregunta</AppButton
@@ -308,7 +302,8 @@
       v-if="preguntasAnyadidas.length !== 0"
       class="preguntas-anyadidas-title"
     >
-      - Preguntas añadidas al evento -
+      - Preguntas añadidas al evento código
+      {{ codigoEventoNuevo !== "" ? codigoEventoNuevo : codigoEventoCopia }}-
     </h2>
     <!-- // * Tabla para cargar las preguntas que se vayan añadiendo al evento  -->
     <AppPaginatedTable
@@ -324,6 +319,19 @@
     </AppPaginatedTable>
     <span class="ir-arriba" @click="$store.commit('scrollToView', $event)">
     </span>
+
+    <!-- //TODO: Se debería trasladar a componente -->
+    <transition name="fade">
+      <div v-if="error" class="alert-box error">
+        <span><i class="fas fa-times"></i>{{ errorMsg }}</span>
+      </div>
+    </transition>
+
+    <transition name="fade">
+      <div v-if="success" class="alert-box success">
+        <span><i class="fas fa-check"></i>{{ successMsg }}</span>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -339,18 +347,25 @@ export default {
   data() {
     return {
       dataToSend: {
-        etapa: "",
-        nivel: "",
-        area: "",
-        tema: "",
+        etapa: {},
+        nivel: {},
+        area: {},
+        tema: {},
       },
-      newEtapa: { isAdded: false, value: "" },
-      newNivel: { isAdded: false, value: "" },
-      newArea: { isAdded: false, value: "" },
-      newTema: { isAdded: false, value: "" },
       anyadirPreguntaForm: false,
       codigoEvento: "",
+      // * Utilizo esta variable para almacenar el valor del codigo y usarlo de forma que no cambie constantemente por el v-model
+      codigoEventoCopia: "",
       codigoEventoNuevo: "",
+      error: false,
+      success: false,
+      errorMsg: "",
+      successMsg: "",
+      timeout: null,
+      newEtapa: { isAdded: false, text: "" },
+      newNivel: { isAdded: false, text: "" },
+      newArea: { isAdded: false, text: "" },
+      newTema: { isAdded: false, text: "" },
       preguntasAnyadidas: [],
       eventNames: {
         nombreEtapa: "",
@@ -385,17 +400,27 @@ export default {
   },
   computed: {
     isTemaCargado: function () {
-      return this.dataToSend.area !== "" && this.dataToSend.area !== undefined;
+      return (
+        this.dataToSend.area.text !== "" &&
+        this.dataToSend.area.text !== undefined
+      );
     },
   },
   async created() {
     try {
-      await this.$store.dispatch("loadEtapas");
-      await this.$store.dispatch("loadAreas");
-      await this.$store.dispatch("loadNiveles");
+      // * Agrupamos las llamadas a la API en un array de promesas y las resolvemos de forma concurrente
+      let data = Promise.all([
+        this.$store.dispatch("loadEtapas"),
+        this.$store.dispatch("loadAreas"),
+        this.$store.dispatch("loadNiveles"),
+      ]);
+      return await data;
     } catch (error) {
       console.error(error);
     }
+  },
+  beforeDestroy() {
+    clearTimeout(this.timeout);
   },
   watch: {
     "dataToSend.area": function (oldVal, newVal) {
@@ -410,17 +435,72 @@ export default {
     },
   },
   methods: {
-    consolear(ev) {
-      console.log(ev);
-    },
     setData(data, target) {
       this.dataToSend[target] = data;
     },
+    async buscarEvento() {
+      this.anyadirPreguntaForm = false;
+      if (this.codigoEvento === "") {
+        this.notifyError("El código no puede estar vacío.");
+        return;
+      }
+      if (Number(this.codigoEvento) === NaN) {
+        this.notifyError("Código de evento inválido.");
+        return;
+      }
+      try {
+        // * Reseteamos el formulario y las preguntas añadidas, en caso de que se haya intentado buscar un evento nuevo tras ya haber buscado uno
+        this.resetForm();
+        this.preguntasAnyadidas = [];
+        let eventID = Number(this.codigoEvento);
+
+        let a = api
+          .getEventoById(eventID)
+          .then((response) => {
+            if (response.status === 200 && response.data.length > 0) {
+              return response.data;
+            }
+            this.notifyError("Evento no encontrado.");
+            return;
+          })
+          .then((data) => {
+            this.eventNames.nombreEtapa = data[0].nombreEtapa;
+            this.eventNames.nombreNivel = data[0].nombreNivel;
+            this.eventNames.nombreArea = data[0].nombreArea;
+            this.eventNames.nombreTema = data[0].nombreTema;
+            this.anyadirPreguntaForm = true;
+            this.codigoEventoCopia = this.codigoEvento;
+          });
+
+        // * Llamada para conseguir la cantidad de preguntas asociadas al evento
+        let b = api
+          .getPreguntas(eventID)
+          .then((response) => {
+            return response.data;
+          })
+          .then((data) => {
+            if (data.length > 0) {
+              this.numeroPreguntasAsociadas = data.length;
+            } else {
+              this.numeroPreguntasAsociadas = 0;
+            }
+          });
+      } catch (error) {
+        console.error(error);
+      }
+      return await Promise.all([a, b]);
+    },
     crearEvento() {
       // * Comprobamos que ningún campo esté vacío antes de enviar
-      if (!Object.values(this.dataToSend).some((el) => el === "")) {
-        let fecha = new Date().toISOString().slice(0, 10);
 
+      // !Object.values(this.dataToSend).some((el) => el === "")
+      if (
+        Object.keys(this.dataToSend.etapa) === "" ||
+        Object.keys(this.dataToSend.nivel) === "" ||
+        Object.keys(this.dataToSend.area) === "" ||
+        Object.keys(this.dataToSend.tema) === ""
+      ) {
+        let fecha = new Date().toISOString().slice(0, 10);
         api
           .createEvento(
             this.dataToSend.etapa.value,
@@ -435,80 +515,96 @@ export default {
             this.eventNames.nombreNivel = this.dataToSend.nivel.text;
             this.eventNames.nombreArea = this.dataToSend.area.text;
             this.eventNames.nombreTema = this.dataToSend.tema.text;
+            this.numeroPreguntasAsociadas = 0;
             this.codigoEventoNuevo = data.result.CodEvento;
             this.anyadirPreguntaForm = true;
+            this.notifySuccess("¡Evento creado!");
           })
-          .catch((error) => console.log(error));
+          .catch((error) => console.error(error));
       } else {
-        console.log("No ha sido posible enviar. Algún campo vacío");
+        this.notifyError("No ha sido posible enviar. Algún campo vacío");
       }
-
-      console.log("Se ha intentado crear el evento", this.dataToSend);
     },
     //TODO: El request al backend se debería hacer al pulsar en "Crear evento" y no al guardar
     crearEtapa() {
-      if (this.newEtapa.value !== "" || this.newEtapa.value !== undefined) {
+      if (this.newEtapa.text !== "" || this.newEtapa.text !== undefined) {
         let etapa = {
-          Nombre: this.newEtapa.value,
+          Nombre: this.newEtapa.text,
         };
         try {
           api
             .createEtapa(etapa)
             .then((response) => response.data)
             .then((data) => {
-              console.log(data);
+              if (data.status === "ok") {
+                this.$refs.etapa.searchTerm = this.newEtapa.text;
+                this.newEtapa.isAdded = !this.newEtapa.isAdded;
+
+                this.dataToSend.etapa.value = data.result.IdEtapa;
+                this.dataToSend.etapa.text = this.newEtapa.text;
+              }
             }).catch;
         } catch (error) {
           console.error(error);
         }
-        this.newEtapa.isAdded = !this.newEtapa.isAdded;
-        this.$refs.etapa.searchTerm = this.newEtapa.value;
       } else {
-        console.log("Etapa está vacía");
+        notifyError("El campo no puede estar vacío");
       }
     },
     crearNivel() {
-      if (this.newNivel.value !== "" || this.newNivel.value !== undefined) {
+      if (this.newNivel.text !== "" || this.newNivel.text !== undefined) {
         let nivel = {
-          Nombre: this.newNivel.value,
+          Nombre: this.newNivel.text,
         };
         try {
           api
             .createNivel(nivel)
             .then((response) => response.data)
             .then((data) => {
-              console.log(data.status);
+              if (data.status === "ok") {
+                this.$refs.nivel.searchTerm = this.newNivel.text;
+                this.newNivel.isAdded = !this.newNivel.isAdded;
+
+                this.dataToSend.nivel.value = data.result.IdNivel;
+                this.dataToSend.nivel.text = this.newNivel.text;
+              }
             }).catch;
-        } catch (e) {
-          console.error(e);
+        } catch (error) {
+          console.error(error);
         }
-        this.newNivel.isAdded = !this.newNivel.isAdded;
-        this.$refs.nivel.searchTerm = this.newNivel.value;
+      } else {
+        notifyError("El campo no puede estar vacío");
       }
     },
     crearArea() {
-      if (this.newArea.value !== "" || this.newArea.value !== undefined) {
+      if (this.newArea.text !== "" || this.newArea.text !== undefined) {
         let area = {
-          Nombre: this.newArea.value,
+          Nombre: this.newArea.text,
         };
         try {
           api
             .createArea(area)
             .then((response) => response.data)
             .then((data) => {
-              console.log(data.status);
+              if (data.status === "ok") {
+                this.$refs.area.searchTerm = this.newArea.text;
+                this.newArea.isAdded = !this.newArea.isAdded;
+
+                this.dataToSend.area.value = data.result.IdArea;
+                this.dataToSend.area.text = this.newArea.text;
+              }
             }).catch;
-        } catch (e) {
-          console.error(e);
+        } catch (error) {
+          console.error(error);
         }
-        this.newArea.isAdded = !this.newArea.isAdded;
-        this.$refs.area.searchTerm = this.newArea.value;
+      } else {
+        notifyError("El campo no puede estar vacío");
       }
     },
     crearTema() {
-      if (this.newTema.value !== "" || this.newTema.value !== undefined) {
+      if (this.newTema.text !== "" || this.newTema.text !== undefined) {
         let tema = {
-          Nombre: this.newTema.value,
+          Nombre: this.newTema.text,
           FK_IdArea: this.dataToSend.area.value,
         };
         try {
@@ -516,21 +612,33 @@ export default {
             .createTema(tema)
             .then((response) => response.data)
             .then((data) => {
-              console.log(data.status);
+              if (data.status === "ok") {
+                this.$refs.tema.searchTerm = this.newTema.text;
+                this.newTema.isAdded = !this.newTema.isAdded;
+
+                this.dataToSend.tema.value = data.result.IdTema;
+                this.dataToSend.tema.text = this.newTema.text;
+              }
             }).catch;
-        } catch (e) {
-          console.error(e);
+        } catch (error) {
+          console.error(error);
         }
-        this.newTema.isAdded = !this.newTema.isAdded;
-        this.$refs.tema.searchTerm = this.newTema.value;
+      } else {
+        notifyError("El campo no puede estar vacío");
       }
     },
     anyadirPregunta() {
+      let formulario = document.querySelector(".form-container form");
+      // * Comprobamos que el formulario ha sido correctamente rellenado
+      if (!formulario.checkValidity()) {
+        this.notifyError("Debes rellenar los campos requeridos.");
+        return;
+      }
       try {
         let codigoEvento =
           this.codigoEventoNuevo !== ""
             ? this.codigoEventoNuevo
-            : this.codigoEvento;
+            : this.codigoEventoCopia;
         codigoEvento = Number(codigoEvento);
         let fecha = new Date().toISOString().slice(0, 10);
 
@@ -543,59 +651,39 @@ export default {
             this.nuevaPregunta.Respuesta3,
             this.nuevaPregunta.Respuesta4,
             this.nuevaPregunta.Correcta,
-            this.nuevaPregunta.Limite,
             this.nuevaPregunta.Imagen,
+            this.nuevaPregunta.Tiempo,
             fecha
           )
           .then((response) => {
-            console.log(response);
-            if (response.status === 200) {
+            if (response.status === 200 && response.statusText === "OK") {
+              this.notifySuccess("Pregunta añadida al evento correctamente.");
               this.preguntasAnyadidas.push(this.nuevaPregunta);
               this.resetForm();
+              document.documentElement.scrollBy({
+                top: 200,
+                behavior: "smooth",
+              });
             }
-          });
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    buscarEvento() {
-      if (this.codigoEvento === "") {
-        //TODO: Cambiar a notificación para el usuario
-        console.log("Código vacío");
-        return;
-      }
-      if (Number(this.codigoEvento) === NaN) {
-        console.log("El código de evento pasado no es un número");
-        return;
-      }
-
-      try {
-        // * Reseteamos el formulario y las preguntas añadidas, en caso de que se haya intentado buscar un evento nuevo tras ya haber buscado uno
-        this.resetForm();
-        this.preguntasAnyadidas = [];
-        let eventID = Number(this.codigoEvento);
-
-        api
-          .getEventoById(eventID)
-          .then((response) => response.data)
-          .then((data) => {
-            this.eventNames.nombreEtapa = data[0].nombreEtapa;
-            this.eventNames.nombreNivel = data[0].nombreNivel;
-            this.eventNames.nombreArea = data[0].nombreArea;
-            this.eventNames.nombreTema = data[0].nombreTema;
-            this.anyadirPreguntaForm = true;
-          });
-
-        api
-          .getPreguntas(eventID)
-          .then((response) => response.data)
-          .then((data) => {
-            this.numeroPreguntasAsociadas = data.length;
           });
       } catch (error) {
         console.error(error);
       }
-      console.log("Se ha intentado buscar un evento");
+    },
+    //TODO: Esto se debería convertir en un solo método
+    notifyError(msg) {
+      this.errorMsg = msg;
+      this.error = true;
+      this.timeout = setTimeout(() => {
+        this.error = false;
+      }, 1500);
+    },
+    notifySuccess(msg) {
+      this.successMsg = msg;
+      this.success = true;
+      this.timeout = setTimeout(() => {
+        this.success = false;
+      }, 1500);
     },
     resetForm() {
       this.nuevaPregunta = {
@@ -618,8 +706,8 @@ export default {
 
 <style lang="scss" scoped>
 $--color-accent: #fab700;
-$--color-preguntas-container: #431b93;
 $--color-preguntas-text: #eee;
+$--color-preguntas-container: #431b93;
 $--color-create-event-container: #069415;
 $--color-add-event-container: #1989d2;
 
@@ -736,6 +824,8 @@ $--color-add-event-container: #1989d2;
     .input > input {
       color: black;
       border-color: inherit;
+      font-family: "open sans";
+      font-weight: bold;
     }
     .input-label {
       color: black;
@@ -759,7 +849,7 @@ $--color-add-event-container: #1989d2;
 .form-container {
   width: 100%;
   max-width: 70vw;
-  position: relative;
+  // position: relative;
   background: $--color-preguntas-container;
   margin: 1rem auto 2rem auto;
   padding: 1.5rem;
@@ -771,32 +861,6 @@ $--color-add-event-container: #1989d2;
     display: flex;
     flex-flow: row wrap;
   }
-
-  // * Recuadro para mostrar el nombre de las columnas (etapa, nivel..) en el formulario
-  // > div:first-child {
-  //   display: flex;
-  //   width: 70%;
-  //   justify-content: space-around;
-  //   margin: 0 auto;
-  //   margin-bottom: 0.5rem;
-  //   padding: 0.8rem;
-  //   color: $--color-preguntas-container;
-  //   // border-radius: 5px;
-  //   // border-bottom: 1px solid white;
-
-  //   > span {
-  //     color: white;
-  //     // font-weight: bold;
-  //     strong {
-  //       // font-style: none;
-  //       color: $--color-preguntas-container;
-  //       background: white;
-  //       border-radius: 50%;
-  //       padding: 0.4rem;
-  //       margin-right: 0.2rem;
-  //     }
-  //   }
-  // }
 
   // * Span para mostrar el código de evento
   > div:nth-child(2) {
@@ -941,9 +1005,45 @@ $--color-add-event-container: #1989d2;
   }
 }
 
-.fade-enter-active,
+.alert-box {
+  position: fixed;
+  bottom: 0;
+  right: 5rem;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  margin: 1rem;
+  padding: 1rem 3rem;
+  font-family: "open sans";
+  font-weight: 500;
+
+  i {
+    margin-right: 6px;
+  }
+
+  &.error {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+  }
+
+  &.success {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+  }
+
+  &.warning {
+    color: #8a6d3b;
+    background-color: #fcf8e3;
+    border-color: #faebcc;
+  }
+}
+
+.fade-enter-active {
+  transition: opacity 0.3s ease;
+}
 .fade-leave-active {
-  transition: opacity 0.2s ease;
+  transition: opacity 0.7s ease;
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;

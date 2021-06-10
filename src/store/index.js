@@ -13,8 +13,9 @@ export default new Vuex.Store({
 	],
 	state: {
 		downloadData: [],
-		filteredData: [],
 		downloadItemId: 0,
+		filteredData: [],
+		filteredHeaders: [],
 		optionsEtapa: [],
 		optionsNivel: [],
 		optionsArea: [],
@@ -42,11 +43,15 @@ export default new Vuex.Store({
 		saveFilteredData(state, data) {
 			state.filteredData = data;
 		},
+		saveFilteredHeaders(state, data) {
+			state.filteredHeaders = data;
+		},
 		newId(state) {
 			state.downloadItemId++;
 		},
-		scrollToView(ev) {
-			ev.target.onclick = document.documentElement.scrollIntoView({
+		//TODO: Esto probablemente no debería estar en la store, sino en un archivo JS aparte
+		scrollToView(target) {
+			target.onclick = document.documentElement.scrollIntoView({
 				behavior: 'smooth',
 			});
 		},
@@ -56,7 +61,6 @@ export default new Vuex.Store({
 			let arrayFiltrado = state.downloadData.filter(el => el.id != id);
 			commit('setDownloadedData', arrayFiltrado);
 		},
-		// getDownloadedData({ commit }) {},
 		loadEtapas({ commit }) {
 			api.getEtapas()
 				.then(response => {
@@ -75,7 +79,7 @@ export default new Vuex.Store({
 					}
 				})
 				.catch(error => {
-					console.log(
+					console.error(
 						'Fallo en la petición para cargar las etapas',
 						error
 					);
@@ -99,7 +103,7 @@ export default new Vuex.Store({
 					}
 				})
 				.catch(error => {
-					console.log(
+					console.error(
 						'Fallo en la petición para cargar los niveles',
 						error
 					);
@@ -123,35 +127,40 @@ export default new Vuex.Store({
 					}
 				})
 				.catch(error => {
-					console.log(
+					console.error(
 						'Fallo en la petición para cargar las áreas',
 						error
 					);
 				});
 		},
 		loadTemas({ commit }, idArea) {
-			api.getTemas(idArea)
-				.then(response => {
-					if (response.status === 200 && response.data.length > 0) {
-						const selectTemas = response.data.reduce(
-							(acc, value) => {
-								acc.push({
-									value: value.IdTema,
-									text: value.Nombre,
-								});
-								return acc;
-							},
-							[]
+			if (idArea !== undefined && idArea !== null) {
+				api.getTemas(idArea)
+					.then(response => {
+						if (
+							response.status === 200 &&
+							response.data.length > 0
+						) {
+							const selectTemas = response.data.reduce(
+								(acc, value) => {
+									acc.push({
+										value: value.IdTema,
+										text: value.Nombre,
+									});
+									return acc;
+								},
+								[]
+							);
+							commit('setTemas', selectTemas);
+						}
+					})
+					.catch(error => {
+						console.error(
+							'Fallo en la petición para cargar los temas',
+							error
 						);
-						commit('setTemas', selectTemas);
-					}
-				})
-				.catch(error => {
-					console.log(
-						'Fallo en la petición para cargar los temas',
-						error
-					);
-				});
+					});
+			}
 		},
 	},
 });

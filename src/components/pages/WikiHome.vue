@@ -191,7 +191,7 @@ export default {
       background: #237e0b;
     }
     to {
-      background: rgb(38, 141, 182);
+      background: #0b1980;
     }
   }
   .card-title-consultar {

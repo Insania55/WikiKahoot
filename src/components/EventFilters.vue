@@ -33,8 +33,8 @@
                   :options="this.$store.state.optionsEtapa"
                   label="Etapa"
                   placeholder="Busca una etapa.."
-                  @input="setData($event, 'etapa')"
-                  @selected-value="setData($event, 'etapa')"
+                  @input="setData($event, 'nombreEtapa')"
+                  @selected-value="setData($event, 'nombreEtapa')"
                   isAsync
                 ></AppSelect>
               </div>
@@ -45,8 +45,8 @@
                   :options="this.$store.state.optionsNivel"
                   label="Nivel"
                   placeholder="Busca un nivel.."
-                  @input="setData($event, 'nivel')"
-                  @selected-value="setData($event, 'nivel')"
+                  @input="setData($event, 'nombreNivel')"
+                  @selected-value="setData($event, 'nombreNivel')"
                 ></AppSelect>
               </div>
 
@@ -56,8 +56,8 @@
                   :options="this.$store.state.optionsArea"
                   label="Área"
                   placeholder="Busca un área.."
-                  @input="setData($event, 'area')"
-                  @selected-value="setData($event, 'area')"
+                  @input="setData($event, 'nombreArea')"
+                  @selected-value="setData($event, 'nombreArea')"
                 ></AppSelect>
               </div>
 
@@ -72,8 +72,8 @@
                       : 'Busca un tema..'
                   "
                   :disabled="!isTemaCargado"
-                  @input="setData($event, 'tema')"
-                  @selected-value="setData($event, 'tema')"
+                  @input="setData($event, 'nombreTema')"
+                  @selected-value="setData($event, 'nombreTema')"
                 ></AppSelect>
               </div>
               <div class="button-container">
@@ -82,9 +82,6 @@
                 >
                 <AppButton @click.prevent="resetInputs" normal
                   >Borrar</AppButton
-                >
-                <AppButton @click.prevent="opcionesParaFiltrar" normal
-                  >Probar</AppButton
                 >
               </div>
             </form>
@@ -107,14 +104,12 @@ export default {
     return {
       searchData: {
         codigo: "",
-        etapa: "",
-        nivel: "",
-        area: "",
-        tema: "",
+        nombreEtapa: "",
+        nombreNivel: "",
+        nombreArea: "",
+        nombreTema: "",
       },
-
       eventHeaders: [],
-      filteredData: null,
     };
   },
   props: {
@@ -125,106 +120,243 @@ export default {
   },
   async created() {
     try {
-      await this.$store.dispatch("loadEtapas");
-      await this.$store.dispatch("loadAreas");
-      await this.$store.dispatch("loadNiveles");
+      // * Agrupamos las llamadas a la API en un array de promesas y las resolvemos de forma concurrente
+      let data = Promise.all([
+        this.$store.dispatch("loadEtapas"),
+        this.$store.dispatch("loadAreas"),
+        this.$store.dispatch("loadNiveles"),
+      ]);
+      return await data;
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   },
   computed: {
     isTemaCargado: function () {
-      return this.searchData.area !== "" && this.searchData.area !== undefined;
+      return (
+        this.searchData.nombreArea !== "" &&
+        this.searchData.nombreArea !== undefined
+      );
     },
   },
   watch: {
-    "searchData.area": function () {
-      this.$store.dispatch("loadTemas", this.searchData.area.value);
+    "searchData.nombreArea": function () {
+      this.$store.dispatch("loadTemas", this.searchData.nombreArea.value);
     },
   },
   methods: {
-    opcionesParaFiltrar: function () {
+    valoresFiltrados: function () {
       let optionsFiltro = [
-        { nombre: "FK_IdEtapa", value: this.searchData.etapa.value },
-        { nombre: "FK_IdNivel", value: this.searchData.nivel.value },
-        { nombre: "FK_IdArea", value: this.searchData.area.value },
-        { nombre: "FK_IdTema", value: this.searchData.tema.value },
+        { nombre: "FK_IdEtapa", value: this.searchData.nombreEtapa.value },
+        { nombre: "FK_IdNivel", value: this.searchData.nombreNivel.value },
+        { nombre: "FK_IdArea", value: this.searchData.nombreArea.value },
+        { nombre: "FK_IdTema", value: this.searchData.nombreTema.value },
       ];
-      let nani = optionsFiltro.filter((item) => {
+      return optionsFiltro.filter((item) => {
         return item.value;
       });
-
-      console.log(nani);
     },
-    setData(value, target) {
+    headersText: function () {
+      return {
+        nombreEtapa: this.searchData.nombreEtapa.text,
+        nombreNivel: this.searchData.nombreNivel.text,
+        nombreArea: this.searchData.nombreArea.text,
+        nombreTema: this.searchData.nombreTema.text,
+      };
+    },
+    setData: function (value, target) {
       this.searchData[target] = value;
     },
-    //TODO: Generar llamada al backend consiguiendo los datos filtrados asociados al valor de la búsqueda
-    saveFilteredData() {
-      //let data = this.searchData;
-      console.log("Se ha intentado enviar el formulario");
-    },
+
     async handleData() {
-      await this.getEventHeaders();
-      await this.getPreguntasById();
+      this.eventHub.$emit("reset-checkboxes");
+      return await Promise.all([
+        this.getPreguntasById(),
+        this.getEventHeaders(),
+      ]);
     },
     async getEventHeaders() {
       try {
         let codigoEvento = this.searchData.codigo;
         if (codigoEvento !== undefined || codigoEvento !== "") {
-          await api
+          api
             .getEventoById(codigoEvento)
             .then((response) => {
-              console.log(response);
               if (response.status === 200 && response.data.length > 0) {
-                this.eventHeaders = response.data;
+                this.eventHeaders = response.data[0];
                 this.$emit("header-data", this.eventHeaders);
               }
             })
             .catch((error) => {
-              console.log(error);
+              console.error(error);
             });
         } else {
-          console.log("Código es undefined o null");
+          throw "Código es undefined o null";
         }
       } catch (e) {
         console.error(e);
       }
     },
+    //TODO: Esta función habría que refactorizarla
+    saveFilteredData() {
+      let opciones = this.valoresFiltrados();
+      let datos = [];
+
+      if (opciones.length === 1) {
+        api
+          .getEventoByOneEntrie(opciones[0].nombre, opciones[0].value)
+          .then((response) => {
+            if (response.status === 200 && response.data.length > 0) {
+              return response.data;
+            }
+            throw "No se han encontrado datos";
+          })
+          .then((data) => {
+            data.forEach((element) => {
+              api.getPreguntas(element.CodEventos).then((response) => {
+                response.data.forEach((pregunta) => {
+                  datos.push(pregunta);
+                });
+              });
+            });
+            this.$emit("header-data", this.headersText());
+            this.$emit("data", datos);
+          })
+          .catch((error) => {
+            this.$emit("data", { msg: error });
+          });
+        return;
+      }
+
+      if (opciones.length === 2) {
+        api
+          .getEventoByTwoEntries(
+            opciones[0].nombre,
+            opciones[1].nombre,
+            opciones[0].value,
+            opciones[1].value
+          )
+          .then((response) => {
+            if (response.status === 200 && response.data.length > 0) {
+              return response.data;
+            }
+            throw "No se han encontrado datos";
+          })
+          .then((data) => {
+            data.forEach((element) => {
+              // TODO: Este nombre (codeventos) debería cambiarse en la BDD a otro más congruente con los demás
+              api.getPreguntas(element.codeventos).then((response) => {
+                response.data.forEach((pregunta) => {
+                  datos.push(pregunta);
+                });
+              });
+            });
+            this.$emit("header-data", this.headersText());
+            this.$emit("data", datos);
+          })
+          .catch((error) => {
+            this.$emit("data", { msg: error });
+          });
+        return;
+      }
+
+      if (opciones.length === 3) {
+        api
+          .getEventoByTwoEntries(
+            opciones[0].nombre,
+            opciones[1].nombre,
+            opciones[2].nombre,
+            opciones[0].value,
+            opciones[1].value,
+            opciones[2].value
+          )
+          .then((response) => {
+            if (response.status === 200 && response.data.length > 0) {
+              return response.data;
+            }
+            throw "No se han encontrado datos";
+          })
+          .then((data) => {
+            console.log("Entra en then");
+            data.forEach((element) => {
+              api.getPreguntas(element.codeventos).then((response) => {
+                response.data.forEach((pregunta) => {
+                  datos.push(pregunta);
+                });
+              });
+            });
+            this.$emit("header-data", this.headersText());
+            this.$emit("data", datos);
+          })
+
+          .catch((error) => {
+            this.$emit("data", { msg: error });
+          });
+        return;
+      }
+
+      if (opciones.length === 4) {
+        api
+          .getEventoByFourEntries(
+            opciones[2].value,
+            opciones[1].value,
+            opciones[0].value,
+            opciones[3].value
+          )
+          .then((response) => {
+            if (response.status === 200 && response.data.length > 0) {
+              return response.data;
+            }
+            throw "No se han encontrado datos";
+          })
+          .then((data) => {
+            data.forEach((element) => {
+              api.getPreguntas(element.codeventos).then((response) => {
+                response.data.forEach((pregunta) => {
+                  datos.push(pregunta);
+                });
+              });
+            });
+            this.$emit("header-data", this.headersText());
+            this.$emit("data", datos);
+          })
+          .catch((error) => {
+            this.$emit("data", { msg: error });
+          });
+        return;
+      }
+    },
     async getPreguntasById() {
       try {
         let codigoEvento = this.searchData.codigo;
+
         if (codigoEvento !== undefined && codigoEvento !== "") {
-          await api
-            .getPreguntas(codigoEvento)
-            .then((response) => {
-              if (response.status === 200 && response.data.length > 0) {
-                this.filteredData = response.data;
-                this.$emit("data", this.filteredData);
-              }
-            })
-            .catch((error) => {
-              console.log(error);
-            });
+          api.getPreguntas(codigoEvento).then((response) => {
+            if (response.status === 200 && response.data.length > 0) {
+              this.$emit("data", response.data);
+            }
+          });
         } else {
-          console.log("Código es undefined o null", codigoEvento);
+          this.$emit("data", { msg: "Código no es válido" });
+          return;
         }
       } catch (error) {
         console.error(error);
       }
-    },
-    cerrarFiltros() {
-      this.$emit("cerrar-filtros");
     },
     resetInputs() {
       this.$refs["etapa"].searchTerm = "";
       this.$refs["nivel"].searchTerm = "";
       this.$refs["area"].searchTerm = "";
       this.$refs["tema"].searchTerm = "";
-      this.searchData.etapa = "";
-      this.searchData.nivel = "";
-      this.searchData.area = "";
-      this.searchData.tema = "";
+      this.searchData.nombreEtapa = "";
+      this.searchData.nombreNivel = "";
+      this.searchData.nombreArea = "";
+      this.searchData.nombreTema = "";
+      this.searchData.codigo = "";
+    },
+    cerrarFiltros() {
+      this.$emit("cerrar-filtros");
     },
   },
 };

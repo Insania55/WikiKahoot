@@ -22,11 +22,12 @@
           {{ header }}
         </div>
       </div>
-      <transition-group name="fade">
+      <transition-group name="table-fade">
+        <!-- // * 'Id' es el id del evento en la BDD, 'id' lo generamos nosotros para identificar al row y poder borrarlo después -->
         <div
           class="flex-table row"
-          v-for="(evento, index) in paginatedData"
-          :key="index"
+          v-for="evento in paginatedData"
+          :key="evento.Pregunta + Date.now()"
           :id="'row' + evento.id"
         >
           <div v-if="selectCheckbox" class="flex-row first">
@@ -233,6 +234,20 @@ export default {
       return this.currentPage === this.totalPages;
     },
   },
+  mounted() {
+    // * Event listener para borrar los checkbox seleccionados en caso de que se quiera
+    if (this.selectCheckbox) {
+      this.eventHub.$on("reset-checkboxes", () => {
+        this.selectAllCheckbox(false);
+      });
+    }
+  },
+  beforeDestroy() {
+    // * Lo eliminamos antes de destruir el componente
+    if (this.selectCheckbox) {
+      this.eventHub.$off("reset-checkboxes", this.selectAllCheckbox(false));
+    }
+  },
   methods: {
     anyadirEvento(
       Pregunta,
@@ -270,7 +285,11 @@ export default {
             fila.children[5].textContent.trim(),
             fila.children[6].textContent.trim(),
             fila.children[7].textContent,
-            fila.children[8].firstChild.href,
+            // * Sin esto, se añaden imágenes apuntando a esa dirección cuando no hay imagen añadida
+            fila.children[8].firstChild.href ===
+              "http://localhost:8080/consultar"
+              ? ""
+              : fila.children[8].firstChild.href,
             this.$store.state.downloadItemId
           );
           // * Aumentamos un id para asignar a cada elemento una ID diferente
@@ -380,7 +399,11 @@ $--color-row-bg: #f4f2f1;
   text-align: center;
   display: flex;
   flex-flow: column nowrap;
-  margin-left: 0.5rem;
+  // position: absolute;
+  // left: 30px;
+  // top: 320px;
+  // bottom: 2;
+  margin-left: 0.45rem;
   margin-bottom: 10px;
 }
 
@@ -523,11 +546,11 @@ $--color-row-bg: #f4f2f1;
   }
 }
 
-.fade-enter-active,
-.fade-leave-active {
+.table-fade-enter-active,
+.table-fade-leave-active {
   transition: opacity 0.4s;
 }
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+.table-fade-enter, .table-fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
 }
 
