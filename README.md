@@ -8,7 +8,7 @@ De momento sin capacidad de hosting, pero siéntete libre de explorar el código
 ## Project setup
 
 ```
-Se clona el proyecto y en la carpeta se ejecuta yarn install
+Se clona el proyecto y yarn install en dicha carpeta
 ```
 
 ### Compiles and hot-reloads for development
@@ -16,13 +16,3 @@ Se clona el proyecto y en la carpeta se ejecuta yarn install
 ```
 yarn serve
 ```
-
-### Compiles and minifies for production
-
-```
-yarn build
-```
-
-### Customize configuration
-
-See [Configuration Reference](https://cli.vuejs.org/config/).
