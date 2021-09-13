@@ -3,7 +3,7 @@
 ## Project setup
 
 ```
-Se clona el proyecto y en la carpeta se ejecuta **__yarn install__**
+Se clona el proyecto y en la carpeta se ejecuta yarn install
 ```
 
 ### Compiles and hot-reloads for development
