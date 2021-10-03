@@ -23,11 +23,12 @@
         </div>
       </div>
       <!-- <transition-group name="table-fade"> -->
-      <!-- // * 'Id' es el id del evento en la BDD, 'id' lo generamos nosotros para identificar al row y poder borrarlo después -->
+      <!-- // 'id' es el ID del evento en la BDD, lo generamos para identificar el row y poder borrarlo después -->
+      <!-- TODO Idear una forma para no tener error de keys repetidas -->
       <div
         class="flex-table row"
         v-for="evento in paginatedData"
-        :key="evento.Pregunta + Date.now()"
+        :key="evento.Respuesta1 + Date.now()"
         :id="'row' + evento.id"
       >
         <div v-if="selectCheckbox" class="flex-row first">
@@ -86,14 +87,13 @@
     </div>
 
     <div v-if="selectCheckbox && !borrable" class="button-container">
-      <!-- //TODO: Notificar al usuario de que se ha añadido el elemento a la descarga -->
       <AppButton @click="anyadirDescarga" normal
         >Añadir a la descarga
       </AppButton>
       <AppButton
         @click="descargarExcel"
-        :disabled="downloadData.length === 0"
-        :green="downloadData.length !== 0"
+        :disabled="storedData.length === 0"
+        :green="storedData.length !== 0"
         >Descargar selección
         <template #icon><i class="far fa-file-excel"></i></template>
       </AppButton>
@@ -101,8 +101,8 @@
     <div v-if="selectCheckbox && !borrable" class="button-container">
       <AppButton
         href="/consultar/consultarSeleccion"
-        :disabled="downloadData.length === 0"
-        :normal="downloadData.length !== 0"
+        :disabled="storedData.length === 0"
+        :normal="storedData.length !== 0"
         >Editar descarga actual</AppButton
       >
     </div>
@@ -164,7 +164,7 @@ export default {
   data() {
     return {
       dataToDownload: [],
-      // TODO: Esto habría que cambiarlo a prop o refactorizarlo
+      // TODO Cambiarlo a prop o refactorizarlo
       clasesHeader: [
         "enunciado",
         "r1",
@@ -193,8 +193,8 @@ export default {
     };
   },
   computed: {
-    downloadData() {
-      return this.$store.state.downloadData;
+    storedData() {
+      return this.$store.state.storedData;
     },
     paginatedData() {
       let start = (this.currentPage - 1) * this.perPage;
@@ -235,7 +235,7 @@ export default {
     },
   },
   mounted() {
-    // * Event listener para borrar los checkbox seleccionados en caso de que se quiera
+    // Event listener para borrar los checkbox seleccionados en caso de que se quiera
     if (this.selectCheckbox) {
       this.eventHub.$on("reset-checkboxes", () => {
         this.selectAllCheckbox(false);
@@ -243,7 +243,7 @@ export default {
     }
   },
   beforeDestroy() {
-    // * Lo eliminamos antes de destruir el componente
+    // Eliminamos el listener antes de destruir el componente
     if (this.selectCheckbox) {
       this.eventHub.$off("reset-checkboxes", this.selectAllCheckbox(false));
     }
@@ -272,10 +272,13 @@ export default {
         id,
       });
     },
-    //TODO: Mostrar mensaje confirmando que se ha añadido a la descarga (o no)
-    anyadirDescarga() {
+
+    // TODO Si no hay ninguna columna seleccionada para añadir a la descarga, mostrar el mensaje de error
+    // this.$emit("notify-error", "Nada que añadir a la descarga");
+    async anyadirDescarga() {
+      // ? Probablemente todos estos querySelectorAll de la página se harían mejor utilizando $refs
       document.querySelectorAll(".flex-table.row").forEach((fila) => {
-        // * Si el checkbox de dicha fila está en estado 'checked' significa que lo han seleccionado para descargar
+        // Si el checkbox de dicha fila está en estado 'checked' significa que lo han seleccionado para descargar el elemento
         if (fila.firstChild.firstChild.checked === true) {
           this.anyadirEvento(
             fila.children[1].textContent.trim(),
@@ -285,51 +288,63 @@ export default {
             fila.children[5].textContent.trim(),
             fila.children[6].textContent.trim(),
             fila.children[7].textContent,
-            // * Sin esto, se añaden imágenes apuntando a esa dirección cuando no hay imagen añadida
+            // Sin esto, se añaden imágenes apuntando a esa dirección cuando no hay imagen añadida
             fila.children[8].firstChild.href ===
               "http://localhost:8080/consultar"
               ? ""
               : fila.children[8].firstChild.href,
             this.$store.state.downloadItemId
           );
-          // * Aumentamos un id para asignar a cada elemento una ID diferente
+          // Aumentamos un ID para asignar a cada elemento de la descarga un ID diferente
           this.$store.commit("newId");
         }
       });
-      // * Controlamos los datos descargados con Vuex almacenados en el estado global de la app
-      this.dataToDownload.forEach((element) => {
-        this.$store.commit("addToDownloadedData", element);
+
+      // Controlamos los datos descargados con Vuex almacenados en el estado global de la app
+      await this.dataToDownload.forEach((element) => {
+        this.$store.commit("addToStoredData", element);
       });
+
       this.selectAllCheckbox(false);
-      this.notifySuccess("Preguntas añadidas a la descarga.");
+      this.$emit("notify-success", "Preguntas añadidas a la descarga.");
     },
 
     descargarExcel() {
-      if (this.downloadData.length !== 0) {
-        downloadAsExcel(this.spreadsheetColumns, this.downloadData);
+      if (this.storedData.length !== 0) {
+        let spreadsheet = {
+          sheet: "Preguntas-WikiKahoot",
+          columns: this.spreadsheetColumns,
+          content: this.storedData,
+        };
+
+        try {
+          downloadAsExcel(spreadsheet);
+        } catch (error) {
+          console.error(error);
+          return;
+        }
+
         this.selectAllCheckbox(false);
         this.dataToDownload = [];
-        this.$store.commit("setDownloadedData", []);
+        this.$store.commit("setStoredData", []);
       } else {
-        //TODO: Cambiar esto por mensaje de error
-        console.log("Todavía no hay datos para descargar");
+        this.$emit("notify-error", "Todavía no hay datos para descargar");
       }
     },
-    selectAllCheckbox(state = true) {
-      // * Si se pasa true, se seleccionan todos, de lo contrario se desmarcan
+    selectAllCheckbox(seleccionarTodos = true) {
       let checker = this.$refs.checkboxManager;
       let checkboxes = document.querySelectorAll(
         "input[type=checkbox]:first-child"
       );
 
-      if (!state) {
+      if (!seleccionarTodos) {
         checker.checked = false;
         checkboxes.forEach((checkbox) => {
           checkbox.checked = false;
         });
         return;
       }
-      if (state && checker.checked) {
+      if (seleccionarTodos && checker.checked) {
         checkboxes.forEach((checkbox) => {
           checkbox.checked = true;
         });
@@ -341,15 +356,16 @@ export default {
     },
     borrarSeleccion() {
       document.querySelectorAll(".flex-table.row").forEach((fila) => {
-        // * Si el checkbox de dicha fila está en estado 'checked' significa que lo han seleccionado para descargar
+        // Si el checkbox de dicha fila está en estado 'checked' significa que lo han seleccionado para descargar
         if (fila.firstChild.firstChild.checked === true) {
-          // * Conseguimos el número del id de dicha fila  (Teniendo en cuenta que las id son row1, row4, row123...)
+          // Conseguimos el número del id de dicha fila (Teniendo en cuenta que las id son row1, row4, row123...)
           let id = fila.id.split("w")[1];
           this.$store.dispatch("deleteItem", id);
         }
       });
       this.selectAllCheckbox(false);
     },
+
     onClickFirstPage() {
       this.$emit("page-changed", 1);
       if (this.selectCheckbox) this.selectAllCheckbox(false);

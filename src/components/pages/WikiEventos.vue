@@ -75,6 +75,8 @@
       :currentPage="currentPage"
       @page-changed="onPageChange"
       :selectCheckbox="true"
+      @notify-success="notifySuccess"
+      @notify-error="notifyError"
     >
     </AppPaginatedTable>
     <span class="ir-arriba" @click="$store.commit('scrollToView', $event)">

@@ -21,6 +21,7 @@
                 class="far fa-plus-square"
               ></i>
             </div>
+            <!-- TODO Al añadir un campo nuevo (etapa, nivel...) el height del contenedor de buscar evento por código no debería cambiar -->
             <transition name="fade">
               <div v-if="newEtapa.isAdded" class="new-field">
                 <input
@@ -109,7 +110,6 @@
               </div>
             </transition>
 
-            <!-- @click="descargarExcel" -->
             <AppButton @click="crearEvento" normal>Crear evento</AppButton>
           </form>
         </div>
@@ -238,7 +238,7 @@
           </label>
         </div>
         <div class="input-container w-50">
-          <!-- //TODO: Troquelar espacios antes de enviar-->
+          <!-- //TODO Troquelar espacios antes de enviar-->
           <label class="input" for="Correcta">
             <input
               v-model="nuevaPregunta.Correcta"
@@ -251,8 +251,8 @@
           </label>
         </div>
         <div class="input-container w-50">
-          <!-- //TODO: Que solo se permita introducir valores dentro de array de posibilidades-->
-          <!-- //TODO: Parsear a número antes de enviar -->
+          <!-- //TODO Que solo se permita introducir valores dentro de array de posibilidades-->
+          <!-- //TODO Parsear a número antes de enviar -->
           <label class="input" for="Tiempo">
             <input
               v-model="nuevaPregunta.Tiempo"
@@ -305,7 +305,7 @@
       - Preguntas añadidas al evento código
       {{ codigoEventoNuevo !== "" ? codigoEventoNuevo : codigoEventoCopia }}-
     </h2>
-    <!-- // * Tabla para cargar las preguntas que se vayan añadiendo al evento  -->
+    <!-- Tabla para cargar las preguntas que se vayan añadiendo al evento -->
     <AppPaginatedTable
       v-if="preguntasAnyadidas.length !== 0"
       :data="preguntasAnyadidas"
@@ -320,7 +320,7 @@
     <span class="ir-arriba" @click="$store.commit('scrollToView', $event)">
     </span>
 
-    <!-- //TODO: Se debería trasladar a componente -->
+    <!-- //TODO Se debería trasladar a componente -->
     <transition name="fade">
       <div v-if="error" class="alert-box error">
         <span><i class="fas fa-times"></i>{{ errorMsg }}</span>
@@ -354,7 +354,7 @@ export default {
       },
       anyadirPreguntaForm: false,
       codigoEvento: "",
-      // * Utilizo esta variable para almacenar el valor del codigo y usarlo de forma que no cambie constantemente por el v-model
+      // Utilizo esta variable para almacenar el valor del codigo y usarlo de forma que no cambie constantemente por el v-model
       codigoEventoCopia: "",
       codigoEventoNuevo: "",
       error: false,
@@ -408,7 +408,7 @@ export default {
   },
   async created() {
     try {
-      // * Agrupamos las llamadas a la API en un array de promesas y las resolvemos de forma concurrente
+      // Agrupamos las llamadas a la API en un array de promesas y las resolvemos de forma concurrente
       let data = Promise.all([
         this.$store.dispatch("loadEtapas"),
         this.$store.dispatch("loadAreas"),
@@ -427,7 +427,7 @@ export default {
       if (this.dataToSend.area !== undefined) {
         this.$store.dispatch("loadTemas", this.dataToSend.area.value);
       }
-      // * Si el área cambia y el tema ya ha sido seleccionado, se resetea el tema puesto que no tendrán correlación
+      // Si el área cambia y el tema ya ha sido seleccionado, se resetea el tema puesto que no tendrán correlación
       if (this.dataToSend.tema !== "" && oldVal.value !== newVal.value) {
         this.dataToSend.tema = "";
         this.$refs.tema.searchTerm = "";
@@ -449,7 +449,7 @@ export default {
         return;
       }
       try {
-        // * Reseteamos el formulario y las preguntas añadidas, en caso de que se haya intentado buscar un evento nuevo tras ya haber buscado uno
+        // Reseteamos el formulario y las preguntas añadidas, en caso de que se haya intentado buscar un evento nuevo tras ya haber buscado uno
         this.resetForm();
         this.preguntasAnyadidas = [];
         let eventID = Number(this.codigoEvento);
@@ -472,7 +472,7 @@ export default {
             this.codigoEventoCopia = this.codigoEvento;
           });
 
-        // * Llamada para conseguir la cantidad de preguntas asociadas al evento
+        // Llamada para conseguir la cantidad de preguntas asociadas al evento
         let b = api
           .getPreguntas(eventID)
           .then((response) => {
@@ -491,9 +491,7 @@ export default {
       return await Promise.all([a, b]);
     },
     crearEvento() {
-      // * Comprobamos que ningún campo esté vacío antes de enviar
-      // !Object.values(this.dataToSend).some((el) => el === "")
-      // console.log(Object.keys(this.dataToSend.nivel));
+      // Comprobamos que ningún campo esté vacío antes de enviar
       if (Object.keys(this.dataToSend.nivel).length !== 0) {
         let fecha = new Date().toISOString().slice(0, 10);
         api
@@ -520,7 +518,7 @@ export default {
         this.notifyError("No ha sido posible enviar. Algún campo vacío");
       }
     },
-    //TODO: El request al backend se debería hacer al pulsar en "Crear evento" y no al guardar
+    //TODO La request al backend se debería hacer al pulsar en "Crear evento" y no al guardar
     crearEtapa() {
       if (this.newEtapa.text !== "" || this.newEtapa.text !== undefined) {
         let etapa = {
@@ -624,7 +622,7 @@ export default {
     },
     anyadirPregunta() {
       let formulario = document.querySelector(".form-container form");
-      // * Comprobamos que el formulario ha sido correctamente rellenado
+      // Comprobamos que el formulario ha sido correctamente rellenado
       if (!formulario.checkValidity()) {
         this.notifyError("Debes rellenar los campos requeridos.");
         return;
@@ -651,6 +649,7 @@ export default {
             fecha
           )
           .then((response) => {
+            console.log(response);
             if (response.status === 200 && response.statusText === "OK") {
               this.notifySuccess("Pregunta añadida al evento correctamente.");
               this.preguntasAnyadidas.push(this.nuevaPregunta);
@@ -665,7 +664,7 @@ export default {
         console.error(error);
       }
     },
-    //TODO: Esto se debería convertir en un solo método
+    //TODO Estos 2 se deberían convertir en un solo método
     notifyError(msg) {
       this.errorMsg = msg;
       this.error = true;
@@ -692,6 +691,7 @@ export default {
         Imagen: "",
       };
     },
+    // TODO
     onPageChange() {
       console.log("Respuesta del paginador");
     },

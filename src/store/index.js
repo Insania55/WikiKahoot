@@ -12,7 +12,7 @@ export default new Vuex.Store({
 		}),
 	],
 	state: {
-		downloadData: [],
+		storedData: [],
 		downloadItemId: 0,
 		filteredData: [],
 		filteredHeaders: [],
@@ -22,11 +22,11 @@ export default new Vuex.Store({
 		optionsTema: [],
 	},
 	mutations: {
-		setDownloadedData(state, data) {
-			state.downloadData = data;
+		setStoredData(state, data) {
+			state.storedData = data;
 		},
-		addToDownloadedData(state, data) {
-			state.downloadData.push(data);
+		addToStoredData(state, data) {
+			state.storedData.push(data);
 		},
 		setEtapas(state, data) {
 			state.optionsEtapa = data;
@@ -49,7 +49,7 @@ export default new Vuex.Store({
 		newId(state) {
 			state.downloadItemId++;
 		},
-		//TODO: Esto probablemente no debería estar en la store, sino en un archivo JS aparte
+		//TODO Trasladar a archivo JS aparte
 		scrollToView(target) {
 			target.onclick = document.documentElement.scrollIntoView({
 				behavior: 'smooth',
@@ -58,8 +58,8 @@ export default new Vuex.Store({
 	},
 	actions: {
 		deleteItem({ commit, state }, id) {
-			let arrayFiltrado = state.downloadData.filter(el => el.id != id);
-			commit('setDownloadedData', arrayFiltrado);
+			let arrayFiltrado = state.storedData.filter(el => el.id != id);
+			commit('setStoredData', arrayFiltrado);
 		},
 		loadEtapas({ commit }) {
 			api.getEtapas()

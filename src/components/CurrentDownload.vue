@@ -1,11 +1,12 @@
 <template>
   <div class="current-download-page">
+    <!-- TODO Quitar los console.log de prueba, seguramente los métodos se puedan utilizar para algo -->
     <AppPaginatedTable
-      :data="downloadData"
+      :data="storedData"
       title="Descarga actual"
       :headerFields="camposHeader"
-      :total-pages="Math.ceil(downloadData.length / itemsPerPage)"
-      :total="downloadData.length"
+      :total-pages="Math.ceil(storedData.length / itemsPerPage)"
+      :total="storedData.length"
       :perPage="itemsPerPage"
       :currentPage="currentPage"
       @page-changed="consolear"
@@ -44,8 +45,8 @@ export default {
     AppPaginatedTable,
   },
   computed: {
-    downloadData() {
-      return this.$store.state.downloadData;
+    storedData() {
+      return this.$store.state.storedData;
     },
   },
   methods: {
