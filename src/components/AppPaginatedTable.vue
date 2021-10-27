@@ -273,8 +273,6 @@ export default {
       });
     },
 
-    // TODO Si no hay ninguna columna seleccionada para añadir a la descarga, mostrar el mensaje de error
-    // this.$emit("notify-error", "Nada que añadir a la descarga");
     async anyadirDescarga() {
       // ? Probablemente todos estos querySelectorAll de la página se harían mejor utilizando $refs
       document.querySelectorAll(".flex-table.row").forEach((fila) => {
@@ -300,12 +298,14 @@ export default {
         }
       });
 
-      // Controlamos los datos descargados con Vuex almacenados en el estado global de la app
+      // Controlamos con Vuex los datos descargados, almacenándolos en el estado global de la app
       await this.dataToDownload.forEach((element) => {
         this.$store.commit("addToStoredData", element);
       });
 
       this.selectAllCheckbox(false);
+      // TODO Si no hay ninguna columna seleccionada para añadir a la descarga, mostrar el mensaje de error (o no mostrar nada)
+      // this.$emit("notify-error", "Nada que añadir a la descarga");
       this.$emit("notify-success", "Preguntas añadidas a la descarga.");
     },
 
@@ -404,7 +404,7 @@ $--color-row-bg: #f4f2f1;
   margin: 0 3em;
   margin-bottom: 5em;
   max-width: 110vw;
-  // ! Tener en cuenta que la mayoría de margins/paddings son relativos al tamaño de fuente
+  // ! Tener en cuenta que la mayoría de margins/paddings son relativos al tamaño de fuente (em/rem), por lo que cambiar esto hará que todo se vaya a la verga
   font-size: 0.8rem;
 }
 
@@ -467,7 +467,7 @@ $--color-row-bg: #f4f2f1;
       background: $--color-row-bg;
     }
 
-    //TODO: Conseguir que este hover funcione
+    //TODO Conseguir que este hover funcione
     // &:hover {
     //   transition: all 0.5s;
     //   background-color: $--color-row-bg;
@@ -475,7 +475,7 @@ $--color-row-bg: #f4f2f1;
   }
 }
 
-// * En total tiene que sumar un 100% o el layout no cuadrará (está feo pero es lo que hay)
+// En total tiene que sumar un 100% o el layout no cuadrará (está feo, feísimo, horrendo, pero es lo que hay)
 .enunciado {
   width: 30%;
 }

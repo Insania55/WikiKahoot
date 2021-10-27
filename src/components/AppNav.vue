@@ -5,9 +5,10 @@
         ><img src="../assets/logo.png" alt="logo WikiKahoot"
       /></router-link>
       <router-link to="/">Home</router-link> |
-      <router-link to="/creacionEventos">Crear eventos</router-link> |
-      <router-link to="/consultar">Consultar eventos</router-link> |
-      <router-link to="/ayuda">Ayuda</router-link>
+      <router-link to="/creacionEventos">Crear Kahoot</router-link> |
+      <router-link to="/consultar">Repositorio de juegos</router-link> |
+      <router-link to="/ayuda">Ayuda</router-link> |
+      <router-link to="/about">Acerca de</router-link>
     </nav>
   </div>
 </template>
@@ -18,7 +19,6 @@ export default {};
 
 <style lang="scss">
 #app-nav {
-  // text-align: center;
   height: 64px;
   padding: 23px;
   padding-left: 8em;

@@ -1,6 +1,7 @@
 <template>
   <div class="home">
     <header>
+      <!-- TODO Habría que optimizar bastante las imágenes, ahora mismo ocupan demasiado y ralentizan la carga -->
       <div class="logo">
         <img class="logo-wikikahoot" src="../../assets/logo.png" />
       </div>
@@ -9,7 +10,7 @@
       <div class="card-left">
         <router-link to="/creacionEventos">
           <div class="card-title-crear">
-            <h3>CREA EVENTOS</h3>
+            <h3>CREA JUEGOS KAHOOT</h3>
           </div>
         </router-link>
         <div class="card-content">
@@ -19,10 +20,8 @@
             src="../../assets/imagen-crear.png"
           />
           <span class="text">
-            WikiKahoot ofrece la opción de crear tus propios eventos con los que
-            hacer crecer la web y crear contenido para otros usuarios. Esta es
-            una forma de compartir conocimiento de la misma manera que se
-            recibe.
+            Crea el repositorio compartido de preguntas y respuestas de tus
+            juegos Kahoot sobre la temática y nivel de dificultad que desees.
           </span>
         </div>
       </div>
@@ -31,7 +30,7 @@
       <div class="card-right">
         <router-link to="/consultar">
           <div class="card-title-consultar">
-            <h3>CONSULTA EVENTOS</h3>
+            <h3>REPOSITORIO DE JUEGOS</h3>
           </div>
         </router-link>
         <div class="card-content">
@@ -41,9 +40,9 @@
             src="../../assets/imagen-consultar.png"
           />
           <span class="text">
-            En la opción CONSULTA EVENTOS puedes buscar el evento que más se
-            ajuste a tus necesidades, existen multitud de temas y variedad.
-            Además puedes filtrarlos hasta dar con el más apropiado.
+            Accede al repositorio compartido de preguntas y respuestas de juegos
+            Kahoot creados. Podrás utilizarlas para tus nuevos juegos y
+            ampliarlos con nuevas cuestiones.
           </span>
         </div>
       </div>
@@ -51,7 +50,7 @@
     <div class="card-home-left">
       <div class="card-left">
         <div class="card-title-compartir">
-          <h3>COMPARTE KAHOOT</h3>
+          <h3>JUEGOS POR ETAPAS EDUCATIVAS</h3>
         </div>
         <div class="card-content">
           <img
@@ -60,10 +59,8 @@
             src="../../assets/imagen-compartir.png"
           />
           <span class="text">
-            WikiKahoot ofrece la opción de crear tus propios eventos con los que
-            hacer crecer la web y crear contenido para otros usuarios. Esta es
-            una forma de compartir conocimiento de la misma manera que se
-            recibe.
+            Dispones de enlaces a juegos Kahoot creados por docentes de
+            diferentes etapas educativas.
           </span>
         </div>
       </div>
@@ -82,9 +79,8 @@
             src="../../assets/imagen-ayudar.png"
           />
           <span class="text">
-            En la opción CONSULTA EVENTOS puedes buscar el evento que más se
-            ajuste a tus necesidades, existen multitud de temas y variedad.
-            Además puedes filtrarlos hasta dar con el más apropiado.
+            Te explicamos cómo crear y acceder a juegos Kahoot utilizando esta
+            herramienta para docentes.
           </span>
         </div>
       </div>

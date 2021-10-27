@@ -354,7 +354,7 @@ export default {
       },
       anyadirPreguntaForm: false,
       codigoEvento: "",
-      // Utilizo esta variable para almacenar el valor del codigo y usarlo de forma que no cambie constantemente por el v-model
+      // Esta variable se utiliza para almacenar el valor del código y usarlo de forma que no cambie constantemente por el data-binding del v-model
       codigoEventoCopia: "",
       codigoEventoNuevo: "",
       error: false,

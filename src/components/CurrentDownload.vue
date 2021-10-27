@@ -1,6 +1,6 @@
 <template>
   <div class="current-download-page">
-    <!-- TODO Quitar los console.log de prueba, seguramente los métodos se puedan utilizar para algo -->
+    <!-- TODO Quitar los console.log (consolear) de prueba, seguramente los métodos se puedan utilizar para algo -->
     <AppPaginatedTable
       :data="storedData"
       title="Descarga actual"

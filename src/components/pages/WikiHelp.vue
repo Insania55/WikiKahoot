@@ -10,12 +10,12 @@
     <div class="card">
       <div class="card-content-left">
         <div class="card-title">
-          <h3>CREA UN EVENTO</h3>
+          <h3>CREA UN KAHOOT</h3>
         </div>
         <div class="texto">
           <span>
-            En "Crear un evento" disponemos de dos opciones, "Crea un nuevo
-            evento" y "Añade preguntas a un evento existente".
+            En "Crear Kahoot" disponemos de dos opciones, "Crea un nuevo evento"
+            y "Añade preguntas a un evento existente".
             <br /><br />
           </span>
           <img
@@ -85,12 +85,12 @@
     <div class="card">
       <div class="card-content-right">
         <div class="card-title">
-          <h3>BUSCA UN EVENTO</h3>
+          <h3>BUSCA UN KAHOOT</h3>
         </div>
         <div class="texto">
           <span>
-            En "Cosultar evento" podemos encontrar el evento que necesitemos y
-            todas las plantillas que le correspondan.
+            En "Repositorio de juegos" podemos encontrar el evento que
+            necesitemos y todas las plantillas que le correspondan.
             <br />
           </span>
           <span>
@@ -131,11 +131,11 @@
     <div class="card">
       <div class="card-content-left-2">
         <div class="card-title">
-          <h3>DESCARGA UN EVENTO</h3>
+          <h3>DESCARGA UN KAHOOT</h3>
         </div>
         <div class="texto">
           <span>
-            Una vez hemos encontrado el evento deseado o hemos filtrado la
+            Una vez hemos encontrado el Kahoot deseado o hemos filtrado la
             información necesaria para encontrar las preguntas deseadas podemos
             descargarlas.
             <br />
