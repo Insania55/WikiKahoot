@@ -5,7 +5,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/github_username/repo_name">
+  <a href="https://github.com/jorgepexp/WikiKahoot">
     <img src="src/assets/logo.png" alt="Logo" width="150" height="120">
   </a>
 
@@ -20,15 +20,17 @@
 
 <!-- TABLE OF CONTENTS -->
 <details>
-  <summary>Table of Contents</summary>
+  <summary>Tabla de contenido</summary>
   <ol>
     <li>
-      <a href="#about-the-project">About The Project</a>
+      <a href="#about-the-project">Acerca del proyecto</a>
       <ul>
-        <li><a href="#built-with">Built With</a></li>
-        <li><a href="#installation">Installation</a></li>
-        <li><a href="#usage">Usage</a></li>
-        <li><a href="#acknowledgments">Acknowledgments</a></li>
+        <li><a href="#built-with">Construido con</a></li>
+        <li><a href="#installation">Instalación</a></li>
+        <li><a href="#usage">Ejemplos de uso</a></li>
+        <li><a href="#learning">Qué he aprendido</a></li>
+        <li><a href="#contact">Contacta conmigo</a></li>
+        <li><a href="#acknowledgments">Menciones</a></li>
       </ul>
     </li>
   </ol>
@@ -37,7 +39,7 @@
 
 
 <!-- ABOUT THE PROJECT -->
-## About The Project
+## Acerca del proyecto
 
 ![Captura de pantalla- Home][product-screenshot]
 
@@ -45,59 +47,69 @@
 
 
 
-### Built With
+### Construido con
 
-* [Vue.js](https://vuejs.org/)
-* [SCSS](https://sass-lang.com/)
-* [PHP](https://www.php.net/)
+* [Vue.js](https://vuejs.org/) - Frontend Framework
+* [SCSS](https://sass-lang.com/) - Style Language / Preprocessor
+* [PHP](https://www.php.net/) - Backend Language
 
 
 
-### Installation
-1. Clone the repo
+### Instalación
+1. Clona el repo
    ```sh
    git clone https://github.com/jorgepexp/WikiKahoot.git
    ```
-2. Install NPM packages
+2. Instala los paquetes NPM
    ```sh
    npm install
    ```
-3. Run the project
+3. Lanza el proyecto
     ```sh
     npm run serve
     ```
 
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="right">(<a href="#top">vuelta arriba</a>)</p>
 
 
 
 <!-- USAGE EXAMPLES -->
-## Usage
+## Ejemplos de uso
 ![Captura de pantalla- Crear][product-screenshot1]
 ![Captura de pantalla- Filtrar][product-screenshot2]
 
-<p align="right">(<a href="#top">back to top</a>)</p>
-
+<p align="right">(<a href="#top">vuelta arriba</a>)</p>
 
 
 
 <!-- CONTACT -->
-## Contact
+## Contacta conmigo
 
 Jorge Pérez Expósito - jorge.pexp@gmail.com
 
 Project Link: [https://github.com/joregepexp/WikiKahoot](https://github.com/joregepexp/WikiKahoot)
 
 
+<!-- LEARNING -->
+## Qué he aprendido
+¿Qué cosas he aprendido mientras realizaba este proyecto?
+* Cómo moverme mejor en una aplicación Vue, haciendo el uso de Vue-router para manejar rutas y de Vuex para controlar el estado global de la app.
+* La forma de conectar el servidor con el cliente usando JS y PHP.
+* Primeros pasos con el preprocesador SASS, utilizando varias de sus características. Destacaría su capacidad de hacer nesting de selectores, maravillosa.
+* Gestionar las dependencias con NPM y scripts de package.json
+* Que estilar una tabla es un sufrimiento que no le deseo a nadie... ;-;
+
+<p align="right">(<a href="#top">vuelta arriba</a>)</p>
+
 
 <!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
+## Menciones
 
 * [Json-as-xlsx](https://www.npmjs.com/package/json-as-xlsx)
 * [Axios](https://github.com/axios/axios)
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="right">(<a href="#top">vuelta arriba</a>)</p>
 
 
 
