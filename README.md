@@ -81,16 +81,6 @@
 
 <p align="right">(<a href="#top">vuelta arriba</a>)</p>
 
-
-
-<!-- CONTACT -->
-## Contacta conmigo
-
-Jorge Pérez Expósito - jorge.pexp@gmail.com
-
-Project Link: [https://github.com/joregepexp/WikiKahoot](https://github.com/joregepexp/WikiKahoot)
-
-
 <!-- LEARNING -->
 ## Qué he aprendido
 ¿Qué cosas he aprendido mientras realizaba este proyecto?
